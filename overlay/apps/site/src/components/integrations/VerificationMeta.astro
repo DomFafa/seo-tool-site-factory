@@ -1,7 +1,0 @@
----
-import type { SiteContext } from '@factory/site-core';
-import { getVerificationMetaTags } from '@factory/integrations';
-interface Props { ctx: SiteContext; }
-const tags = getVerificationMetaTags(Astro.props.ctx);
----
-{tags.map((tag) => <meta name={tag.name} content={tag.content} />)}
