@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.open-next/
+dist/
+coverage/
+apps/web/.generated/
+.env
+.env.*
+!.env.example
