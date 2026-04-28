@@ -1,9 +1,93 @@
-import { existsSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import matter from 'gray-matter';
 import type { SiteContext, ValidationIssue } from './types';
 import { contentExists, localeContentDirExists } from './content';
 import { listSiteIds, loadSiteContext } from './load';
+import { ContentFrontmatterSchema } from './schema';
 import { findWorkspaceRoot } from './workspace';
+
+type VerificationConfig = {
+  method?: 'none' | 'meta' | 'html-file' | 'xml-file' | 'dns' | 'import-from-gsc';
+  content?: string;
+  fileName?: string;
+  fileContent?: string;
+};
+
+function findContentFiles(dir: string): string[] {
+  if (!existsSync(dir)) return [];
+  const entries = readdirSync(dir, { withFileTypes: true });
+  return entries.flatMap((entry) => {
+    const entryPath = join(dir, entry.name);
+    if (entry.isDirectory()) return findContentFiles(entryPath);
+    return entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mdx')) ? [entryPath] : [];
+  });
+}
+
+function validateContentFrontmatter(ctx: SiteContext, locale: string): ValidationIssue[] {
+  const issues: ValidationIssue[] = [];
+  const contentDir = join(ctx.siteDir, 'content', locale);
+  const slugs = new Map<string, string>();
+
+  for (const filePath of findContentFiles(contentDir)) {
+    const parsed = matter(readFileSync(filePath, 'utf8'));
+    const result = ContentFrontmatterSchema.safeParse(parsed.data);
+
+    if (!result.success) {
+      for (const issue of result.error.issues) {
+        issues.push({
+          level: 'P0',
+          code: 'INVALID_CONTENT_FRONTMATTER',
+          file: filePath,
+          message: `${issue.path.join('.') || 'frontmatter'} ${issue.message}`
+        });
+      }
+      continue;
+    }
+
+    const previous = slugs.get(result.data.slug);
+    if (previous) {
+      issues.push({
+        level: 'P0',
+        code: 'DUPLICATE_CONTENT_SLUG',
+        file: filePath,
+        message: `Duplicate slug "${result.data.slug}" in locale ${locale}; first seen in ${previous}.`
+      });
+    } else {
+      slugs.set(result.data.slug, filePath);
+    }
+
+    if (result.data.index && (ctx.siteConfig.lifecycle.status !== 'live' || !ctx.siteConfig.indexing.allowIndex)) {
+      issues.push({
+        level: 'P1',
+        code: 'CONTENT_INDEX_TRUE_WHILE_SITE_NOINDEX',
+        file: filePath,
+        message: `Content slug "${result.data.slug}" has index=true, but the site is not live/indexable.`
+      });
+    }
+  }
+
+  return issues;
+}
+
+function validateVerification(label: string, enabled: boolean, verification: VerificationConfig | undefined): ValidationIssue[] {
+  if (!enabled) return [];
+  const method = verification?.method ?? 'none';
+
+  if (method === 'none') {
+    return [{ level: 'P1', code: `${label}_VERIFICATION_NOT_CONFIGURED`, message: `${label} is enabled but verification.method=none.` }];
+  }
+
+  if (method === 'meta' && !verification?.content) {
+    return [{ level: 'P0', code: `${label}_META_CONTENT_MISSING`, message: `${label} meta verification requires verification.content.` }];
+  }
+
+  if ((method === 'html-file' || method === 'xml-file') && (!verification?.fileName || !verification?.fileContent)) {
+    return [{ level: 'P0', code: `${label}_FILE_VERIFICATION_INCOMPLETE`, message: `${label} file verification requires fileName and fileContent.` }];
+  }
+
+  return [];
+}
 
 export function validateSiteContext(ctx: SiteContext): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
@@ -20,12 +104,19 @@ export function validateSiteContext(ctx: SiteContext): ValidationIssue[] {
   if (!contentExists(ctx, site.defaultLocale, 'home.mdx')) {
     issues.push({ level: 'P0', code: 'MISSING_HOME_CONTENT', message: `Missing content/${site.defaultLocale}/home.mdx.` });
   }
+  if (!contentExists(ctx, site.defaultLocale, 'faq.mdx')) {
+    issues.push({ level: 'P2', code: 'MISSING_FAQ_CONTENT', message: `Missing content/${site.defaultLocale}/faq.mdx.` });
+  }
   for (const [locale, cfg] of Object.entries(site.locales)) {
     if (cfg.enabled && !localeContentDirExists(ctx, locale)) {
       issues.push({ level: 'P1', code: 'LOCALE_ENABLED_NO_CONTENT_DIR', message: `${locale} is enabled but content/${locale}/ does not exist.` });
+      continue;
     }
     if (cfg.indexable && !cfg.reviewed) {
       issues.push({ level: 'P1', code: 'LOCALE_INDEXABLE_NOT_REVIEWED', message: `${locale} is indexable but reviewed=false.` });
+    }
+    if (cfg.enabled) {
+      issues.push(...validateContentFrontmatter(ctx, locale));
     }
   }
   if (site.lifecycle.status !== 'live' && site.indexing.allowIndex) {
@@ -38,10 +129,16 @@ export function validateSiteContext(ctx: SiteContext): ValidationIssue[] {
     const adsense = integrations.ads.providers.adsense;
     if (!adsense.enabled) issues.push({ level: 'P0', code: 'ADSENSE_ACTIVE_BUT_DISABLED', message: 'ads.activeProvider=adsense but adsense.enabled=false.' });
     if (!adsense.publisherId) issues.push({ level: 'P0', code: 'ADSENSE_MISSING_PUBLISHER_ID', message: 'AdSense publisherId is required when AdSense is active.' });
+    if (integrations.ads.adsTxt.enabled && !integrations.ads.adsTxt.entries.some((entry) => entry.includes('google.com') && entry.includes('pub-'))) {
+      issues.push({ level: 'P1', code: 'ADSENSE_ADS_TXT_ENTRY_MISSING', message: 'ads.txt is enabled, but no Google AdSense seller entry was found.' });
+    }
   }
   if (integrations.ads.enabled && integrations.ads.activeProvider === 'adsterra') {
     const adsterra = integrations.ads.providers.adsterra;
     if (!adsterra.enabled) issues.push({ level: 'P0', code: 'ADSTERRA_ACTIVE_BUT_DISABLED', message: 'ads.activeProvider=adsterra but adsterra.enabled=false.' });
+  }
+  if (integrations.ads.adsTxt.enabled && integrations.ads.adsTxt.entries.length === 0) {
+    issues.push({ level: 'P1', code: 'ADS_TXT_ENABLED_EMPTY', message: 'ads.txt generation is enabled but no entries are configured.' });
   }
   if (integrations.analytics.googleAnalytics.enabled && !integrations.analytics.googleAnalytics.measurementId) {
     issues.push({ level: 'P0', code: 'GA4_MISSING_MEASUREMENT_ID', message: 'Google Analytics is enabled but measurementId is missing.' });
@@ -49,11 +146,18 @@ export function validateSiteContext(ctx: SiteContext): ValidationIssue[] {
   if (integrations.analytics.microsoftClarity.enabled && !integrations.analytics.microsoftClarity.projectId) {
     issues.push({ level: 'P0', code: 'CLARITY_MISSING_PROJECT_ID', message: 'Microsoft Clarity is enabled but projectId is missing.' });
   }
+
+  issues.push(...validateVerification('GSC', integrations.webmaster.googleSearchConsole.enabled, integrations.webmaster.googleSearchConsole.verification));
+  issues.push(...validateVerification('BING_WEBMASTER', integrations.webmaster.bingWebmaster.enabled, integrations.webmaster.bingWebmaster.verification));
+
   if (integrations.indexing.indexNow.enabled) {
     if (!integrations.indexing.indexNow.key) issues.push({ level: 'P0', code: 'INDEXNOW_MISSING_KEY', message: 'IndexNow is enabled but key is missing.' });
     if (!integrations.indexing.indexNow.keyFile) issues.push({ level: 'P0', code: 'INDEXNOW_MISSING_KEY_FILE', message: 'IndexNow is enabled but keyFile is missing.' });
   }
   for (const [placement, cfg] of Object.entries(integrations.ads.providers.adsterra.placements ?? {})) {
+    if (cfg.enabled && integrations.ads.providers.adsterra.blockedFormats.includes(cfg.format)) {
+      issues.push({ level: 'P0', code: 'ADSTERRA_BLOCKED_FORMAT_ENABLED', message: `Adsterra placement ${placement} uses blocked format ${cfg.format}.` });
+    }
     if (cfg.enabled && cfg.snippet) {
       const snippetPath = join(ctx.siteDir, cfg.snippet);
       if (!existsSync(snippetPath)) {

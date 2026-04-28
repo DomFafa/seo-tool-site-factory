@@ -2,22 +2,27 @@ import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import matter from 'gray-matter';
 import { marked } from 'marked';
+import { ContentFrontmatterSchema } from './schema';
 import type { ContentDocument, ContentFrontmatter, SiteContext } from './types';
 
-function normalizeFrontmatter(data: Record<string, unknown>, fallbackSlug: string): ContentFrontmatter {
-  const title = String(data.title ?? '').trim();
-  const description = String(data.description ?? '').trim();
-  if (!title) throw new Error(`Content document is missing title for slug ${fallbackSlug}`);
-  if (!description) throw new Error(`Content document is missing description for slug ${fallbackSlug}`);
-  return {
-    ...data,
-    title,
-    description,
-    slug: String(data.slug ?? fallbackSlug),
-    lastModified: String(data.lastModified ?? new Date().toISOString().slice(0, 10)),
-    index: data.index === undefined ? false : Boolean(data.index),
-    contentStatus: (data.contentStatus as ContentFrontmatter['contentStatus']) ?? 'draft'
-  };
+function normalizeFrontmatter(data: Record<string, unknown>, fallbackSlug: string, filePath: string): ContentFrontmatter {
+  const parsed = ContentFrontmatterSchema.safeParse({
+    slug: fallbackSlug,
+    lastModified: new Date().toISOString().slice(0, 10),
+    index: false,
+    contentStatus: 'draft',
+    aiAssisted: false,
+    ...data
+  });
+
+  if (!parsed.success) {
+    const details = parsed.error.issues
+      .map((issue) => `${issue.path.join('.') || 'frontmatter'} ${issue.message}`)
+      .join('; ');
+    throw new Error(`Invalid content frontmatter in ${filePath}: ${details}`);
+  }
+
+  return parsed.data;
 }
 
 async function readContentFile(ctx: SiteContext, locale: string, relPath: string, kind: ContentDocument['kind']): Promise<ContentDocument> {
@@ -25,7 +30,7 @@ async function readContentFile(ctx: SiteContext, locale: string, relPath: string
   if (!existsSync(filePath)) throw new Error(`Missing content file: ${filePath}`);
   const parsed = matter(readFileSync(filePath, 'utf8'));
   const fallbackSlug = relPath.replace(/\.mdx?$/, '').split('/').pop() ?? 'page';
-  const frontmatter = normalizeFrontmatter(parsed.data, fallbackSlug);
+  const frontmatter = normalizeFrontmatter(parsed.data, fallbackSlug, filePath);
   const html = await marked.parse(parsed.content);
   return { filePath, locale, kind, frontmatter, body: parsed.content, html };
 }

@@ -1,5 +1,5 @@
 import type { ContentDocument, SiteContext } from '@factory/site-core';
-import { getEnabledLocales, getIndexableLocales } from '@factory/site-core';
+import { getIndexableLocales } from '@factory/site-core';
 import { getBaseUrl, getGuideUrl, getLocaleHomeUrl } from './urls';
 
 type PageInput = {
@@ -16,11 +16,21 @@ export function buildPageSeo(ctx: SiteContext, input: PageInput) {
   const canonical = pageType === 'guide' && slug ? getGuideUrl(ctx, locale, slug) : getLocaleHomeUrl(ctx, locale);
   const indexableLocales = getIndexableLocales(ctx);
   const pageIndexAllowed = ctx.siteConfig.lifecycle.status === 'live' && ctx.siteConfig.indexing.allowIndex && page.frontmatter.index && page.frontmatter.contentStatus === 'approved' && indexableLocales.includes(locale);
-  const alternates = getEnabledLocales(ctx).map((altLocale) => ({
+
+  // Only emit hreflang links to locales that are actually eligible for indexing.
+  // For draft/noindex pages, keep alternates limited to the current page to avoid
+  // advertising unreviewed or machine-translated locales to search engines.
+  const hreflangLocales = pageIndexAllowed ? indexableLocales : [locale];
+  const alternates = hreflangLocales.map((altLocale) => ({
     hreflang: altLocale,
     href: pageType === 'guide' && slug ? getGuideUrl(ctx, altLocale, slug) : getLocaleHomeUrl(ctx, altLocale)
   }));
-  alternates.push({ hreflang: 'x-default', href: getLocaleHomeUrl(ctx, ctx.siteConfig.seo.xDefaultLocale ?? ctx.siteConfig.defaultLocale) });
+  const configuredDefault = ctx.siteConfig.seo.xDefaultLocale ?? ctx.siteConfig.defaultLocale;
+  const xDefaultLocale = hreflangLocales.includes(configuredDefault) ? configuredDefault : locale;
+  alternates.push({
+    hreflang: 'x-default',
+    href: pageType === 'guide' && slug ? getGuideUrl(ctx, xDefaultLocale, slug) : getLocaleHomeUrl(ctx, xDefaultLocale)
+  });
 
   const jsonLd = pageType === 'guide'
     ? {

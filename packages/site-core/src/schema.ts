@@ -152,3 +152,34 @@ export const IntegrationsConfigSchema = z.object({
     }).default({ enabled: false, submitOnProductionDeploy: false, endpoint: 'https://api.indexnow.org/indexnow' })
   }).default({ indexNow: {} })
 });
+
+
+export const ContentFrontmatterSchema = z
+  .object({
+    title: z.string().min(1),
+    description: z.string().min(1),
+    slug: z.string().min(1).regex(/^[a-z0-9][a-z0-9-]*$/),
+    lastModified: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+    index: z.boolean().default(false),
+    contentStatus: z.enum(['draft', 'edited', 'reviewed', 'localized', 'approved', 'archived']).default('draft'),
+    reviewedBy: z.string().nullable().optional(),
+    reviewedAt: z.string().nullable().optional(),
+    aiAssisted: z.boolean().default(false)
+  })
+  .superRefine((frontmatter, ctx) => {
+    if (frontmatter.index && frontmatter.contentStatus !== 'approved') {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['index'],
+        message: 'index=true requires contentStatus=approved'
+      });
+    }
+
+    if (frontmatter.index && frontmatter.aiAssisted && (!frontmatter.reviewedBy || !frontmatter.reviewedAt)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['reviewedBy'],
+        message: 'indexable AI-assisted content requires reviewedBy and reviewedAt'
+      });
+    }
+  });
