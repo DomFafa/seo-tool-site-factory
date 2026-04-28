@@ -1,0 +1,29 @@
+schemaVersion: 1
+toolId: typing-practice-paragraph
+executionModel: client-only
+privacy:
+  storesTypedText: false
+  storesResults: false
+analytics:
+  safeFields:
+    - locale
+    - duration
+    - mode
+    - wpmBucket
+    - accuracyBucket
+options:
+  mode: paragraph
+  durations:
+    - 15
+    - 30
+    - 60
+    - 180
+    - 300
+  defaultDuration: 60
+  prompts:
+    - "A paragraph typing exercise helps you practice punctuation, spacing, and sentence flow. Try to keep a consistent rhythm from the first word to the last."
+    - "Longer typing practice can reveal habits that short drills miss. Focus on accuracy before increasing speed."
+  showWpm: true
+  showCpm: true
+  showAccuracy: true
+  showErrorHeatmap: false

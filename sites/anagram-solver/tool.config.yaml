@@ -1,0 +1,11 @@
+schemaVersion: 1
+toolId: anagram-solver
+executionModel: static-data
+privacy:
+  storesUserInput: false
+analytics:
+  safeFields:
+    - locale
+    - action
+options:
+  mode: anagram-solver

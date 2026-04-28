@@ -1,0 +1,12 @@
+schemaVersion: 1
+primaryKeyword: cursive alphabet
+category: reference
+intent:
+  userJob: "Learn or reference uppercase and lowercase cursive letters."
+productBoundary:
+  thisSiteIs:
+    - a cursive alphabet reference
+    - a future home for printable practice worksheets
+  thisSiteIsNot:
+    - a social media text generator
+    - a general handwriting course

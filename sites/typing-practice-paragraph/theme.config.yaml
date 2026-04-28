@@ -1,0 +1,9 @@
+schemaVersion: 1
+name: typing-practice-paragraph
+colors:
+  primary: "#1d4ed8"
+radius: 18px
+layout: tool-first
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true

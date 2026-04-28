@@ -1,0 +1,12 @@
+schemaVersion: 1
+primaryKeyword: cursed text generator
+category: generator
+intent:
+  userJob: "Create creepy or glitchy text for fun and copy it."
+productBoundary:
+  thisSiteIs:
+    - a cursed text generator
+    - a Unicode combining-mark playground
+  thisSiteIsNot:
+    - a harmful content tool
+    - a text formatting standardizer

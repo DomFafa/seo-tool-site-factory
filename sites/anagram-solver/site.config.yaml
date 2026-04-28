@@ -1,0 +1,32 @@
+schemaVersion: 1
+id: anagram-solver
+brandName: Anagramly
+category: solver
+primaryKeyword: anagram-solver
+lifecycle:
+  status: draft
+domains:
+  production: seo-tool-anagram-solver.pages.dev
+  canonicalHost: seo-tool-anagram-solver.pages.dev
+  aliases: []
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+primaryTool: anagram-solver
+seo:
+  defaultTitle: Anagram Solver
+  defaultDescription: Find possible words from a set of letters using a simple static word list.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+deployment:
+  provider: cloudflare-pages
+  projectName: seo-tool-anagram-solver
+  outputDir: dist/sites/anagram-solver

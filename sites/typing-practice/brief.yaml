@@ -1,0 +1,12 @@
+schemaVersion: 1
+primaryKeyword: typing practice
+category: practice
+intent:
+  userJob: "Practice typing regularly and improve accuracy."
+productBoundary:
+  thisSiteIs:
+    - a typing practice tool
+    - a future home for lessons and weak-key practice
+  thisSiteIsNot:
+    - only a WPM speed test
+    - a paragraph library only

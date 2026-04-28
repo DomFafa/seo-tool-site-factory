@@ -1,0 +1,12 @@
+schemaVersion: 1
+primaryKeyword: correcteur d orthographe
+category: checker
+intent:
+  userJob: "Vérifier rapidement quelques fautes fréquentes dans un texte français."
+productBoundary:
+  thisSiteIs:
+    - un correcteur statique léger en version de démonstration
+    - un futur outil de correction plus complet
+  thisSiteIsNot:
+    - un correcteur grammatical complet en v1
+    - un service qui stocke les textes utilisateurs

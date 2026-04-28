@@ -1,0 +1,32 @@
+schemaVersion: 1
+id: convertir-imagen-a-png
+brandName: PNG Fácil
+category: converter
+primaryKeyword: convertir imagen a png
+lifecycle:
+  status: draft
+domains:
+  production: seo-tool-convertir-imagen-a-png.pages.dev
+  canonicalHost: seo-tool-convertir-imagen-a-png.pages.dev
+  aliases: []
+defaultLocale: es
+locales:
+  es:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+primaryTool: convert-image-to-png
+seo:
+  defaultTitle: Convertir Imagen a PNG
+  defaultDescription: Convierte imágenes JPG, PNG y WebP a PNG directamente en tu navegador.
+  xDefaultLocale: es
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+deployment:
+  provider: cloudflare-pages
+  projectName: seo-tool-convertir-imagen-a-png
+  outputDir: dist/sites/convertir-imagen-a-png

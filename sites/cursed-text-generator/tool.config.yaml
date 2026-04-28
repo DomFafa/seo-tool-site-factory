@@ -1,0 +1,11 @@
+schemaVersion: 1
+toolId: cursed-text-generator
+executionModel: client-only
+privacy:
+  storesUserInput: false
+analytics:
+  safeFields:
+    - locale
+    - action
+options:
+  mode: cursed-text-generator

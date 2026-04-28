@@ -1,0 +1,32 @@
+schemaVersion: 1
+id: cursed-text-generator
+brandName: CursedText
+category: generator
+primaryKeyword: cursed text generator
+lifecycle:
+  status: draft
+domains:
+  production: seo-tool-cursed-text-generator.pages.dev
+  canonicalHost: seo-tool-cursed-text-generator.pages.dev
+  aliases: []
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+primaryTool: cursed-text-generator
+seo:
+  defaultTitle: Cursed Text Generator
+  defaultDescription: Generate cursed, glitchy, Zalgo-style text with adjustable intensity.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+deployment:
+  provider: cloudflare-pages
+  projectName: seo-tool-cursed-text-generator
+  outputDir: dist/sites/cursed-text-generator

@@ -1,0 +1,32 @@
+schemaVersion: 1
+id: typing-practice
+brandName: TypePractice
+category: practice
+primaryKeyword: typing practice
+lifecycle:
+  status: draft
+domains:
+  production: seo-tool-typing-practice.pages.dev
+  canonicalHost: seo-tool-typing-practice.pages.dev
+  aliases: []
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+primaryTool: typing-practice
+seo:
+  defaultTitle: Typing Practice
+  defaultDescription: Practice typing with timed exercises and simple accuracy feedback.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+deployment:
+  provider: cloudflare-pages
+  projectName: seo-tool-typing-practice
+  outputDir: dist/sites/typing-practice

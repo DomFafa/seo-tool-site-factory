@@ -1,0 +1,9 @@
+schemaVersion: 1
+name: cursive-generator
+colors:
+  primary: "#9333ea"
+radius: 18px
+layout: tool-first
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true

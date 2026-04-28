@@ -1,0 +1,12 @@
+schemaVersion: 1
+primaryKeyword: anagram-solver
+category: solver
+intent:
+  userJob: "Find words that can be made from scrambled letters."
+productBoundary:
+  thisSiteIs:
+    - an anagram solver
+    - a future word game helper
+  thisSiteIsNot:
+    - a complete dictionary product in v1
+    - a Scrabble rules authority

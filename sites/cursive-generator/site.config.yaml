@@ -1,0 +1,32 @@
+schemaVersion: 1
+id: cursive-generator
+brandName: CursiveType
+category: generator
+primaryKeyword: cursive generator
+lifecycle:
+  status: draft
+domains:
+  production: seo-tool-cursive-generator.pages.dev
+  canonicalHost: seo-tool-cursive-generator.pages.dev
+  aliases: []
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+primaryTool: cursive-generator
+seo:
+  defaultTitle: Cursive Generator
+  defaultDescription: Generate cursive-style Unicode text that you can copy and use online.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+deployment:
+  provider: cloudflare-pages
+  projectName: seo-tool-cursive-generator
+  outputDir: dist/sites/cursive-generator

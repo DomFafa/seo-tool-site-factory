@@ -1,0 +1,12 @@
+schemaVersion: 1
+primaryKeyword: typing test online
+category: tester
+intent:
+  userJob: "Take a web-based typing test and get a result quickly."
+productBoundary:
+  thisSiteIs:
+    - an online typing test
+    - a future certificate-style result page
+  thisSiteIsNot:
+    - a full typing course
+    - a long paragraph practice library

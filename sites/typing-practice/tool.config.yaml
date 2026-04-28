@@ -1,0 +1,29 @@
+schemaVersion: 1
+toolId: typing-practice
+executionModel: client-only
+privacy:
+  storesTypedText: false
+  storesResults: false
+analytics:
+  safeFields:
+    - locale
+    - duration
+    - mode
+    - wpmBucket
+    - accuracyBucket
+options:
+  mode: practice
+  durations:
+    - 15
+    - 30
+    - 60
+    - 180
+    - 300
+  defaultDuration: 60
+  prompts:
+    - "Practice accurate typing before trying to increase speed. Build a steady rhythm and keep your hands relaxed."
+    - "Daily typing practice is easier when the text is clear and the results are simple to understand."
+  showWpm: true
+  showCpm: true
+  showAccuracy: true
+  showErrorHeatmap: false

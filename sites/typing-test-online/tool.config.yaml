@@ -1,0 +1,29 @@
+schemaVersion: 1
+toolId: typing-test-online
+executionModel: client-only
+privacy:
+  storesTypedText: false
+  storesResults: false
+analytics:
+  safeFields:
+    - locale
+    - duration
+    - mode
+    - wpmBucket
+    - accuracyBucket
+options:
+  mode: online-test
+  durations:
+    - 15
+    - 30
+    - 60
+    - 180
+    - 300
+  defaultDuration: 60
+  prompts:
+    - "This online typing test gives you a quick estimate of speed and accuracy. Type the prompt, finish the timer, and review your result."
+    - "A clean online typing test should be easy to start, easy to finish, and easy to understand."
+  showWpm: true
+  showCpm: true
+  showAccuracy: true
+  showErrorHeatmap: false

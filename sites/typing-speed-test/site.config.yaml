@@ -6,10 +6,9 @@ primaryKeyword: typing speed test
 lifecycle:
   status: draft
 domains:
-  production: typingspeedtest.example.com
-  canonicalHost: typingspeedtest.example.com
-  aliases:
-    - www.typingspeedtest.example.com
+  production: seo-tool-typing-speed-test.pages.dev
+  canonicalHost: seo-tool-typing-speed-test.pages.dev
+  aliases: []
 defaultLocale: en
 locales:
   en:

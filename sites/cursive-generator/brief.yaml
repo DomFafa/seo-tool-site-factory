@@ -1,0 +1,12 @@
+schemaVersion: 1
+primaryKeyword: cursive generator
+category: generator
+intent:
+  userJob: "Turn normal text into cursive-style text for copying."
+productBoundary:
+  thisSiteIs:
+    - a Unicode cursive text generator
+    - a lightweight copy-and-paste text tool
+  thisSiteIsNot:
+    - a handwriting lesson site
+    - a font download marketplace

@@ -1,0 +1,32 @@
+schemaVersion: 1
+id: cursive-alphabet
+brandName: Cursive Chart
+category: reference
+primaryKeyword: cursive alphabet
+lifecycle:
+  status: draft
+domains:
+  production: seo-tool-cursive-alphabet.pages.dev
+  canonicalHost: seo-tool-cursive-alphabet.pages.dev
+  aliases: []
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+primaryTool: cursive-alphabet
+seo:
+  defaultTitle: Cursive Alphabet
+  defaultDescription: View uppercase and lowercase cursive letters in a simple alphabet chart.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+deployment:
+  provider: cloudflare-pages
+  projectName: seo-tool-cursive-alphabet
+  outputDir: dist/sites/cursive-alphabet

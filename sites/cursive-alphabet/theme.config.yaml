@@ -1,0 +1,9 @@
+schemaVersion: 1
+name: cursive-alphabet
+colors:
+  primary: "#7c3aed"
+radius: 18px
+layout: tool-first
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true

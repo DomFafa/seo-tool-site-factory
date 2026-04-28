@@ -1,0 +1,14 @@
+schemaVersion: 1
+toolId: spellcheck
+executionModel: client-only
+privacy:
+  storesUserInput: false
+  externalProvider: none
+analytics:
+  safeFields:
+    - locale
+    - lengthBucket
+options:
+  mode: static-lite
+  language: fr
+  disclaimer: "V1 detects only a small set of common French mistakes."

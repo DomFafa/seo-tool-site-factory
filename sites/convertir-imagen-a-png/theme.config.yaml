@@ -1,0 +1,9 @@
+schemaVersion: 1
+name: convertir-imagen-a-png
+colors:
+  primary: "#0f766e"
+radius: 18px
+layout: tool-first
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true

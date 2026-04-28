@@ -1,0 +1,32 @@
+schemaVersion: 1
+id: correcteur-orthographe
+brandName: OrthoFR
+category: checker
+primaryKeyword: correcteur d orthographe
+lifecycle:
+  status: draft
+domains:
+  production: seo-tool-correcteur-orthographe.pages.dev
+  canonicalHost: seo-tool-correcteur-orthographe.pages.dev
+  aliases: []
+defaultLocale: fr
+locales:
+  fr:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+primaryTool: spellcheck
+seo:
+  defaultTitle: Correcteur d Orthographe
+  defaultDescription: Détectez quelques erreurs fréquentes en français avec un correcteur statique léger.
+  xDefaultLocale: fr
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+deployment:
+  provider: cloudflare-pages
+  projectName: seo-tool-correcteur-orthographe
+  outputDir: dist/sites/correcteur-orthographe

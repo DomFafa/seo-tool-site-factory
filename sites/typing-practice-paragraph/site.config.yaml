@@ -1,0 +1,32 @@
+schemaVersion: 1
+id: typing-practice-paragraph
+brandName: ParagraphType
+category: practice
+primaryKeyword: typing practice paragraph
+lifecycle:
+  status: draft
+domains:
+  production: seo-tool-typing-practice-paragraph.pages.dev
+  canonicalHost: seo-tool-typing-practice-paragraph.pages.dev
+  aliases: []
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+primaryTool: typing-practice-paragraph
+seo:
+  defaultTitle: Typing Practice Paragraph
+  defaultDescription: Practice typing with paragraph-length prompts and WPM feedback.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+deployment:
+  provider: cloudflare-pages
+  projectName: seo-tool-typing-practice-paragraph
+  outputDir: dist/sites/typing-practice-paragraph

@@ -1,0 +1,32 @@
+schemaVersion: 1
+id: typing-test-online
+brandName: TypeTest Online
+category: tester
+primaryKeyword: typing test online
+lifecycle:
+  status: draft
+domains:
+  production: seo-tool-typing-test-online.pages.dev
+  canonicalHost: seo-tool-typing-test-online.pages.dev
+  aliases: []
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+primaryTool: typing-test-online
+seo:
+  defaultTitle: Typing Test Online
+  defaultDescription: Take a simple online typing test and review WPM, accuracy, and errors.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+deployment:
+  provider: cloudflare-pages
+  projectName: seo-tool-typing-test-online
+  outputDir: dist/sites/typing-test-online

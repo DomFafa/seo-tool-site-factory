@@ -15,6 +15,9 @@ export default defineConfig({
   vite: {
     define: {
       __SITE_ID__: JSON.stringify(siteId ?? '')
+    },
+    ssr: {
+      noExternal: ['@astrojs/react']
     }
   }
 });

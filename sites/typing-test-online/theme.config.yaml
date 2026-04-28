@@ -1,0 +1,9 @@
+schemaVersion: 1
+name: typing-test-online
+colors:
+  primary: "#0f172a"
+radius: 18px
+layout: tool-first
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true

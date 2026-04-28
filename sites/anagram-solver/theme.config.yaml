@@ -1,0 +1,9 @@
+schemaVersion: 1
+name: anagram-solver
+colors:
+  primary: "#166534"
+radius: 18px
+layout: tool-first
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true

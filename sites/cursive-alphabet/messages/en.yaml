@@ -1,0 +1,4 @@
+tool:
+  start: Start
+  copy: Copy
+  reset: Reset

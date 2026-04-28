@@ -1,17 +1,31 @@
 ---
 import TypingTestIsland from '../features/typing-test/TypingTestIsland.tsx';
 import ImageConverterIsland from '../features/image-converter/ImageConverterIsland.tsx';
+import TextGeneratorIsland from '../features/text-generator/TextGeneratorIsland.tsx';
+import AnagramSolverIsland from '../features/anagram-solver/AnagramSolverIsland.tsx';
+import CursiveAlphabetIsland from '../features/cursive-alphabet/CursiveAlphabetIsland.tsx';
+import SpellcheckIsland from '../features/spellcheck/SpellcheckIsland.tsx';
 import type { SiteContext } from '@factory/site-core';
 
 interface Props { ctx: SiteContext; locale: string; }
 const { ctx, locale } = Astro.props;
 const toolId = ctx.siteConfig.primaryTool;
 const toolConfig = ctx.toolConfig;
+
+const typingToolIds = new Set(['typing-speed-test', 'typing-practice', 'typing-practice-paragraph', 'typing-test-online']);
+const textGeneratorModes: Record<string, 'cursive' | 'cursed'> = {
+  'cursive-generator': 'cursive',
+  'cursed-text-generator': 'cursed'
+};
 ---
 <section class="tool-shell" aria-label="Interactive tool">
-  {toolId === 'typing-speed-test' && <TypingTestIsland client:load locale={locale} config={toolConfig} />}
   {toolId === 'convert-image-to-png' && <ImageConverterIsland client:load locale={locale} config={toolConfig} />}
-  {toolId !== 'typing-speed-test' && toolId !== 'convert-image-to-png' && (
+  {typingToolIds.has(toolId) && <TypingTestIsland client:load locale={locale} config={toolConfig} />}
+  {toolId in textGeneratorModes && <TextGeneratorIsland client:load locale={locale} config={toolConfig} mode={textGeneratorModes[toolId]} />}
+  {toolId === 'anagram-solver' && <AnagramSolverIsland client:load locale={locale} config={toolConfig} />}
+  {toolId === 'cursive-alphabet' && <CursiveAlphabetIsland client:load locale={locale} config={toolConfig} />}
+  {toolId === 'spellcheck' && <SpellcheckIsland client:load locale={locale} config={toolConfig} />}
+  {toolId !== 'convert-image-to-png' && !typingToolIds.has(toolId) && !(toolId in textGeneratorModes) && toolId !== 'anagram-solver' && toolId !== 'cursive-alphabet' && toolId !== 'spellcheck' && (
     <div class="error">Tool renderer for <strong>{toolId}</strong> is not implemented yet.</div>
   )}
 </section>

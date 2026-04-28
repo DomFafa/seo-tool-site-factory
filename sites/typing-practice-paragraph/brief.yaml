@@ -1,0 +1,12 @@
+schemaVersion: 1
+primaryKeyword: typing practice paragraph
+category: practice
+intent:
+  userJob: "Practice typing full paragraphs instead of short word drills."
+productBoundary:
+  thisSiteIs:
+    - a paragraph typing practice tool
+    - a future library of short, medium, and long paragraphs
+  thisSiteIsNot:
+    - a general typing course
+    - a certificate-style typing test

@@ -1,0 +1,12 @@
+schemaVersion: 1
+primaryKeyword: convertir imagen a png
+category: converter
+intent:
+  userJob: "Convertir una imagen a formato PNG sin subir el archivo a un servidor."
+productBoundary:
+  thisSiteIs:
+    - un conversor de imágenes a PNG
+    - una herramienta centrada en privacidad y descarga rápida
+  thisSiteIsNot:
+    - un editor de imágenes completo
+    - un servicio de almacenamiento de archivos

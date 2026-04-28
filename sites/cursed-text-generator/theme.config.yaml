@@ -1,0 +1,9 @@
+schemaVersion: 1
+name: cursed-text-generator
+colors:
+  primary: "#7f1d1d"
+radius: 18px
+layout: tool-first
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true
