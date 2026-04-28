@@ -1,6 +1,13 @@
-import { validateAllSites, validateSitePack, loadSite, loadSites, type ValidationIssue } from '../packages/site-core/src/index.js';
+import {
+  prepareSelectedSite,
+  validateAllSites,
+  validateSitePack,
+  loadSite,
+  loadSites,
+  type ValidationIssue
+} from '../packages/site-core/src/index.js';
 
-type Command = 'list' | 'check';
+type Command = 'list' | 'check' | 'build';
 
 function printIssue(issue: ValidationIssue): void {
   const site = issue.siteId ? `[${issue.siteId}] ` : '';
@@ -49,6 +56,21 @@ async function checkSites(args: string[]): Promise<void> {
   process.exitCode = result.errors.length > 0 ? 1 : 0;
 }
 
+async function buildSite(args: string[]): Promise<void> {
+  const siteId = args[0];
+  if (!siteId) {
+    console.error('Usage: pnpm site build <site-id>');
+    process.exitCode = 1;
+    return;
+  }
+
+  const prepared = await prepareSelectedSite({ siteId });
+  console.log(`Prepared ${prepared.site.id}`);
+  console.log(`Generated ${prepared.generatedFiles.site}`);
+  console.log(`Generated ${prepared.generatedFiles.theme}`);
+  console.log(`Generated ${prepared.generatedFiles.contentManifest}`);
+}
+
 async function main(): Promise<void> {
   const [command, ...args] = process.argv.slice(2) as [Command | undefined, ...string[]];
 
@@ -62,7 +84,12 @@ async function main(): Promise<void> {
     return;
   }
 
-  console.error('Usage: pnpm site list | pnpm site check <site-id> | pnpm site check --all');
+  if (command === 'build') {
+    await buildSite(args);
+    return;
+  }
+
+  console.error('Usage: pnpm site list | pnpm site check <site-id> | pnpm site check --all | pnpm site build <site-id>');
   process.exitCode = 1;
 }
 

@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prepare-site": "tsx scripts/prepare-site.ts",
     "site": "tsx scripts/site.ts",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"

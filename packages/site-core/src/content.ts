@@ -4,10 +4,22 @@ import matter from 'gray-matter';
 import { contentFrontmatterSchema, type ContentFrontmatter, type SiteConfig } from './schema.js';
 import type { ValidationIssue, ValidationResult } from './issues.js';
 
-export type ContentItem = {
+export type ContentManifestEntry = {
   locale: string;
+  slug: string;
+  title: string;
+  description: string;
+  lastModified: string;
+  index: boolean;
+  contentStatus: ContentFrontmatter['contentStatus'];
   filePath: string;
-  frontmatter: ContentFrontmatter;
+};
+
+export type ContentManifest = {
+  siteId: string;
+  defaultLocale: string;
+  locales: string[];
+  entries: ContentManifestEntry[];
 };
 
 async function pathExists(filePath: string): Promise<boolean> {
@@ -32,6 +44,48 @@ async function findMdxFiles(dir: string): Promise<string[]> {
   );
 
   return files.flat();
+}
+
+export async function buildContentManifest(
+  siteDir: string,
+  config: SiteConfig,
+  rootDir = process.cwd()
+): Promise<ContentManifest> {
+  const entries: ContentManifestEntry[] = [];
+
+  for (const locale of config.locales) {
+    const localeContentDir = path.join(siteDir, 'content', locale);
+    if (!(await pathExists(localeContentDir))) {
+      continue;
+    }
+
+    const mdxFiles = await findMdxFiles(localeContentDir);
+    for (const filePath of mdxFiles) {
+      const source = await fs.readFile(filePath, 'utf8');
+      const parsed = matter(source);
+      const frontmatter = contentFrontmatterSchema.parse(parsed.data);
+
+      entries.push({
+        locale,
+        slug: frontmatter.slug,
+        title: frontmatter.title,
+        description: frontmatter.description,
+        lastModified: frontmatter.lastModified,
+        index: frontmatter.index,
+        contentStatus: frontmatter.contentStatus,
+        filePath: path.relative(rootDir, filePath)
+      });
+    }
+  }
+
+  entries.sort((a, b) => `${a.locale}/${a.slug}`.localeCompare(`${b.locale}/${b.slug}`));
+
+  return {
+    siteId: config.id,
+    defaultLocale: config.defaultLocale,
+    locales: config.locales,
+    entries
+  };
 }
 
 export async function validateContent(siteDir: string, config: SiteConfig): Promise<ValidationResult> {
