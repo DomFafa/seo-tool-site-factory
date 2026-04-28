@@ -1,4 +1,5 @@
 tool:
-  start: Start
-  copy: Copy
-  reset: Reset
+  choose: Elegir imagen
+  converting: Convirtiendo en tu navegador...
+  download: Descargar PNG
+  another: Convertir otra imagen

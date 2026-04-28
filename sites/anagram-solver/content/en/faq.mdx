@@ -1,18 +1,26 @@
 ---
 title: "Anagram Solver FAQ"
-description: "Common questions about anagram-solver."
+description: "Common questions about anagrams, word unscrambling, filters, and word lists."
 slug: "faq"
-lastModified: "2026-04-28"
+lastModified: "2026-04-29"
 index: false
 contentStatus: draft
 ---
 
 ## Frequently asked questions
 
-### Is this site ready for indexing?
+### What is an anagram?
 
-Not yet. This technical launch keeps content in draft and noindex by default.
+An anagram is a word or phrase made by rearranging letters. For example, “listen” can be rearranged into “silent”.
 
-### Does the tool send raw input to analytics?
+### Does the solver have every English word?
 
-No. Tool events should use safe buckets and avoid raw user input.
+No word list is perfect. The solver uses a built-in English word list and should be treated as a practical helper, not an official dictionary for every game or competition.
+
+### Can I search for shorter words too?
+
+Yes. Lower the minimum length to include shorter words that can be made from your letters.
+
+### Does the tool send my letters to a server?
+
+No. The search runs in your browser and avoids sending the raw letters to analytics or to a server.
