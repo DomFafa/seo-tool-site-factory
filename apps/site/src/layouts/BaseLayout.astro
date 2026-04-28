@@ -1,0 +1,71 @@
+---
+import '../styles/global.css';
+import VerificationMeta from '../components/integrations/VerificationMeta.astro';
+import AnalyticsScripts from '../components/integrations/AnalyticsScripts.astro';
+import AdProviderScripts from '../components/integrations/AdProviderScripts.astro';
+import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import type { SiteContext, ContentDocument } from '@factory/site-core';
+import { buildPageSeo } from '@factory/seo';
+
+interface Props {
+  ctx: SiteContext;
+  locale: string;
+  page: ContentDocument;
+  pageType: 'home' | 'guide';
+  slug?: string;
+}
+
+const { ctx, locale, page, pageType, slug } = Astro.props;
+const seo = buildPageSeo(ctx, { locale, page, pageType, slug });
+const theme = ctx.themeConfig;
+const primary = theme?.colors?.primary ?? '#2563eb';
+const radius = theme?.radius ?? '18px';
+---
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{seo.title}</title>
+    <meta name="description" content={seo.description} />
+    <link rel="canonical" href={seo.canonical} />
+    {seo.noindex && <meta name="robots" content="noindex,nofollow" />}
+    {seo.alternates.map((alt) => (
+      <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
+    ))}
+    <meta property="og:title" content={seo.title} />
+    <meta property="og:description" content={seo.description} />
+    <meta property="og:url" content={seo.canonical} />
+    <meta property="og:type" content={pageType === 'guide' ? 'article' : 'website'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <style is:inline define:vars={{ primary, radius }}>
+      :root { --factory-primary: var(--primary); --factory-radius: var(--radius); }
+    </style>
+    <script type="application/ld+json" set:html={JSON.stringify(seo.jsonLd)} />
+    <VerificationMeta ctx={ctx} />
+    <AnalyticsScripts ctx={ctx} />
+    <AdProviderScripts ctx={ctx} />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container site-header-inner">
+        <a class="brand" href={seo.homeUrl}>
+          <span class="brand-mark">{ctx.siteConfig.brandName.slice(0, 1).toUpperCase()}</span>
+          <span>{ctx.siteConfig.brandName}</span>
+        </a>
+        <nav class="nav" aria-label="Main navigation">
+          <a href={seo.homeUrl}>Home</a>
+          <LanguageSwitcher ctx={ctx} locale={locale} />
+        </nav>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+    <footer class="footer">
+      <div class="container">
+        <p>© {new Date().getFullYear()} {ctx.siteConfig.brandName}. Built as a lightweight tool site.</p>
+      </div>
+    </footer>
+  </body>
+</html>

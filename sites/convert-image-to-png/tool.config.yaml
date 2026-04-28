@@ -1,0 +1,20 @@
+schemaVersion: 1
+toolId: convert-image-to-png
+executionModel: browser-file-processing
+privacy:
+  uploadsToServer: false
+  storesFiles: false
+analytics:
+  safeFields:
+    - locale
+    - inputMimeType
+    - fileSizeBucket
+    - success
+options:
+  acceptedInputTypes:
+    - image/jpeg
+    - image/png
+    - image/webp
+  outputType: image/png
+  maxFileSizeMb: 10
+  batchUpload: false

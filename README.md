@@ -1,38 +1,20 @@
-# SEO Tool Site Factory V1 Patch
+# SEO Tool Site Factory
 
-This zip contains a V1 scaffold patch for the solo-operator Astro static tool-site factory.
+Astro-based static SEO tool-site factory for operating many independent keyword-driven tool sites from one repository.
 
-Because this environment could not fetch the private GitHub repository directly, the patch is designed as an additive scaffold. It includes both:
+## V1 architecture
 
-1. `seo-tool-site-factory-v1.patch` — unified git patch.
-2. `overlay/` — full file tree that can be copied into the repository if the git patch conflicts with existing files.
-
-## Apply with git
-
-From the root of your connected repository:
-
-```bash
-bash /path/to/extracted/apply.sh
+```txt
+apps/site       Astro static site renderer
+sites/          YAML site packs, content, messages, snippets, static files
+packages/       shared site loading, SEO, integrations, tools, ops logic
+infra/          Cloudflare notes/templates
+scripts/        CLI entrypoints
 ```
 
-Or manually:
+Each site is developed, built, deployed, and verified independently.
 
-```bash
-git apply --check seo-tool-site-factory-v1.patch
-git apply seo-tool-site-factory-v1.patch
-```
-
-## If git patch conflicts
-
-Use the overlay tree:
-
-```bash
-rsync -av overlay/ /path/to/seo-tool-site-factory/
-```
-
-Review overwrites before committing.
-
-## After applying
+## Quick start
 
 ```bash
 pnpm install
@@ -40,35 +22,60 @@ pnpm site list
 pnpm site check typing-speed-test
 pnpm site dev typing-speed-test
 pnpm site build typing-speed-test
+pnpm site preview typing-speed-test
+```
+
+The build output for a selected site is written to:
+
+```txt
+dist/sites/<site-id>/
+```
+
+## Deployment
+
+V1 targets Cloudflare Pages Direct Upload per site.
+
+```bash
+pnpm site deploy typing-speed-test --preview
+pnpm site deploy typing-speed-test --production
+pnpm site verify typing-speed-test
+```
+
+Deploy commands wrap `wrangler pages deploy` using `deployment.projectName` from the selected site's YAML config.
+
+## Third-party integrations
+
+Per-site integrations live in:
+
+```txt
+sites/<site-id>/integrations.config.yaml
+```
+
+Supported in V1:
+
+- Google Analytics 4
+- Microsoft Clarity
+- Google Search Console verification meta/file
+- Bing Webmaster verification meta/file/import marker
+- Bing IndexNow key file and submit command
+- AdSense base script, slots, and ads.txt entries
+- Adsterra snippet-based slots
+
+Useful commands:
+
+```bash
+pnpm site check-integrations typing-speed-test
+pnpm site verify-integrations typing-speed-test
+pnpm site submit-indexnow typing-speed-test
 pnpm ops report
 ```
 
-## V1 scope included
+## Add a site
 
-- Astro static site renderer in `apps/site`
-- YAML site packs in `sites/*`
-- per-site `dev`, `build`, `deploy`, `verify`
-- Cloudflare Pages Direct Upload command wrapper
-- AdSense + Adsterra integration config and ad slot abstraction
-- GA4 + Microsoft Clarity script injection
-- Google Search Console + Bing Webmaster verification meta/file support
-- IndexNow key file generation and submit command
-- generated `ads.txt`
-- generated `robots.txt` and `sitemap.xml`
-- two sample sites: `typing-speed-test` and `convert-image-to-png`
-- CLI report generation to `.generated/portfolio.html`
-
-## Important defaults
-
-Both sample sites are intentionally configured as:
-
-```yaml
-lifecycle:
-  status: draft
-indexing:
-  allowIndex: false
-ads:
-  enabled: false
+```bash
+pnpm site create cursed-text-generator --category generator --tool text-generator --default-locale en
+pnpm site check cursed-text-generator
+pnpm site dev cursed-text-generator
 ```
 
-This prevents accidental indexing or ad loading before real domains, platform verification, and content approval.
+A new site starts as `draft`, `allowIndex: false`, and `ads.enabled: false`.
