@@ -1,0 +1,24 @@
+schemaVersion: 1
+toolId: typing-speed-test
+executionModel: client-only
+privacy:
+  storesTypedText: false
+  storesResults: false
+analytics:
+  safeFields:
+    - locale
+    - duration
+    - wpmBucket
+    - accuracyBucket
+options:
+  durations:
+    - 15
+    - 30
+    - 60
+    - 180
+    - 300
+  defaultDuration: 60
+  showWpm: true
+  showCpm: true
+  showAccuracy: true
+  showErrorHeatmap: false

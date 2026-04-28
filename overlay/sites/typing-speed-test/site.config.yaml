@@ -1,0 +1,33 @@
+schemaVersion: 1
+id: typing-speed-test
+brandName: SpeedType
+category: tester
+primaryKeyword: typing speed test
+lifecycle:
+  status: draft
+domains:
+  production: typingspeedtest.example.com
+  canonicalHost: typingspeedtest.example.com
+  aliases:
+    - www.typingspeedtest.example.com
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+primaryTool: typing-speed-test
+seo:
+  defaultTitle: Typing Speed Test
+  defaultDescription: Test your typing speed online and measure WPM, CPM, accuracy, and errors.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+deployment:
+  provider: cloudflare-pages
+  projectName: seo-tool-typing-speed-test
+  outputDir: dist/sites/typing-speed-test

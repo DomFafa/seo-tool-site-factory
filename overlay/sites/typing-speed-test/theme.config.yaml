@@ -1,0 +1,9 @@
+schemaVersion: 1
+name: speedtype
+colors:
+  primary: "#2563eb"
+radius: 18px
+layout: tool-first
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true

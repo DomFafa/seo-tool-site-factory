@@ -1,82 +1,74 @@
-# SEO Tool Site Factory — AI Handoff Pack
+# SEO Tool Site Factory V1 Patch
 
-Generated: 2026-04-28
+This zip contains a V1 scaffold patch for the solo-operator Astro static tool-site factory.
 
-This package is designed to be unzipped into a project workspace so Codex, Claude Code, or another coding agent can continue implementation without needing the full prior conversation.
+Because this environment could not fetch the private GitHub repository directly, the patch is designed as an additive scaffold. It includes both:
 
-## What this package contains
+1. `seo-tool-site-factory-v1.patch` — unified git patch.
+2. `overlay/` — full file tree that can be copied into the repository if the git patch conflicts with existing files.
 
-```txt
-source/
-  seo-tool-site-factory-requirements.original.md
+## Apply with git
 
-docs/
-  00-executive-summary.md
-  01-requirements-expanded.md
-  02-architecture-design.md
-  03-repository-structure.md
-  04-site-pack-spec.md
-  05-tool-specs.md
-  06-seo-i18n-ads-analytics.md
-  07-cloudflare-deployment.md
-  08-implementation-roadmap.md
-  09-quality-gates-and-checklists.md
-  10-security-privacy-abuse-protection.md
-  11-library-and-tooling-recommendations.md
-  12-risk-notes.md
-  adr/
+From the root of your connected repository:
 
-references/
-  official-references.md
-
-prompts/
-  CODEX_START_PROMPT.md
-  CLAUDE_CODE_START_PROMPT.md
-
-templates/
-  site.config.example.ts
-  theme.example.ts
-  content.frontmatter.example.mdx
-  tool.spec.example.ts
-  site-cli-contract.md
-  package-json-scripts.md
-
-checklists/
-  launch-checklist.md
-  content-review-checklist.md
-  ads-policy-checklist.md
-  seo-regression-checklist.md
-
-AGENTS.md
-CLAUDE.md
-AI-HANDOFF.md
-implementation_tasks.json
+```bash
+bash /path/to/extracted/apply.sh
 ```
 
-## Start here
+Or manually:
 
-1. Read `AI-HANDOFF.md` first.
-2. Then read `docs/00-executive-summary.md` and `docs/08-implementation-roadmap.md`.
-3. Use `AGENTS.md` or `CLAUDE.md` as coding-agent instructions.
-4. Treat `source/seo-tool-site-factory-requirements.original.md` as the original baseline and `docs/01-requirements-expanded.md` as the implementation-ready version.
+```bash
+git apply --check seo-tool-site-factory-v1.patch
+git apply seo-tool-site-factory-v1.patch
+```
 
-## Current product decision
+## If git patch conflicts
 
-Build a one-codebase, many-independent-sites factory using:
+Use the overlay tree:
 
-- Next.js App Router
-- Cloudflare Workers + OpenNext adapter
-- build-time `SITE_ID` selection
-- `apps/ + sites/ + packages/ + infra/` repo model
-- independent site packs with config, content, messages, and theme
-- deterministic SEO output generated from structured data
-- launch gates for build, SEO, ads, privacy, deployment, and monitoring
+```bash
+rsync -av overlay/ /path/to/seo-tool-site-factory/
+```
 
-## First implementation target
+Review overwrites before committing.
 
-Implement the factory skeleton first. Then implement two operational sites:
+## After applying
 
-1. `typing-speed-test` — browser-interactive tool
-2. `convert-image-to-png` — file-processing tool, client-side first
+```bash
+pnpm install
+pnpm site list
+pnpm site check typing-speed-test
+pnpm site dev typing-speed-test
+pnpm site build typing-speed-test
+pnpm ops report
+```
 
-Do not implement all 10 sites before the skeleton, validation, SEO, and deployment gates work.
+## V1 scope included
+
+- Astro static site renderer in `apps/site`
+- YAML site packs in `sites/*`
+- per-site `dev`, `build`, `deploy`, `verify`
+- Cloudflare Pages Direct Upload command wrapper
+- AdSense + Adsterra integration config and ad slot abstraction
+- GA4 + Microsoft Clarity script injection
+- Google Search Console + Bing Webmaster verification meta/file support
+- IndexNow key file generation and submit command
+- generated `ads.txt`
+- generated `robots.txt` and `sitemap.xml`
+- two sample sites: `typing-speed-test` and `convert-image-to-png`
+- CLI report generation to `.generated/portfolio.html`
+
+## Important defaults
+
+Both sample sites are intentionally configured as:
+
+```yaml
+lifecycle:
+  status: draft
+indexing:
+  allowIndex: false
+ads:
+  enabled: false
+```
+
+This prevents accidental indexing or ad loading before real domains, platform verification, and content approval.

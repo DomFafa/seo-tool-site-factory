@@ -1,0 +1,2922 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..be1856b
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,12 @@
++node_modules/
++.pnpm-store/
++.astro/
++dist/
++.generated/
++.cache/
++.DS_Store
++apps/site/public/.generated-public-manifest.json
++apps/site/public/ads.txt
++apps/site/public/*.txt
++apps/site/public/*.xml
++apps/site/public/google*.html
+diff --git a/AGENTS.md b/AGENTS.md
+new file mode 100644
+index 0000000..8ac6589
+--- /dev/null
++++ b/AGENTS.md
+@@ -0,0 +1,19 @@
++# Agent Instructions
++
++This repository is a static SEO tool-site factory.
++
++Follow these rules when editing code:
++
++1. Do not bypass YAML schema validation in `packages/site-core`.
++2. Do not hard-code site IDs, domains, analytics IDs, ad IDs, verification tokens, or canonical URLs inside Astro pages.
++3. Use `SITE_ID` through the CLI for dev/build/deploy.
++4. Do not manually write sitemap, robots, ads.txt, IndexNow key files, or verification files in page components.
++5. Do not place ads near primary actions such as Convert, Download, Copy, Start, Upload, or Retry.
++6. Do not include raw user input, uploaded file content, typed text, or spellcheck text in analytics events.
++7. Interactive tool UI belongs under `apps/site/src/features/*`.
++8. Pure tool logic belongs under `packages/tools/*`.
++9. Site identity, content, integrations, and theme belong under `sites/<site-id>/`.
++10. Run `pnpm site check <site-id>` after changing a site pack.
++11. Run `pnpm ops report` after adding or changing multiple sites.
++
++V1 intentionally avoids complex admin, permissions, and approval workflows. Prefer CLI + YAML + generated reports.
+diff --git a/README.md b/README.md
+new file mode 100644
+index 0000000..b5aba4d
+--- /dev/null
++++ b/README.md
+@@ -0,0 +1,81 @@
++# SEO Tool Site Factory
++
++Astro-based static SEO tool-site factory for operating many independent keyword-driven tool sites from one repository.
++
++## V1 architecture
++
++```txt
++apps/site       Astro static site renderer
++sites/          YAML site packs, content, messages, snippets, static files
++packages/       shared site loading, SEO, integrations, tools, ops logic
++infra/          Cloudflare notes/templates
++scripts/        CLI entrypoints
++```
++
++Each site is developed, built, deployed, and verified independently.
++
++## Quick start
++
++```bash
++pnpm install
++pnpm site list
++pnpm site check typing-speed-test
++pnpm site dev typing-speed-test
++pnpm site build typing-speed-test
++pnpm site preview typing-speed-test
++```
++
++The build output for a selected site is written to:
++
++```txt
++dist/sites/<site-id>/
++```
++
++## Deployment
++
++V1 targets Cloudflare Pages Direct Upload per site.
++
++```bash
++pnpm site deploy typing-speed-test --preview
++pnpm site deploy typing-speed-test --production
++pnpm site verify typing-speed-test
++```
++
++Deploy commands wrap `wrangler pages deploy` using `deployment.projectName` from the selected site's YAML config.
++
++## Third-party integrations
++
++Per-site integrations live in:
++
++```txt
++sites/<site-id>/integrations.config.yaml
++```
++
++Supported in V1:
++
++- Google Analytics 4
++- Microsoft Clarity
++- Google Search Console verification meta/file
++- Bing Webmaster verification meta/file/import marker
++- Bing IndexNow key file and submit command
++- AdSense base script, slots, and ads.txt entries
++- Adsterra snippet-based slots
++
++Useful commands:
++
++```bash
++pnpm site check-integrations typing-speed-test
++pnpm site verify-integrations typing-speed-test
++pnpm site submit-indexnow typing-speed-test
++pnpm ops report
++```
++
++## Add a site
++
++```bash
++pnpm site create cursed-text-generator --category generator --tool text-generator --default-locale en
++pnpm site check cursed-text-generator
++pnpm site dev cursed-text-generator
++```
++
++A new site starts as `draft`, `allowIndex: false`, and `ads.enabled: false`.
+diff --git a/apps/site/astro.config.mjs b/apps/site/astro.config.mjs
+new file mode 100644
+index 0000000..118efd6
+--- /dev/null
++++ b/apps/site/astro.config.mjs
+@@ -0,0 +1,20 @@
++import { defineConfig } from 'astro/config';
++import react from '@astrojs/react';
++
++const siteId = process.env.SITE_ID;
++
++if (!siteId) {
++  console.warn('[site-factory] SITE_ID is not set. Use `pnpm site dev <site-id>` or `pnpm site build <site-id>`.');
++}
++
++export default defineConfig({
++  output: 'static',
++  trailingSlash: 'always',
++  integrations: [react()],
++  outDir: siteId ? `../../dist/sites/${siteId}` : '../../dist/site-unknown',
++  vite: {
++    define: {
++      __SITE_ID__: JSON.stringify(siteId ?? '')
++    }
++  }
++});
+diff --git a/apps/site/package.json b/apps/site/package.json
+new file mode 100644
+index 0000000..bb842c1
+--- /dev/null
++++ b/apps/site/package.json
+@@ -0,0 +1,18 @@
++{
++  "name": "@factory/site",
++  "version": "0.1.0",
++  "private": true,
++  "type": "module",
++  "scripts": {
++    "dev": "astro dev",
++    "build": "astro build",
++    "preview": "astro preview"
++  },
++  "dependencies": {
++    "@factory/integrations": "workspace:*",
++    "@factory/seo": "workspace:*",
++    "@factory/site-core": "workspace:*",
++    "@factory/typing-engine": "workspace:*",
++    "@factory/image-converter": "workspace:*"
++  }
++}
+diff --git a/apps/site/src/components/AdSlot.astro b/apps/site/src/components/AdSlot.astro
+new file mode 100644
+index 0000000..c919e2b
+--- /dev/null
++++ b/apps/site/src/components/AdSlot.astro
+@@ -0,0 +1,23 @@
++---
++import type { SiteContext } from '@factory/site-core';
++import { getAdSlotRenderModel } from '@factory/integrations';
++
++interface Props { ctx: SiteContext; placement: string; }
++const { ctx, placement } = Astro.props;
++const model = getAdSlotRenderModel(ctx, placement);
++---
++{model.kind === 'disabled' && null}
++{model.kind === 'placeholder' && <div class="ad-slot" data-placement={placement}>Ad slot: {placement}</div>}
++{model.kind === 'adsense' && (
++  <div class="ad-slot" data-placement={placement}>
++    <ins
++      class="adsbygoogle"
++      style="display:block; width:100%; min-height:90px;"
++      data-ad-client={model.client}
++      data-ad-slot={model.slot}
++      data-ad-format={model.format}
++      data-full-width-responsive="true"></ins>
++    <script is:inline>{`(window.adsbygoogle = window.adsbygoogle || []).push({});`}</script>
++  </div>
++)}
++{model.kind === 'raw-html' && <div class="ad-slot" data-placement={placement} set:html={model.html} />}
+diff --git a/apps/site/src/components/LanguageSwitcher.astro b/apps/site/src/components/LanguageSwitcher.astro
+new file mode 100644
+index 0000000..c82db1a
+--- /dev/null
++++ b/apps/site/src/components/LanguageSwitcher.astro
+@@ -0,0 +1,12 @@
++---
++import type { SiteContext } from '@factory/site-core';
++import { getLocaleHomeUrl } from '@factory/seo';
++interface Props { ctx: SiteContext; locale: string; }
++const { ctx, locale } = Astro.props;
++const locales = Object.entries(ctx.siteConfig.locales).filter(([, cfg]) => cfg.enabled);
++---
++<div class="language-switcher" aria-label="Language selector">
++  {locales.map(([code]) => (
++    <a href={getLocaleHomeUrl(ctx, code)} aria-current={code === locale ? 'true' : undefined}>{code.toUpperCase()}</a>
++  ))}
++</div>
+diff --git a/apps/site/src/components/ToolRenderer.astro b/apps/site/src/components/ToolRenderer.astro
+new file mode 100644
+index 0000000..57b0113
+--- /dev/null
++++ b/apps/site/src/components/ToolRenderer.astro
+@@ -0,0 +1,17 @@
++---
++import TypingTestIsland from '../features/typing-test/TypingTestIsland.tsx';
++import ImageConverterIsland from '../features/image-converter/ImageConverterIsland.tsx';
++import type { SiteContext } from '@factory/site-core';
++
++interface Props { ctx: SiteContext; locale: string; }
++const { ctx, locale } = Astro.props;
++const toolId = ctx.siteConfig.primaryTool;
++const toolConfig = ctx.toolConfig;
++---
++<section class="tool-shell" aria-label="Interactive tool">
++  {toolId === 'typing-speed-test' && <TypingTestIsland client:load locale={locale} config={toolConfig} />}
++  {toolId === 'convert-image-to-png' && <ImageConverterIsland client:load locale={locale} config={toolConfig} />}
++  {toolId !== 'typing-speed-test' && toolId !== 'convert-image-to-png' && (
++    <div class="error">Tool renderer for <strong>{toolId}</strong> is not implemented yet.</div>
++  )}
++</section>
+diff --git a/apps/site/src/components/integrations/AdProviderScripts.astro b/apps/site/src/components/integrations/AdProviderScripts.astro
+new file mode 100644
+index 0000000..a242490
+--- /dev/null
++++ b/apps/site/src/components/integrations/AdProviderScripts.astro
+@@ -0,0 +1,13 @@
++---
++import type { SiteContext } from '@factory/site-core';
++import { getAdProviderScriptModel } from '@factory/integrations';
++interface Props { ctx: SiteContext; }
++const model = getAdProviderScriptModel(Astro.props.ctx);
++---
++{model.adsense?.enabled && (
++  <script
++    async
++    crossorigin="anonymous"
++    src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${model.adsense.publisherId}`}>
++  </script>
++)}
+diff --git a/apps/site/src/components/integrations/AnalyticsScripts.astro b/apps/site/src/components/integrations/AnalyticsScripts.astro
+new file mode 100644
+index 0000000..6757947
+--- /dev/null
++++ b/apps/site/src/components/integrations/AnalyticsScripts.astro
+@@ -0,0 +1,29 @@
++---
++import type { SiteContext } from '@factory/site-core';
++import { getAnalyticsRenderModel } from '@factory/integrations';
++interface Props { ctx: SiteContext; }
++const model = getAnalyticsRenderModel(Astro.props.ctx);
++---
++{model.ga4?.enabled && (
++  <>
++    <script async src={`https://www.googletagmanager.com/gtag/js?id=${model.ga4.measurementId}`}></script>
++    <script is:inline define:vars={{ measurementId: model.ga4.measurementId }}>
++      window.dataLayer = window.dataLayer || [];
++      function gtag(){dataLayer.push(arguments);}
++      gtag('js', new Date());
++      gtag('config', measurementId);
++      window.__factoryTrack = function(eventName, params) {
++        try { gtag('event', eventName, params || {}); } catch (_) {}
++      };
++    </script>
++  </>
++)}
++{model.clarity?.enabled && (
++  <script is:inline define:vars={{ projectId: model.clarity.projectId }}>
++    (function(c,l,a,r,i,t,y){
++      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
++      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
++      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
++    })(window, document, "clarity", "script", projectId);
++  </script>
++)}
+diff --git a/apps/site/src/components/integrations/VerificationMeta.astro b/apps/site/src/components/integrations/VerificationMeta.astro
+new file mode 100644
+index 0000000..3c91b5e
+--- /dev/null
++++ b/apps/site/src/components/integrations/VerificationMeta.astro
+@@ -0,0 +1,7 @@
++---
++import type { SiteContext } from '@factory/site-core';
++import { getVerificationMetaTags } from '@factory/integrations';
++interface Props { ctx: SiteContext; }
++const tags = getVerificationMetaTags(Astro.props.ctx);
++---
++{tags.map((tag) => <meta name={tag.name} content={tag.content} />)}
+diff --git a/apps/site/src/env.d.ts b/apps/site/src/env.d.ts
+new file mode 100644
+index 0000000..5a18a34
+--- /dev/null
++++ b/apps/site/src/env.d.ts
+@@ -0,0 +1,4 @@
++/// <reference path="../.astro/types.d.ts" />
++/// <reference types="astro/client" />
++
++declare const __SITE_ID__: string;
+diff --git a/apps/site/src/features/image-converter/ImageConverterIsland.tsx b/apps/site/src/features/image-converter/ImageConverterIsland.tsx
+new file mode 100644
+index 0000000..e7c461a
+--- /dev/null
++++ b/apps/site/src/features/image-converter/ImageConverterIsland.tsx
+@@ -0,0 +1,94 @@
++import React, { useRef, useState } from 'react';
++import { convertImageToPng, validateImageFile } from '@factory/image-converter';
++
++type Props = {
++  locale: string;
++  config: any;
++};
++
++function track(eventName: string, params: Record<string, unknown>) {
++  if (typeof window !== 'undefined') {
++    (window as any).__factoryTrack?.(eventName, params);
++  }
++}
++
++export default function ImageConverterIsland({ locale, config }: Props) {
++  const maxFileSizeMb = config?.options?.maxFileSizeMb ?? 10;
++  const acceptedInputTypes = config?.options?.acceptedInputTypes ?? ['image/jpeg', 'image/png', 'image/webp'];
++  const [dragging, setDragging] = useState(false);
++  const [error, setError] = useState<string | null>(null);
++  const [status, setStatus] = useState<string>('Choose an image file to convert it to PNG.');
++  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
++  const [downloadName, setDownloadName] = useState<string>('converted.png');
++  const inputRef = useRef<HTMLInputElement | null>(null);
++
++  async function handleFile(file: File) {
++    setError(null);
++    setDownloadUrl(null);
++    const validation = validateImageFile(file, { maxFileSizeMb, acceptedInputTypes });
++    if (!validation.ok) {
++      setError(validation.message);
++      track('tool_error', { toolId: 'convert-image-to-png', locale, reason: validation.reason });
++      return;
++    }
++    track('file_selected', { toolId: 'convert-image-to-png', locale, inputMimeType: file.type, fileSizeBucket: sizeBucket(file.size) });
++    track('tool_start', { toolId: 'convert-image-to-png', locale, inputMimeType: file.type, fileSizeBucket: sizeBucket(file.size) });
++    setStatus('Converting in your browser...');
++    try {
++      const result = await convertImageToPng(file);
++      setDownloadUrl(result.url);
++      setDownloadName(result.filename);
++      setStatus('Your PNG is ready.');
++      track('tool_complete', { toolId: 'convert-image-to-png', locale, inputMimeType: file.type, fileSizeBucket: sizeBucket(file.size), success: true });
++    } catch (err) {
++      const message = err instanceof Error ? err.message : 'Conversion failed.';
++      setError(message);
++      setStatus('Conversion failed.');
++      track('tool_error', { toolId: 'convert-image-to-png', locale, reason: 'conversion_failed' });
++    }
++  }
++
++  function onFiles(files: FileList | null) {
++    const file = files?.[0];
++    if (file) void handleFile(file);
++  }
++
++  return (
++    <div className="tool-grid">
++      <input
++        ref={inputRef}
++        type="file"
++        accept={acceptedInputTypes.join(',')}
++        style={{ display: 'none' }}
++        onChange={(e) => onFiles(e.target.files)}
++      />
++      <div
++        className={`dropzone${dragging ? ' dragging' : ''}`}
++        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
++        onDragLeave={() => setDragging(false)}
++        onDrop={(e) => { e.preventDefault(); setDragging(false); onFiles(e.dataTransfer.files); }}
++      >
++        <p><strong>Drop an image here</strong></p>
++        <p className="small">Supported: {acceptedInputTypes.join(', ')}. Max size: {maxFileSizeMb} MB.</p>
++        <button type="button" onClick={() => inputRef.current?.click()}>Choose image</button>
++      </div>
++      {error && <div className="error">{error}</div>}
++      <div className={downloadUrl ? 'success' : 'result-panel'}>{status}</div>
++      {downloadUrl && (
++        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
++          <a className="button" href={downloadUrl} download={downloadName} onClick={() => track('download_action', { toolId: 'convert-image-to-png', locale })}>Download PNG</a>
++          <button type="button" className="secondary" onClick={() => { setDownloadUrl(null); setStatus('Choose another image to convert it to PNG.'); }}>Convert another</button>
++        </div>
++      )}
++      <p className="small">Privacy: v1 conversion runs in your browser. The selected image is not uploaded by this tool.</p>
++    </div>
++  );
++}
++
++function sizeBucket(size: number) {
++  const mb = size / 1024 / 1024;
++  if (mb < 1) return '<1MB';
++  if (mb < 5) return '1-5MB';
++  if (mb < 10) return '5-10MB';
++  return '10MB+';
++}
+diff --git a/apps/site/src/features/typing-test/TypingTestIsland.tsx b/apps/site/src/features/typing-test/TypingTestIsland.tsx
+new file mode 100644
+index 0000000..217f460
+--- /dev/null
++++ b/apps/site/src/features/typing-test/TypingTestIsland.tsx
+@@ -0,0 +1,116 @@
++import React, { useMemo, useRef, useState } from 'react';
++import { calculateTypingResult } from '@factory/typing-engine';
++
++type Props = {
++  locale: string;
++  config: any;
++};
++
++const DEFAULT_PROMPTS = [
++  'The quick brown fox jumps over the lazy dog. Practice steady typing before trying to type faster.',
++  'Clear tools help people finish simple tasks quickly. Accuracy matters more than speed at the beginning.',
++  'A good typing test measures words per minute, accuracy, and errors without distracting the user.'
++];
++
++function track(eventName: string, params: Record<string, unknown>) {
++  if (typeof window !== 'undefined') {
++    (window as any).__factoryTrack?.(eventName, params);
++  }
++}
++
++export default function TypingTestIsland({ locale, config }: Props) {
++  const durations = config?.options?.durations ?? [15, 30, 60, 180, 300];
++  const defaultDuration = config?.options?.defaultDuration ?? 60;
++  const prompt = useMemo(() => DEFAULT_PROMPTS[Math.floor(Math.random() * DEFAULT_PROMPTS.length)], []);
++  const [duration, setDuration] = useState(defaultDuration);
++  const [typed, setTyped] = useState('');
++  const [startedAt, setStartedAt] = useState<number | null>(null);
++  const [finishedAt, setFinishedAt] = useState<number | null>(null);
++  const [now, setNow] = useState(Date.now());
++  const timerRef = useRef<number | null>(null);
++
++  const elapsedSeconds = startedAt ? Math.min(duration, Math.floor(((finishedAt ?? now) - startedAt) / 1000)) : 0;
++  const remainingSeconds = Math.max(0, duration - elapsedSeconds);
++  const finished = Boolean(finishedAt) || remainingSeconds === 0;
++  const result = calculateTypingResult({ prompt, typed, elapsedSeconds: Math.max(1, elapsedSeconds || (finished ? duration : 1)) });
++
++  function startTimerIfNeeded() {
++    if (startedAt) return;
++    const start = Date.now();
++    setStartedAt(start);
++    setNow(start);
++    track('tool_start', { toolId: 'typing-speed-test', locale, duration });
++    timerRef.current = window.setInterval(() => {
++      setNow(Date.now());
++    }, 250);
++  }
++
++  function finish() {
++    if (timerRef.current) window.clearInterval(timerRef.current);
++    const end = Date.now();
++    setFinishedAt(end);
++    const finalElapsed = startedAt ? Math.min(duration, Math.floor((end - startedAt) / 1000)) : duration;
++    const finalResult = calculateTypingResult({ prompt, typed, elapsedSeconds: Math.max(1, finalElapsed) });
++    track('tool_complete', { toolId: 'typing-speed-test', locale, duration, wpmBucket: bucket(finalResult.wpm), accuracyBucket: bucket(finalResult.accuracy) });
++    track('typing_test_completed', { locale, duration, wpmBucket: bucket(finalResult.wpm), accuracyBucket: bucket(finalResult.accuracy) });
++  }
++
++  function reset() {
++    if (timerRef.current) window.clearInterval(timerRef.current);
++    setTyped('');
++    setStartedAt(null);
++    setFinishedAt(null);
++    setNow(Date.now());
++  }
++
++  function onChange(value: string) {
++    if (finished) return;
++    startTimerIfNeeded();
++    setTyped(value);
++    if (value.length >= prompt.length) {
++      window.setTimeout(finish, 0);
++    }
++  }
++
++  React.useEffect(() => {
++    if (startedAt && !finishedAt && remainingSeconds <= 0) finish();
++    return () => undefined;
++  }, [remainingSeconds, startedAt, finishedAt]);
++
++  return (
++    <div className="tool-grid">
++      <div>
++        <label htmlFor="duration"><strong>Test duration</strong></label>
++        <select id="duration" value={duration} disabled={Boolean(startedAt)} onChange={(e) => setDuration(Number(e.target.value))}>
++          {durations.map((d: number) => <option value={d} key={d}>{d < 60 ? `${d} seconds` : `${d / 60} minute${d === 60 ? '' : 's'}`}</option>)}
++        </select>
++      </div>
++      <div className="result-panel" aria-label="Text prompt">
++        <p>{prompt}</p>
++      </div>
++      <div>
++        <label htmlFor="typing-input"><strong>Type the text above</strong></label>
++        <textarea id="typing-input" value={typed} disabled={finished} onChange={(e) => onChange(e.target.value)} placeholder="Start typing here..." />
++      </div>
++      <div className="metric-row" aria-live="polite">
++        <div className="metric"><span className="small">Time left</span><strong>{remainingSeconds}s</strong></div>
++        <div className="metric"><span className="small">WPM</span><strong>{result.wpm}</strong></div>
++        <div className="metric"><span className="small">Accuracy</span><strong>{result.accuracy}%</strong></div>
++        <div className="metric"><span className="small">Errors</span><strong>{result.errors}</strong></div>
++      </div>
++      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
++        <button type="button" className="secondary" onClick={reset}>Reset</button>
++        {startedAt && !finished && <button type="button" onClick={finish}>Finish now</button>}
++      </div>
++      <p className="small">Privacy: this typing test runs in your browser. Typed text is not sent to the server by this tool.</p>
++    </div>
++  );
++}
++
++function bucket(value: number) {
++  if (value < 20) return '0-19';
++  if (value < 40) return '20-39';
++  if (value < 60) return '40-59';
++  if (value < 80) return '60-79';
++  return '80+';
++}
+diff --git a/apps/site/src/layouts/BaseLayout.astro b/apps/site/src/layouts/BaseLayout.astro
+new file mode 100644
+index 0000000..dcbfa8a
+--- /dev/null
++++ b/apps/site/src/layouts/BaseLayout.astro
+@@ -0,0 +1,71 @@
++---
++import '../styles/global.css';
++import VerificationMeta from '../components/integrations/VerificationMeta.astro';
++import AnalyticsScripts from '../components/integrations/AnalyticsScripts.astro';
++import AdProviderScripts from '../components/integrations/AdProviderScripts.astro';
++import LanguageSwitcher from '../components/LanguageSwitcher.astro';
++import type { SiteContext, ContentDocument } from '@factory/site-core';
++import { buildPageSeo } from '@factory/seo';
++
++interface Props {
++  ctx: SiteContext;
++  locale: string;
++  page: ContentDocument;
++  pageType: 'home' | 'guide';
++  slug?: string;
++}
++
++const { ctx, locale, page, pageType, slug } = Astro.props;
++const seo = buildPageSeo(ctx, { locale, page, pageType, slug });
++const theme = ctx.themeConfig;
++const primary = theme?.colors?.primary ?? '#2563eb';
++const radius = theme?.radius ?? '18px';
++---
++<!doctype html>
++<html lang={locale}>
++  <head>
++    <meta charset="utf-8" />
++    <meta name="viewport" content="width=device-width, initial-scale=1" />
++    <title>{seo.title}</title>
++    <meta name="description" content={seo.description} />
++    <link rel="canonical" href={seo.canonical} />
++    {seo.noindex && <meta name="robots" content="noindex,nofollow" />}
++    {seo.alternates.map((alt) => (
++      <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />
++    ))}
++    <meta property="og:title" content={seo.title} />
++    <meta property="og:description" content={seo.description} />
++    <meta property="og:url" content={seo.canonical} />
++    <meta property="og:type" content={pageType === 'guide' ? 'article' : 'website'} />
++    <meta name="twitter:card" content="summary_large_image" />
++    <style is:inline define:vars={{ primary, radius }}>
++      :root { --factory-primary: var(--primary); --factory-radius: var(--radius); }
++    </style>
++    <script type="application/ld+json" set:html={JSON.stringify(seo.jsonLd)} />
++    <VerificationMeta ctx={ctx} />
++    <AnalyticsScripts ctx={ctx} />
++    <AdProviderScripts ctx={ctx} />
++  </head>
++  <body>
++    <header class="site-header">
++      <div class="container site-header-inner">
++        <a class="brand" href={seo.homeUrl}>
++          <span class="brand-mark">{ctx.siteConfig.brandName.slice(0, 1).toUpperCase()}</span>
++          <span>{ctx.siteConfig.brandName}</span>
++        </a>
++        <nav class="nav" aria-label="Main navigation">
++          <a href={seo.homeUrl}>Home</a>
++          <LanguageSwitcher ctx={ctx} locale={locale} />
++        </nav>
++      </div>
++    </header>
++    <main>
++      <slot />
++    </main>
++    <footer class="footer">
++      <div class="container">
++        <p>© {new Date().getFullYear()} {ctx.siteConfig.brandName}. Built as a lightweight tool site.</p>
++      </div>
++    </footer>
++  </body>
++</html>
+diff --git a/apps/site/src/pages/[locale]/guide/[slug].astro b/apps/site/src/pages/[locale]/guide/[slug].astro
+new file mode 100644
+index 0000000..d2ceab3
+--- /dev/null
++++ b/apps/site/src/pages/[locale]/guide/[slug].astro
+@@ -0,0 +1,33 @@
++---
++import BaseLayout from '../../../layouts/BaseLayout.astro';
++import AdSlot from '../../../components/AdSlot.astro';
++import { loadSelectedSite, getEnabledNonDefaultLocales, listGuideContent, loadGuideContent } from '@factory/site-core';
++
++export async function getStaticPaths() {
++  const ctx = await loadSelectedSite();
++  const paths = [];
++  for (const locale of getEnabledNonDefaultLocales(ctx)) {
++    const guides = await listGuideContent(ctx, locale);
++    for (const guide of guides) {
++      paths.push({ params: { locale, slug: guide.frontmatter.slug }, props: { locale, slug: guide.frontmatter.slug } });
++    }
++  }
++  return paths;
++}
++
++const ctx = await loadSelectedSite();
++const { locale, slug } = Astro.props;
++const guide = await loadGuideContent(ctx, locale, slug);
++---
++<BaseLayout ctx={ctx} locale={locale} page={guide} pageType="guide" slug={slug}>
++  <section class="hero">
++    <div class="container">
++      <h1>{guide.frontmatter.title}</h1>
++      <p>{guide.frontmatter.description}</p>
++    </div>
++  </section>
++  <div class="container">
++    <article class="content-card" set:html={guide.html}></article>
++    <AdSlot ctx={ctx} placement="inArticle" />
++  </div>
++</BaseLayout>
+diff --git a/apps/site/src/pages/[locale]/index.astro b/apps/site/src/pages/[locale]/index.astro
+new file mode 100644
+index 0000000..dfba210
+--- /dev/null
++++ b/apps/site/src/pages/[locale]/index.astro
+@@ -0,0 +1,31 @@
++---
++import BaseLayout from '../../layouts/BaseLayout.astro';
++import ToolRenderer from '../../components/ToolRenderer.astro';
++import AdSlot from '../../components/AdSlot.astro';
++import { loadSelectedSite, loadHomeContent, loadFaqContent, getEnabledNonDefaultLocales } from '@factory/site-core';
++
++export async function getStaticPaths() {
++  const ctx = await loadSelectedSite();
++  return getEnabledNonDefaultLocales(ctx).map((locale) => ({ params: { locale }, props: { locale } }));
++}
++
++const ctx = await loadSelectedSite();
++const { locale } = Astro.props;
++const home = await loadHomeContent(ctx, locale);
++const faq = await loadFaqContent(ctx, locale);
++---
++<BaseLayout ctx={ctx} locale={locale} page={home} pageType="home">
++  <section class="hero">
++    <div class="container">
++      <h1>{home.frontmatter.title}</h1>
++      <p>{home.frontmatter.description}</p>
++    </div>
++  </section>
++  <div class="container">
++    <ToolRenderer ctx={ctx} locale={locale} />
++    <AdSlot ctx={ctx} placement="afterTool" />
++    <article class="content-card" set:html={home.html}></article>
++    {faq && <article class="content-card" set:html={faq.html}></article>}
++    <AdSlot ctx={ctx} placement="inArticle" />
++  </div>
++</BaseLayout>
+diff --git a/apps/site/src/pages/guide/[slug].astro b/apps/site/src/pages/guide/[slug].astro
+new file mode 100644
+index 0000000..50de8e8
+--- /dev/null
++++ b/apps/site/src/pages/guide/[slug].astro
+@@ -0,0 +1,28 @@
++---
++import BaseLayout from '../../layouts/BaseLayout.astro';
++import AdSlot from '../../components/AdSlot.astro';
++import { loadSelectedSite, listGuideContent, loadGuideContent } from '@factory/site-core';
++
++export async function getStaticPaths() {
++  const ctx = await loadSelectedSite();
++  const locale = ctx.siteConfig.defaultLocale;
++  const guides = await listGuideContent(ctx, locale);
++  return guides.map((guide) => ({ params: { slug: guide.frontmatter.slug }, props: { locale, slug: guide.frontmatter.slug } }));
++}
++
++const ctx = await loadSelectedSite();
++const { locale, slug } = Astro.props;
++const guide = await loadGuideContent(ctx, locale, slug);
++---
++<BaseLayout ctx={ctx} locale={locale} page={guide} pageType="guide" slug={slug}>
++  <section class="hero">
++    <div class="container">
++      <h1>{guide.frontmatter.title}</h1>
++      <p>{guide.frontmatter.description}</p>
++    </div>
++  </section>
++  <div class="container">
++    <article class="content-card" set:html={guide.html}></article>
++    <AdSlot ctx={ctx} placement="inArticle" />
++  </div>
++</BaseLayout>
+diff --git a/apps/site/src/pages/index.astro b/apps/site/src/pages/index.astro
+new file mode 100644
+index 0000000..b8908a6
+--- /dev/null
++++ b/apps/site/src/pages/index.astro
+@@ -0,0 +1,26 @@
++---
++import BaseLayout from '../layouts/BaseLayout.astro';
++import ToolRenderer from '../components/ToolRenderer.astro';
++import AdSlot from '../components/AdSlot.astro';
++import { loadSelectedSite, loadHomeContent, loadFaqContent } from '@factory/site-core';
++
++const ctx = await loadSelectedSite();
++const locale = ctx.siteConfig.defaultLocale;
++const home = await loadHomeContent(ctx, locale);
++const faq = await loadFaqContent(ctx, locale);
++---
++<BaseLayout ctx={ctx} locale={locale} page={home} pageType="home">
++  <section class="hero">
++    <div class="container">
++      <h1>{home.frontmatter.title}</h1>
++      <p>{home.frontmatter.description}</p>
++    </div>
++  </section>
++  <div class="container">
++    <ToolRenderer ctx={ctx} locale={locale} />
++    <AdSlot ctx={ctx} placement="afterTool" />
++    <article class="content-card" set:html={home.html}></article>
++    {faq && <article class="content-card" set:html={faq.html}></article>}
++    <AdSlot ctx={ctx} placement="inArticle" />
++  </div>
++</BaseLayout>
+diff --git a/apps/site/src/pages/robots.txt.ts b/apps/site/src/pages/robots.txt.ts
+new file mode 100644
+index 0000000..7eb8325
+--- /dev/null
++++ b/apps/site/src/pages/robots.txt.ts
+@@ -0,0 +1,9 @@
++import { loadSelectedSite } from '@factory/site-core';
++import { generateRobotsTxt } from '@factory/seo';
++
++export async function GET() {
++  const ctx = await loadSelectedSite();
++  return new Response(generateRobotsTxt(ctx), {
++    headers: { 'Content-Type': 'text/plain; charset=utf-8' }
++  });
++}
+diff --git a/apps/site/src/pages/sitemap.xml.ts b/apps/site/src/pages/sitemap.xml.ts
+new file mode 100644
+index 0000000..acf5a79
+--- /dev/null
++++ b/apps/site/src/pages/sitemap.xml.ts
+@@ -0,0 +1,10 @@
++import { loadSelectedSite } from '@factory/site-core';
++import { generateSitemapXml } from '@factory/seo';
++
++export async function GET() {
++  const ctx = await loadSelectedSite();
++  const xml = await generateSitemapXml(ctx);
++  return new Response(xml, {
++    headers: { 'Content-Type': 'application/xml; charset=utf-8' }
++  });
++}
+diff --git a/apps/site/src/styles/global.css b/apps/site/src/styles/global.css
+new file mode 100644
+index 0000000..72e5b66
+--- /dev/null
++++ b/apps/site/src/styles/global.css
+@@ -0,0 +1,58 @@
++:root {
++  --factory-bg: #f7f7f8;
++  --factory-surface: #ffffff;
++  --factory-text: #171717;
++  --factory-muted: #5f6368;
++  --factory-border: #e5e7eb;
++  --factory-primary: #2563eb;
++  --factory-radius: 18px;
++  --factory-max: 1080px;
++}
++
++* { box-sizing: border-box; }
++body {
++  margin: 0;
++  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++  background: var(--factory-bg);
++  color: var(--factory-text);
++  line-height: 1.6;
++}
++a { color: var(--factory-primary); text-decoration: none; }
++a:hover { text-decoration: underline; }
++.container { max-width: var(--factory-max); margin: 0 auto; padding: 0 20px; }
++.site-header { border-bottom: 1px solid var(--factory-border); background: rgba(255,255,255,.86); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 10; }
++.site-header-inner { display: flex; align-items: center; justify-content: space-between; min-height: 64px; gap: 16px; }
++.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--factory-text); }
++.brand-mark { width: 34px; height: 34px; border-radius: 10px; background: var(--factory-primary); display: inline-flex; color: white; align-items: center; justify-content: center; font-weight: 900; }
++.nav { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 14px; }
++.hero { padding: 56px 0 24px; }
++.hero h1 { font-size: clamp(34px, 5vw, 56px); line-height: 1.05; margin: 0 0 16px; letter-spacing: -0.04em; }
++.hero p { max-width: 760px; font-size: 18px; color: var(--factory-muted); margin: 0; }
++.tool-shell { background: var(--factory-surface); border: 1px solid var(--factory-border); border-radius: var(--factory-radius); padding: clamp(18px, 4vw, 32px); box-shadow: 0 16px 50px rgba(15,23,42,.08); margin: 24px 0; }
++.content-card { background: var(--factory-surface); border: 1px solid var(--factory-border); border-radius: var(--factory-radius); padding: clamp(20px, 4vw, 36px); margin: 24px 0; }
++.content-card h2, .content-card h3 { line-height: 1.2; letter-spacing: -0.02em; }
++.content-card p, .content-card li { color: #30343b; }
++.footer { border-top: 1px solid var(--factory-border); padding: 32px 0; margin-top: 56px; color: var(--factory-muted); font-size: 14px; }
++.language-switcher { display: flex; gap: 8px; flex-wrap: wrap; }
++.language-switcher a { border: 1px solid var(--factory-border); border-radius: 999px; padding: 5px 10px; font-size: 13px; color: var(--factory-text); background: #fff; }
++.language-switcher a[aria-current="true"] { background: var(--factory-primary); color: white; border-color: var(--factory-primary); }
++.ad-slot { margin: 32px 0; min-height: 90px; border: 1px dashed var(--factory-border); border-radius: 14px; display: flex; align-items: center; justify-content: center; color: var(--factory-muted); font-size: 13px; background: rgba(255,255,255,.5); }
++.tool-grid { display: grid; gap: 16px; }
++button, .button { cursor: pointer; border: 0; border-radius: 12px; background: var(--factory-primary); color: white; font-weight: 700; padding: 11px 16px; }
++button.secondary { background: #eef2ff; color: var(--factory-primary); }
++button:disabled { opacity: .55; cursor: not-allowed; }
++input, textarea, select { width: 100%; border: 1px solid var(--factory-border); border-radius: 12px; padding: 12px 14px; font: inherit; background: white; }
++textarea { min-height: 150px; resize: vertical; }
++.result-panel { border: 1px solid var(--factory-border); border-radius: 14px; padding: 16px; background: #f8fafc; }
++.metric-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
++.metric { background: white; border: 1px solid var(--factory-border); border-radius: 12px; padding: 14px; }
++.metric strong { display: block; font-size: 26px; line-height: 1; }
++.small { font-size: 13px; color: var(--factory-muted); }
++.dropzone { border: 2px dashed var(--factory-border); border-radius: 16px; padding: 30px; text-align: center; background: #fafafa; }
++.dropzone.dragging { border-color: var(--factory-primary); background: #eff6ff; }
++.error { color: #b91c1c; background: #fee2e2; border: 1px solid #fecaca; border-radius: 12px; padding: 10px 12px; }
++.success { color: #166534; background: #dcfce7; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 12px; }
++@media (max-width: 720px) {
++  .site-header-inner { align-items: flex-start; flex-direction: column; padding: 14px 0; }
++  .hero { padding-top: 32px; }
++}
+diff --git a/docs/v1-implementation-notes.md b/docs/v1-implementation-notes.md
+new file mode 100644
+index 0000000..f9abb72
+--- /dev/null
++++ b/docs/v1-implementation-notes.md
+@@ -0,0 +1,53 @@
++# V1 implementation notes
++
++This v1 scaffold implements the confirmed solo-operator architecture:
++
++- Astro static site renderer
++- YAML site packs
++- per-site dev/build/deploy
++- Cloudflare Pages Direct Upload
++- AdSense + Adsterra integration config
++- GA4, Google Search Console, Bing Webmaster, Microsoft Clarity, IndexNow config
++- generated `ads.txt`, verification files, and IndexNow key file
++- CLI checks and generated portfolio report
++
++## Important defaults
++
++Sample sites are `draft`, `allowIndex: false`, and `ads.enabled: false` by default. This avoids accidental indexing or ad loading before content, domains, and verification are ready.
++
++To make a site indexable, update:
++
++```yaml
++lifecycle:
++  status: live
++indexing:
++  allowIndex: true
++locales:
++  en:
++    enabled: true
++    indexable: true
++    reviewed: true
++```
++
++And set each relevant content document:
++
++```yaml
++index: true
++contentStatus: approved
++```
++
++## Integration checklist
++
++For each live site:
++
++1. Set the real canonical domain in `site.config.yaml`.
++2. Add GA4 measurement ID if needed.
++3. Add Google Search Console verification meta/file.
++4. Add Bing Webmaster import/meta/file.
++5. Add Clarity project ID if needed.
++6. Add IndexNow key/keyFile if needed.
++7. Add AdSense publisher ID and ads.txt entry.
++8. Add Adsterra snippets only if using Adsterra.
++9. Run `pnpm site check <site-id>`.
++10. Run `pnpm site build <site-id>`.
++11. Deploy and run `pnpm site verify-integrations <site-id>`.
+diff --git a/infra/cloudflare/README.md b/infra/cloudflare/README.md
+new file mode 100644
+index 0000000..5d29ba3
+--- /dev/null
++++ b/infra/cloudflare/README.md
+@@ -0,0 +1,27 @@
++# Cloudflare deployment
++
++V1 uses Cloudflare Pages Direct Upload per site.
++
++Each site config includes:
++
++```yaml
++deployment:
++  provider: cloudflare-pages
++  projectName: seo-tool-typing-speed-test
++  outputDir: dist/sites/typing-speed-test
++```
++
++Deploy with:
++
++```bash
++pnpm site deploy typing-speed-test --preview
++pnpm site deploy typing-speed-test --production
++```
++
++The deploy command builds the selected site, then calls:
++
++```bash
++wrangler pages deploy dist/sites/<site-id> --project-name <projectName> --branch <preview|main>
++```
++
++Create the Cloudflare Pages project manually or through Wrangler before production deployment.
+diff --git a/package.json b/package.json
+new file mode 100644
+index 0000000..d8ee7dd
+--- /dev/null
++++ b/package.json
+@@ -0,0 +1,38 @@
++{
++  "name": "seo-tool-site-factory",
++  "version": "0.1.0",
++  "private": true,
++  "type": "module",
++  "packageManager": "pnpm@10.0.0",
++  "scripts": {
++    "site": "tsx scripts/site.ts",
++    "ops": "tsx scripts/ops.ts",
++    "check": "pnpm site check --all",
++    "ops:report": "pnpm ops report",
++    "typecheck": "tsc --noEmit",
++    "lint": "echo \"lint placeholder: add eslint when code style is finalized\""
++  },
++  "devDependencies": {
++    "@astrojs/react": "^4.2.0",
++    "@types/node": "^22.10.0",
++    "@types/react": "^19.0.0",
++    "@types/react-dom": "^19.0.0",
++    "astro": "^5.9.0",
++    "tsx": "^4.19.0",
++    "typescript": "^5.8.0",
++    "wrangler": "^4.0.0"
++  },
++  "dependencies": {
++    "@vitejs/plugin-react": "^4.3.0",
++    "gray-matter": "^4.0.3",
++    "marked": "^15.0.0",
++    "react": "^19.0.0",
++    "react-dom": "^19.0.0",
++    "yaml": "^2.7.0",
++    "zod": "^3.24.0",
++    "@factory/integrations": "workspace:*",
++    "@factory/ops": "workspace:*",
++    "@factory/seo": "workspace:*",
++    "@factory/site-core": "workspace:*"
++  }
++}
+diff --git a/packages/integrations/package.json b/packages/integrations/package.json
+new file mode 100644
+index 0000000..2ecac61
+--- /dev/null
++++ b/packages/integrations/package.json
+@@ -0,0 +1,13 @@
++{
++  "name": "@factory/integrations",
++  "version": "0.1.0",
++  "private": true,
++  "type": "module",
++  "exports": {
++    ".": "./src/index.ts"
++  },
++  "dependencies": {
++    "@factory/site-core": "workspace:*",
++    "@factory/seo": "workspace:*"
++  }
++}
+diff --git a/packages/integrations/src/index.ts b/packages/integrations/src/index.ts
+new file mode 100644
+index 0000000..2d23914
+--- /dev/null
++++ b/packages/integrations/src/index.ts
+@@ -0,0 +1,4 @@
++export * from './render-models';
++export * from './root-files';
++export * from './verify';
++export * from './indexnow';
+diff --git a/packages/integrations/src/indexnow.ts b/packages/integrations/src/indexnow.ts
+new file mode 100644
+index 0000000..6d82f13
+--- /dev/null
++++ b/packages/integrations/src/indexnow.ts
+@@ -0,0 +1,25 @@
++import { getSitemapEntries } from '@factory/seo';
++import type { SiteContext } from '@factory/site-core';
++
++export async function submitIndexNow(ctx: SiteContext): Promise<{ ok: boolean; status: number; message: string }> {
++  const config = ctx.integrationsConfig.indexing.indexNow;
++  if (!config.enabled || !config.key || !config.keyFile) {
++    return { ok: false, status: 0, message: 'IndexNow is not configured.' };
++  }
++  const entries = await getSitemapEntries(ctx);
++  const urlList = entries.map((entry) => entry.loc);
++  if (urlList.length === 0) return { ok: false, status: 0, message: 'No indexable URLs found in sitemap entries.' };
++  const endpoint = config.endpoint ?? 'https://api.indexnow.org/indexnow';
++  const body = {
++    host: ctx.siteConfig.domains.canonicalHost,
++    key: config.key,
++    keyLocation: `https://${ctx.siteConfig.domains.canonicalHost}/${config.keyFile}`,
++    urlList
++  };
++  const res = await fetch(endpoint, {
++    method: 'POST',
++    headers: { 'Content-Type': 'application/json' },
++    body: JSON.stringify(body)
++  });
++  return { ok: res.ok, status: res.status, message: `Submitted ${urlList.length} URLs to ${endpoint}` };
++}
+diff --git a/packages/integrations/src/render-models.ts b/packages/integrations/src/render-models.ts
+new file mode 100644
+index 0000000..7984c60
+--- /dev/null
++++ b/packages/integrations/src/render-models.ts
+@@ -0,0 +1,70 @@
++import { existsSync, readFileSync } from 'node:fs';
++import { join } from 'node:path';
++import type { SiteContext } from '@factory/site-core';
++
++export function getVerificationMetaTags(ctx: SiteContext): Array<{ name: string; content: string }> {
++  const tags: Array<{ name: string; content: string }> = [];
++  const webmaster = ctx.integrationsConfig.webmaster;
++  const gsc = webmaster.googleSearchConsole;
++  if (gsc.enabled && gsc.verification?.method === 'meta' && gsc.verification.content) {
++    tags.push({ name: gsc.verification.metaName ?? 'google-site-verification', content: gsc.verification.content });
++  }
++  const bing = webmaster.bingWebmaster;
++  if (bing.enabled && bing.verification?.method === 'meta' && bing.verification.content) {
++    tags.push({ name: bing.verification.metaName ?? 'msvalidate.01', content: bing.verification.content });
++  }
++  const adsense = ctx.integrationsConfig.ads.providers.adsense;
++  if (adsense.enabled && adsense.publisherId && adsense.verification?.method === 'meta') {
++    tags.push({ name: adsense.verification.metaName ?? 'google-adsense-account', content: adsense.verification.content ?? adsense.publisherId });
++  }
++  return tags;
++}
++
++export function getAnalyticsRenderModel(ctx: SiteContext) {
++  const analytics = ctx.integrationsConfig.analytics;
++  return {
++    ga4: analytics.googleAnalytics.enabled && analytics.googleAnalytics.measurementId
++      ? { enabled: true, measurementId: analytics.googleAnalytics.measurementId }
++      : undefined,
++    clarity: analytics.microsoftClarity.enabled && analytics.microsoftClarity.projectId
++      ? { enabled: true, projectId: analytics.microsoftClarity.projectId }
++      : undefined
++  };
++}
++
++export function getAdProviderScriptModel(ctx: SiteContext) {
++  const ads = ctx.integrationsConfig.ads;
++  const adsense = ads.providers.adsense;
++  return {
++    adsense: ads.enabled && ads.activeProvider === 'adsense' && adsense.enabled && adsense.publisherId
++      ? { enabled: true, publisherId: adsense.publisherId }
++      : undefined
++  };
++}
++
++export type AdSlotRenderModel =
++  | { kind: 'disabled' }
++  | { kind: 'placeholder' }
++  | { kind: 'adsense'; client: string; slot: string; format: string }
++  | { kind: 'raw-html'; html: string };
++
++export function getAdSlotRenderModel(ctx: SiteContext, placement: string): AdSlotRenderModel {
++  const ads = ctx.integrationsConfig.ads;
++  if (!ads.enabled || ctx.siteConfig.lifecycle.status !== 'live') return { kind: 'disabled' };
++  if (ads.activeProvider === 'adsense') {
++    const adsense = ads.providers.adsense;
++    const slot = adsense.slots?.[placement];
++    if (!adsense.enabled || !slot?.enabled || !adsense.publisherId || !slot.adSlot) return { kind: 'disabled' };
++    return { kind: 'adsense', client: `ca-${adsense.publisherId.replace(/^ca-/, '')}`, slot: slot.adSlot, format: slot.format ?? 'auto' };
++  }
++  if (ads.activeProvider === 'adsterra') {
++    const placementConfig = ads.providers.adsterra.placements?.[placement];
++    if (!ads.providers.adsterra.enabled || !placementConfig?.enabled) return { kind: 'disabled' };
++    if (placementConfig.snippet) {
++      const snippetPath = join(ctx.siteDir, placementConfig.snippet);
++      if (existsSync(snippetPath)) return { kind: 'raw-html', html: readFileSync(snippetPath, 'utf8') };
++    }
++    return { kind: 'placeholder' };
++  }
++  return { kind: 'disabled' };
++}
+diff --git a/packages/integrations/src/root-files.ts b/packages/integrations/src/root-files.ts
+new file mode 100644
+index 0000000..7e327c6
+--- /dev/null
++++ b/packages/integrations/src/root-files.ts
+@@ -0,0 +1,60 @@
++import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
++import { basename, join } from 'node:path';
++import type { SiteContext } from '@factory/site-core';
++
++type Manifest = { files: string[] };
++
++function readManifest(publicDir: string): Manifest {
++  const file = join(publicDir, '.generated-public-manifest.json');
++  if (!existsSync(file)) return { files: [] };
++  try { return JSON.parse(readFileSync(file, 'utf8')) as Manifest; } catch { return { files: [] }; }
++}
++
++function writeManifest(publicDir: string, manifest: Manifest) {
++  writeFileSync(join(publicDir, '.generated-public-manifest.json'), JSON.stringify(manifest, null, 2));
++}
++
++function writeGenerated(publicDir: string, relPath: string, content: string, files: string[]) {
++  const target = join(publicDir, relPath);
++  mkdirSync(join(target, '..'), { recursive: true });
++  writeFileSync(target, content);
++  files.push(relPath);
++}
++
++export function prepareGeneratedPublicFiles(ctx: SiteContext, appPublicDir: string): string[] {
++  mkdirSync(appPublicDir, { recursive: true });
++  const previous = readManifest(appPublicDir);
++  for (const rel of previous.files) {
++    const target = join(appPublicDir, rel);
++    if (existsSync(target)) rmSync(target, { force: true });
++  }
++  const files: string[] = [];
++  const adsTxt = ctx.integrationsConfig.ads.adsTxt;
++  if (adsTxt.enabled && adsTxt.entries.length > 0) {
++    writeGenerated(appPublicDir, 'ads.txt', adsTxt.entries.join('\n') + '\n', files);
++  }
++  const indexNow = ctx.integrationsConfig.indexing.indexNow;
++  if (indexNow.enabled && indexNow.key && indexNow.keyFile) {
++    writeGenerated(appPublicDir, indexNow.keyFile, indexNow.key + '\n', files);
++  }
++  const gsc = ctx.integrationsConfig.webmaster.googleSearchConsole;
++  if (gsc.enabled && gsc.verification?.method === 'html-file' && gsc.verification.fileName && gsc.verification.fileContent) {
++    writeGenerated(appPublicDir, gsc.verification.fileName, gsc.verification.fileContent, files);
++  }
++  const bing = ctx.integrationsConfig.webmaster.bingWebmaster;
++  if (bing.enabled && (bing.verification?.method === 'html-file' || bing.verification?.method === 'xml-file') && bing.verification.fileName && bing.verification.fileContent) {
++    writeGenerated(appPublicDir, bing.verification.fileName, bing.verification.fileContent, files);
++  }
++  const staticDir = join(ctx.siteDir, 'static');
++  if (existsSync(staticDir)) {
++    for (const name of readdirSync(staticDir)) {
++      const src = join(staticDir, name);
++      const rel = basename(name);
++      if (existsSync(src)) {
++        writeGenerated(appPublicDir, rel, readFileSync(src, 'utf8'), files);
++      }
++    }
++  }
++  writeManifest(appPublicDir, { files });
++  return files;
++}
+diff --git a/packages/integrations/src/verify.ts b/packages/integrations/src/verify.ts
+new file mode 100644
+index 0000000..6921a00
+--- /dev/null
++++ b/packages/integrations/src/verify.ts
+@@ -0,0 +1,54 @@
++import type { SiteContext } from '@factory/site-core';
++
++export type VerifyResult = { label: string; ok: boolean; message: string };
++
++async function fetchText(url: string): Promise<{ status: number; text: string }> {
++  const res = await fetch(url, { redirect: 'follow' });
++  return { status: res.status, text: await res.text() };
++}
++
++export async function verifyOnlineIntegrations(ctx: SiteContext): Promise<VerifyResult[]> {
++  const base = `https://${ctx.siteConfig.domains.canonicalHost}`;
++  const results: VerifyResult[] = [];
++  const home = await fetchText(base);
++  results.push({ label: 'homepage', ok: home.status >= 200 && home.status < 400, message: `${base} -> HTTP ${home.status}` });
++
++  const robots = await fetchText(`${base}/robots.txt`);
++  results.push({ label: 'robots.txt', ok: robots.status === 200 && robots.text.includes('Sitemap:'), message: `/robots.txt -> HTTP ${robots.status}` });
++
++  const sitemap = await fetchText(`${base}/sitemap.xml`);
++  results.push({ label: 'sitemap.xml', ok: sitemap.status === 200 && sitemap.text.includes('<urlset'), message: `/sitemap.xml -> HTTP ${sitemap.status}` });
++
++  const ads = ctx.integrationsConfig.ads;
++  if (ads.adsTxt.enabled) {
++    const adsTxt = await fetchText(`${base}/ads.txt`);
++    results.push({ label: 'ads.txt', ok: adsTxt.status === 200, message: `/ads.txt -> HTTP ${adsTxt.status}` });
++  }
++
++  const ga = ctx.integrationsConfig.analytics.googleAnalytics;
++  if (ga.enabled && ga.measurementId) {
++    results.push({ label: 'GA4 tag', ok: home.text.includes(ga.measurementId), message: ga.measurementId });
++  }
++
++  const clarity = ctx.integrationsConfig.analytics.microsoftClarity;
++  if (clarity.enabled && clarity.projectId) {
++    results.push({ label: 'Microsoft Clarity tag', ok: home.text.includes(clarity.projectId), message: clarity.projectId });
++  }
++
++  const gsc = ctx.integrationsConfig.webmaster.googleSearchConsole;
++  if (gsc.enabled && gsc.verification?.method === 'meta' && gsc.verification.content) {
++    results.push({ label: 'GSC verification meta', ok: home.text.includes(gsc.verification.content), message: 'meta tag content check' });
++  }
++
++  const bing = ctx.integrationsConfig.webmaster.bingWebmaster;
++  if (bing.enabled && bing.verification?.method === 'meta' && bing.verification.content) {
++    results.push({ label: 'Bing verification meta', ok: home.text.includes(bing.verification.content), message: 'meta tag content check' });
++  }
++
++  const indexNow = ctx.integrationsConfig.indexing.indexNow;
++  if (indexNow.enabled && indexNow.keyFile) {
++    const key = await fetchText(`${base}/${indexNow.keyFile}`);
++    results.push({ label: 'IndexNow key file', ok: key.status === 200 && Boolean(indexNow.key && key.text.includes(indexNow.key)), message: `/${indexNow.keyFile} -> HTTP ${key.status}` });
++  }
++  return results;
++}
+diff --git a/packages/ops/package.json b/packages/ops/package.json
+new file mode 100644
+index 0000000..f27fa48
+--- /dev/null
++++ b/packages/ops/package.json
+@@ -0,0 +1,12 @@
++{
++  "name": "@factory/ops",
++  "version": "0.1.0",
++  "private": true,
++  "type": "module",
++  "exports": {
++    ".": "./src/index.ts"
++  },
++  "dependencies": {
++    "@factory/site-core": "workspace:*"
++  }
++}
+diff --git a/packages/ops/src/index.ts b/packages/ops/src/index.ts
+new file mode 100644
+index 0000000..fefac6f
+--- /dev/null
++++ b/packages/ops/src/index.ts
+@@ -0,0 +1,75 @@
++import { mkdirSync, writeFileSync } from 'node:fs';
++import { join } from 'node:path';
++import { listSiteIds, loadSiteContext, validateSiteContext, type SiteContext } from '@factory/site-core';
++
++export type SiteScorecard = {
++  siteId: string;
++  brandName: string;
++  category: string;
++  primaryKeyword: string;
++  domain: string;
++  status: string;
++  defaultLocale: string;
++  enabledLocales: string[];
++  indexableLocales: string[];
++  primaryTool: string;
++  executionModel: string;
++  adsEnabled: boolean;
++  adsProvider: string;
++  ga4: boolean;
++  clarity: boolean;
++  gsc: boolean;
++  bingWebmaster: boolean;
++  indexNow: boolean;
++  p0: number;
++  p1: number;
++  p2: number;
++};
++
++function scorecard(ctx: SiteContext): SiteScorecard {
++  const issues = validateSiteContext(ctx);
++  const locales = Object.entries(ctx.siteConfig.locales);
++  return {
++    siteId: ctx.siteId,
++    brandName: ctx.siteConfig.brandName,
++    category: ctx.siteConfig.category,
++    primaryKeyword: ctx.siteConfig.primaryKeyword,
++    domain: ctx.siteConfig.domains.canonicalHost,
++    status: ctx.siteConfig.lifecycle.status,
++    defaultLocale: ctx.siteConfig.defaultLocale,
++    enabledLocales: locales.filter(([, cfg]) => cfg.enabled).map(([locale]) => locale),
++    indexableLocales: locales.filter(([, cfg]) => cfg.enabled && cfg.indexable && cfg.reviewed).map(([locale]) => locale),
++    primaryTool: ctx.siteConfig.primaryTool,
++    executionModel: ctx.toolConfig.executionModel,
++    adsEnabled: ctx.integrationsConfig.ads.enabled,
++    adsProvider: ctx.integrationsConfig.ads.activeProvider,
++    ga4: ctx.integrationsConfig.analytics.googleAnalytics.enabled,
++    clarity: ctx.integrationsConfig.analytics.microsoftClarity.enabled,
++    gsc: ctx.integrationsConfig.webmaster.googleSearchConsole.enabled,
++    bingWebmaster: ctx.integrationsConfig.webmaster.bingWebmaster.enabled,
++    indexNow: ctx.integrationsConfig.indexing.indexNow.enabled,
++    p0: issues.filter((i) => i.level === 'P0').length,
++    p1: issues.filter((i) => i.level === 'P1').length,
++    p2: issues.filter((i) => i.level === 'P2').length
++  };
++}
++
++export function generatePortfolioReport(workspaceRoot: string) {
++  const cards = listSiteIds(workspaceRoot).map((siteId) => scorecard(loadSiteContext(siteId, workspaceRoot)));
++  const outDir = join(workspaceRoot, '.generated');
++  mkdirSync(outDir, { recursive: true });
++  writeFileSync(join(outDir, 'portfolio.json'), JSON.stringify(cards, null, 2));
++  writeFileSync(join(outDir, 'portfolio.html'), renderHtml(cards));
++  return cards;
++}
++
++function renderHtml(cards: SiteScorecard[]): string {
++  const rows = cards.map((card) => `
++    <tr>
++      <td>${card.siteId}</td><td>${card.domain}</td><td>${card.status}</td><td>${card.primaryTool}</td>
++      <td>${card.enabledLocales.join(', ')}</td><td>${card.indexableLocales.join(', ') || '-'}</td>
++      <td>${card.adsEnabled ? card.adsProvider : 'off'}</td><td>${card.ga4 ? 'yes' : 'no'}</td><td>${card.gsc ? 'yes' : 'no'}</td><td>${card.bingWebmaster ? 'yes' : 'no'}</td><td>${card.indexNow ? 'yes' : 'no'}</td>
++      <td>P0 ${card.p0} / P1 ${card.p1} / P2 ${card.p2}</td>
++    </tr>`).join('');
++  return `<!doctype html><html><head><meta charset="utf-8"><title>SEO Tool Site Factory Portfolio</title><style>body{font-family:system-ui;margin:32px;background:#f7f7f8}table{border-collapse:collapse;background:#fff;width:100%}td,th{border:1px solid #ddd;padding:8px;text-align:left}th{background:#f0f0f0}</style></head><body><h1>Portfolio report</h1><p>Generated ${new Date().toISOString()}</p><table><thead><tr><th>Site</th><th>Domain</th><th>Status</th><th>Tool</th><th>Locales</th><th>Indexable</th><th>Ads</th><th>GA4</th><th>GSC</th><th>Bing</th><th>IndexNow</th><th>Issues</th></tr></thead><tbody>${rows}</tbody></table></body></html>`;
++}
+diff --git a/packages/seo/package.json b/packages/seo/package.json
+new file mode 100644
+index 0000000..0601139
+--- /dev/null
++++ b/packages/seo/package.json
+@@ -0,0 +1,12 @@
++{
++  "name": "@factory/seo",
++  "version": "0.1.0",
++  "private": true,
++  "type": "module",
++  "exports": {
++    ".": "./src/index.ts"
++  },
++  "dependencies": {
++    "@factory/site-core": "workspace:*"
++  }
++}
+diff --git a/packages/seo/src/index.ts b/packages/seo/src/index.ts
+new file mode 100644
+index 0000000..b968692
+--- /dev/null
++++ b/packages/seo/src/index.ts
+@@ -0,0 +1,4 @@
++export * from './urls';
++export * from './metadata';
++export * from './sitemap';
++export * from './robots';
+diff --git a/packages/seo/src/metadata.ts b/packages/seo/src/metadata.ts
+new file mode 100644
+index 0000000..09e7c49
+--- /dev/null
++++ b/packages/seo/src/metadata.ts
+@@ -0,0 +1,62 @@
++import type { ContentDocument, SiteContext } from '@factory/site-core';
++import { getEnabledLocales, getIndexableLocales } from '@factory/site-core';
++import { getBaseUrl, getGuideUrl, getLocaleHomeUrl } from './urls';
++
++type PageInput = {
++  locale: string;
++  page: ContentDocument;
++  pageType: 'home' | 'guide';
++  slug?: string;
++};
++
++export function buildPageSeo(ctx: SiteContext, input: PageInput) {
++  const { locale, page, pageType, slug } = input;
++  const title = page.frontmatter.title || ctx.siteConfig.seo.defaultTitle;
++  const description = page.frontmatter.description || ctx.siteConfig.seo.defaultDescription;
++  const canonical = pageType === 'guide' && slug ? getGuideUrl(ctx, locale, slug) : getLocaleHomeUrl(ctx, locale);
++  const indexableLocales = getIndexableLocales(ctx);
++  const pageIndexAllowed = ctx.siteConfig.lifecycle.status === 'live' && ctx.siteConfig.indexing.allowIndex && page.frontmatter.index && page.frontmatter.contentStatus === 'approved' && indexableLocales.includes(locale);
++  const alternates = getEnabledLocales(ctx).map((altLocale) => ({
++    hreflang: altLocale,
++    href: pageType === 'guide' && slug ? getGuideUrl(ctx, altLocale, slug) : getLocaleHomeUrl(ctx, altLocale)
++  }));
++  alternates.push({ hreflang: 'x-default', href: getLocaleHomeUrl(ctx, ctx.siteConfig.seo.xDefaultLocale ?? ctx.siteConfig.defaultLocale) });
++
++  const jsonLd = pageType === 'guide'
++    ? {
++        '@context': 'https://schema.org',
++        '@type': 'Article',
++        headline: title,
++        description,
++        dateModified: page.frontmatter.lastModified,
++        mainEntityOfPage: canonical
++      }
++    : {
++        '@context': 'https://schema.org',
++        '@type': 'SoftwareApplication',
++        name: ctx.siteConfig.brandName,
++        description,
++        applicationCategory: 'WebApplication',
++        operatingSystem: 'Any',
++        url: canonical
++      };
++
++  return {
++    title,
++    description,
++    canonical,
++    homeUrl: getLocaleHomeUrl(ctx, locale),
++    noindex: !pageIndexAllowed,
++    alternates,
++    jsonLd
++  };
++}
++
++export function buildSiteJsonLd(ctx: SiteContext) {
++  return {
++    '@context': 'https://schema.org',
++    '@type': 'WebSite',
++    name: ctx.siteConfig.brandName,
++    url: getBaseUrl(ctx)
++  };
++}
+diff --git a/packages/seo/src/robots.ts b/packages/seo/src/robots.ts
+new file mode 100644
+index 0000000..62a4941
+--- /dev/null
++++ b/packages/seo/src/robots.ts
+@@ -0,0 +1,14 @@
++import type { SiteContext } from '@factory/site-core';
++import { getBaseUrl } from './urls';
++
++export function generateRobotsTxt(ctx: SiteContext): string {
++  const allowIndex = ctx.siteConfig.lifecycle.status === 'live' && ctx.siteConfig.indexing.allowIndex;
++  const lines = [
++    'User-agent: *',
++    allowIndex ? 'Allow: /' : 'Disallow: /',
++    '',
++    `Sitemap: ${getBaseUrl(ctx)}/sitemap.xml`,
++    ''
++  ];
++  return lines.join('\n');
++}
+diff --git a/packages/seo/src/sitemap.ts b/packages/seo/src/sitemap.ts
+new file mode 100644
+index 0000000..c5d9310
+--- /dev/null
++++ b/packages/seo/src/sitemap.ts
+@@ -0,0 +1,29 @@
++import { getIndexableLocales, listGuideContent, loadHomeContent, type SiteContext } from '@factory/site-core';
++import { getGuideUrl, getLocaleHomeUrl } from './urls';
++
++function escapeXml(value: string): string {
++  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
++}
++
++export async function getSitemapEntries(ctx: SiteContext) {
++  const entries: Array<{ loc: string; lastmod: string }> = [];
++  for (const locale of getIndexableLocales(ctx)) {
++    const home = await loadHomeContent(ctx, locale);
++    if (home.frontmatter.index && home.frontmatter.contentStatus === 'approved') {
++      entries.push({ loc: getLocaleHomeUrl(ctx, locale), lastmod: home.frontmatter.lastModified });
++    }
++    const guides = await listGuideContent(ctx, locale);
++    for (const guide of guides) {
++      if (guide.frontmatter.index && guide.frontmatter.contentStatus === 'approved') {
++        entries.push({ loc: getGuideUrl(ctx, locale, guide.frontmatter.slug), lastmod: guide.frontmatter.lastModified });
++      }
++    }
++  }
++  return entries;
++}
++
++export async function generateSitemapXml(ctx: SiteContext): Promise<string> {
++  const entries = await getSitemapEntries(ctx);
++  const body = entries.map((entry) => `  <url>\n    <loc>${escapeXml(entry.loc)}</loc>\n    <lastmod>${escapeXml(entry.lastmod)}</lastmod>\n  </url>`).join('\n');
++  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`;
++}
+diff --git a/packages/seo/src/urls.ts b/packages/seo/src/urls.ts
+new file mode 100644
+index 0000000..88b6432
+--- /dev/null
++++ b/packages/seo/src/urls.ts
+@@ -0,0 +1,21 @@
++import type { SiteContext } from '@factory/site-core';
++
++export function getBaseUrl(ctx: SiteContext): string {
++  return `https://${ctx.siteConfig.domains.canonicalHost}`;
++}
++
++export function getLocaleHomePath(ctx: SiteContext, locale: string): string {
++  return locale === ctx.siteConfig.defaultLocale ? '/' : `/${locale}/`;
++}
++
++export function getLocaleHomeUrl(ctx: SiteContext, locale: string): string {
++  return new URL(getLocaleHomePath(ctx, locale), getBaseUrl(ctx)).toString();
++}
++
++export function getGuidePath(ctx: SiteContext, locale: string, slug: string): string {
++  return locale === ctx.siteConfig.defaultLocale ? `/guide/${slug}/` : `/${locale}/guide/${slug}/`;
++}
++
++export function getGuideUrl(ctx: SiteContext, locale: string, slug: string): string {
++  return new URL(getGuidePath(ctx, locale, slug), getBaseUrl(ctx)).toString();
++}
+diff --git a/packages/site-core/package.json b/packages/site-core/package.json
+new file mode 100644
+index 0000000..4a76a2a
+--- /dev/null
++++ b/packages/site-core/package.json
+@@ -0,0 +1,15 @@
++{
++  "name": "@factory/site-core",
++  "version": "0.1.0",
++  "private": true,
++  "type": "module",
++  "exports": {
++    ".": "./src/index.ts"
++  },
++  "dependencies": {
++    "gray-matter": "^4.0.3",
++    "marked": "^15.0.0",
++    "yaml": "^2.7.0",
++    "zod": "^3.24.0"
++  }
++}
+diff --git a/packages/site-core/src/content.ts b/packages/site-core/src/content.ts
+new file mode 100644
+index 0000000..75f1817
+--- /dev/null
++++ b/packages/site-core/src/content.ts
+@@ -0,0 +1,65 @@
++import { existsSync, readdirSync, readFileSync } from 'node:fs';
++import { join } from 'node:path';
++import matter from 'gray-matter';
++import { marked } from 'marked';
++import type { ContentDocument, ContentFrontmatter, SiteContext } from './types';
++
++function normalizeFrontmatter(data: Record<string, unknown>, fallbackSlug: string): ContentFrontmatter {
++  const title = String(data.title ?? '').trim();
++  const description = String(data.description ?? '').trim();
++  if (!title) throw new Error(`Content document is missing title for slug ${fallbackSlug}`);
++  if (!description) throw new Error(`Content document is missing description for slug ${fallbackSlug}`);
++  return {
++    ...data,
++    title,
++    description,
++    slug: String(data.slug ?? fallbackSlug),
++    lastModified: String(data.lastModified ?? new Date().toISOString().slice(0, 10)),
++    index: data.index === undefined ? false : Boolean(data.index),
++    contentStatus: (data.contentStatus as ContentFrontmatter['contentStatus']) ?? 'draft'
++  };
++}
++
++async function readContentFile(ctx: SiteContext, locale: string, relPath: string, kind: ContentDocument['kind']): Promise<ContentDocument> {
++  const filePath = join(ctx.siteDir, 'content', locale, relPath);
++  if (!existsSync(filePath)) throw new Error(`Missing content file: ${filePath}`);
++  const parsed = matter(readFileSync(filePath, 'utf8'));
++  const fallbackSlug = relPath.replace(/\.mdx?$/, '').split('/').pop() ?? 'page';
++  const frontmatter = normalizeFrontmatter(parsed.data, fallbackSlug);
++  const html = await marked.parse(parsed.content);
++  return { filePath, locale, kind, frontmatter, body: parsed.content, html };
++}
++
++export function contentExists(ctx: SiteContext, locale: string, relPath: string): boolean {
++  return existsSync(join(ctx.siteDir, 'content', locale, relPath));
++}
++
++export function localeContentDirExists(ctx: SiteContext, locale: string): boolean {
++  return existsSync(join(ctx.siteDir, 'content', locale));
++}
++
++export async function loadHomeContent(ctx: SiteContext, locale: string): Promise<ContentDocument> {
++  return readContentFile(ctx, locale, 'home.mdx', 'home');
++}
++
++export async function loadFaqContent(ctx: SiteContext, locale: string): Promise<ContentDocument | null> {
++  const filePath = join(ctx.siteDir, 'content', locale, 'faq.mdx');
++  if (!existsSync(filePath)) return null;
++  return readContentFile(ctx, locale, 'faq.mdx', 'faq');
++}
++
++export async function listGuideContent(ctx: SiteContext, locale: string): Promise<ContentDocument[]> {
++  const dir = join(ctx.siteDir, 'content', locale, 'guides');
++  if (!existsSync(dir)) return [];
++  const files = readdirSync(dir).filter((file) => file.endsWith('.md') || file.endsWith('.mdx')).sort();
++  const docs = [];
++  for (const file of files) docs.push(await readContentFile(ctx, locale, `guides/${file}`, 'guide'));
++  return docs;
++}
++
++export async function loadGuideContent(ctx: SiteContext, locale: string, slug: string): Promise<ContentDocument> {
++  const guides = await listGuideContent(ctx, locale);
++  const guide = guides.find((doc) => doc.frontmatter.slug === slug);
++  if (!guide) throw new Error(`Guide not found for locale=${locale}, slug=${slug}`);
++  return guide;
++}
+diff --git a/packages/site-core/src/index.ts b/packages/site-core/src/index.ts
+new file mode 100644
+index 0000000..6c9e814
+--- /dev/null
++++ b/packages/site-core/src/index.ts
+@@ -0,0 +1,6 @@
++export * from './types';
++export * from './schema';
++export * from './workspace';
++export * from './load';
++export * from './content';
++export * from './validation';
+diff --git a/packages/site-core/src/load.ts b/packages/site-core/src/load.ts
+new file mode 100644
+index 0000000..e207ad9
+--- /dev/null
++++ b/packages/site-core/src/load.ts
+@@ -0,0 +1,56 @@
++import { existsSync, readdirSync, readFileSync } from 'node:fs';
++import { join } from 'node:path';
++import YAML from 'yaml';
++import { IntegrationsConfigSchema, SiteConfigSchema, ThemeConfigSchema, ToolConfigSchema } from './schema';
++import type { IntegrationsConfig, SiteConfig, SiteContext, ThemeConfig, ToolConfig } from './types';
++import { findWorkspaceRoot } from './workspace';
++
++function readYaml<T>(filePath: string, parser: { parse: (value: unknown) => T }): T {
++  if (!existsSync(filePath)) throw new Error(`Missing YAML file: ${filePath}`);
++  const raw = readFileSync(filePath, 'utf8');
++  const parsed = YAML.parse(raw);
++  return parser.parse(parsed);
++}
++
++export function listSiteIds(workspaceRoot = findWorkspaceRoot()): string[] {
++  const sitesDir = join(workspaceRoot, 'sites');
++  if (!existsSync(sitesDir)) return [];
++  return readdirSync(sitesDir, { withFileTypes: true })
++    .filter((d) => d.isDirectory())
++    .map((d) => d.name)
++    .sort();
++}
++
++export function loadSiteContext(siteId: string, workspaceRoot = findWorkspaceRoot()): SiteContext {
++  const siteDir = join(workspaceRoot, 'sites', siteId);
++  if (!existsSync(siteDir)) throw new Error(`Unknown site: ${siteId}. Expected directory ${siteDir}`);
++  const siteConfig = readYaml<SiteConfig>(join(siteDir, 'site.config.yaml'), SiteConfigSchema);
++  const toolConfig = readYaml<ToolConfig>(join(siteDir, 'tool.config.yaml'), ToolConfigSchema);
++  const themeConfig = readYaml<ThemeConfig>(join(siteDir, 'theme.config.yaml'), ThemeConfigSchema);
++  const integrationsConfig = readYaml<IntegrationsConfig>(join(siteDir, 'integrations.config.yaml'), IntegrationsConfigSchema);
++  if (siteConfig.id !== siteId) {
++    throw new Error(`Site id mismatch: directory is ${siteId}, site.config.yaml id is ${siteConfig.id}`);
++  }
++  return { workspaceRoot, siteId, siteDir, siteConfig, toolConfig, themeConfig, integrationsConfig };
++}
++
++export async function loadSelectedSite(): Promise<SiteContext> {
++  const siteId = process.env.SITE_ID;
++  if (!siteId) throw new Error('SITE_ID is required. Use `pnpm site dev <site-id>` or `pnpm site build <site-id>`.');
++  return loadSiteContext(siteId);
++}
++
++export function getEnabledLocales(ctx: SiteContext): string[] {
++  return Object.entries(ctx.siteConfig.locales).filter(([, cfg]) => cfg.enabled).map(([locale]) => locale);
++}
++
++export function getEnabledNonDefaultLocales(ctx: SiteContext): string[] {
++  return getEnabledLocales(ctx).filter((locale) => locale !== ctx.siteConfig.defaultLocale);
++}
++
++export function getIndexableLocales(ctx: SiteContext): string[] {
++  if (ctx.siteConfig.lifecycle.status !== 'live' || !ctx.siteConfig.indexing.allowIndex) return [];
++  return Object.entries(ctx.siteConfig.locales)
++    .filter(([, cfg]) => cfg.enabled && cfg.indexable && cfg.reviewed)
++    .map(([locale]) => locale);
++}
+diff --git a/packages/site-core/src/schema.ts b/packages/site-core/src/schema.ts
+new file mode 100644
+index 0000000..50e3195
+--- /dev/null
++++ b/packages/site-core/src/schema.ts
+@@ -0,0 +1,154 @@
++import { z } from 'zod';
++
++const LocaleConfigSchema = z.object({
++  enabled: z.boolean().default(true),
++  indexable: z.boolean().default(false),
++  reviewed: z.boolean().default(false)
++});
++
++export const SiteConfigSchema = z.object({
++  schemaVersion: z.number().int().default(1),
++  id: z.string().min(1).regex(/^[a-z0-9][a-z0-9-]*$/),
++  brandName: z.string().min(1),
++  category: z.string().min(1),
++  primaryKeyword: z.string().min(1),
++  lifecycle: z.object({
++    status: z.enum(['draft', 'preview', 'live', 'paused', 'archived']).default('draft')
++  }).default({ status: 'draft' }),
++  domains: z.object({
++    production: z.string().min(1),
++    canonicalHost: z.string().min(1),
++    aliases: z.array(z.string()).default([])
++  }),
++  defaultLocale: z.string().min(2),
++  locales: z.record(LocaleConfigSchema),
++  indexing: z.object({
++    allowIndex: z.boolean().default(false)
++  }).default({ allowIndex: false }),
++  primaryTool: z.string().min(1),
++  seo: z.object({
++    defaultTitle: z.string().min(1),
++    defaultDescription: z.string().min(1),
++    xDefaultLocale: z.string().min(2).optional(),
++    structuredData: z.array(z.string()).default(['WebSite', 'WebPage'])
++  }),
++  deployment: z.object({
++    provider: z.enum(['cloudflare-pages']).default('cloudflare-pages'),
++    projectName: z.string().min(1),
++    outputDir: z.string().min(1).optional()
++  })
++});
++
++export const ToolConfigSchema = z.object({
++  schemaVersion: z.number().int().default(1),
++  toolId: z.string().min(1),
++  executionModel: z.enum(['client-only', 'static-data', 'browser-file-processing', 'external-provider', 'hybrid']),
++  privacy: z.record(z.any()).default({}),
++  analytics: z.object({
++    safeFields: z.array(z.string()).default([])
++  }).default({ safeFields: [] }),
++  options: z.record(z.any()).default({})
++});
++
++export const ThemeConfigSchema = z.object({
++  schemaVersion: z.number().int().default(1),
++  name: z.string().min(1).default('default'),
++  colors: z.object({
++    primary: z.string().default('#2563eb')
++  }).default({ primary: '#2563eb' }),
++  radius: z.string().default('18px'),
++  layout: z.string().default('tool-first'),
++  adLayout: z.object({
++    avoidPrimaryActions: z.boolean().default(true),
++    disableOnToolResultPanel: z.boolean().default(true)
++  }).default({ avoidPrimaryActions: true, disableOnToolResultPanel: true })
++});
++
++const VerificationSchema = z.object({
++  method: z.enum(['none', 'meta', 'html-file', 'xml-file', 'dns', 'import-from-gsc']).default('none'),
++  metaName: z.string().optional(),
++  content: z.string().optional(),
++  fileName: z.string().optional(),
++  fileContent: z.string().optional()
++}).default({ method: 'none' });
++
++export const IntegrationsConfigSchema = z.object({
++  schemaVersion: z.number().int().default(1),
++  consent: z.object({
++    enabled: z.boolean().default(false),
++    googleConsentMode: z.boolean().default(false),
++    clarityConsentMode: z.boolean().default(false)
++  }).default({ enabled: false, googleConsentMode: false, clarityConsentMode: false }),
++  ads: z.object({
++    enabled: z.boolean().default(false),
++    activeProvider: z.enum(['adsense', 'adsterra']).default('adsense'),
++    policy: z.object({
++      allowPopunder: z.boolean().default(false),
++      allowInterstitial: z.boolean().default(false),
++      allowSocialBar: z.boolean().default(false),
++      avoidPrimaryActions: z.boolean().default(true),
++      disableOnToolResultPanel: z.boolean().default(true)
++    }).default({ allowPopunder: false, allowInterstitial: false, allowSocialBar: false, avoidPrimaryActions: true, disableOnToolResultPanel: true }),
++    adsTxt: z.object({
++      enabled: z.boolean().default(false),
++      entries: z.array(z.string()).default([])
++    }).default({ enabled: false, entries: [] }),
++    providers: z.object({
++      adsense: z.object({
++        enabled: z.boolean().default(false),
++        publisherId: z.string().optional(),
++        siteStatus: z.enum(['not_submitted', 'pending_review', 'approved', 'rejected', 'disabled']).default('not_submitted'),
++        autoAds: z.boolean().default(false),
++        verification: VerificationSchema.optional(),
++        slots: z.record(z.object({
++          enabled: z.boolean().default(false),
++          adSlot: z.string().optional(),
++          format: z.string().default('auto')
++        })).default({})
++      }).default({ enabled: false, siteStatus: 'not_submitted', autoAds: false, slots: {} }),
++      adsterra: z.object({
++        enabled: z.boolean().default(false),
++        siteStatus: z.enum(['not_submitted', 'pending_verification', 'verified', 'rejected', 'disabled']).default('not_submitted'),
++        allowedFormats: z.array(z.string()).default(['banner', 'native']),
++        blockedFormats: z.array(z.string()).default(['popunder', 'interstitial', 'social-bar']),
++        placements: z.record(z.object({
++          enabled: z.boolean().default(false),
++          format: z.string(),
++          snippet: z.string().optional()
++        })).default({})
++      }).default({ enabled: false, siteStatus: 'not_submitted', placements: {} })
++    }).default({ adsense: {}, adsterra: {} })
++  }).default({ enabled: false, activeProvider: 'adsense' }),
++  analytics: z.object({
++    googleAnalytics: z.object({
++      enabled: z.boolean().default(false),
++      measurementId: z.string().optional(),
++      trackToolEvents: z.boolean().default(true)
++    }).default({ enabled: false, trackToolEvents: true }),
++    microsoftClarity: z.object({
++      enabled: z.boolean().default(false),
++      projectId: z.string().optional(),
++      consentMode: z.boolean().default(false)
++    }).default({ enabled: false, consentMode: false })
++  }).default({ googleAnalytics: {}, microsoftClarity: {} }),
++  webmaster: z.object({
++    googleSearchConsole: z.object({
++      enabled: z.boolean().default(false),
++      propertyType: z.enum(['url-prefix', 'domain']).default('url-prefix'),
++      verification: VerificationSchema.optional()
++    }).default({ enabled: false, propertyType: 'url-prefix' }),
++    bingWebmaster: z.object({
++      enabled: z.boolean().default(false),
++      verification: VerificationSchema.optional()
++    }).default({ enabled: false })
++  }).default({ googleSearchConsole: {}, bingWebmaster: {} }),
++  indexing: z.object({
++    indexNow: z.object({
++      enabled: z.boolean().default(false),
++      key: z.string().optional(),
++      keyFile: z.string().optional(),
++      submitOnProductionDeploy: z.boolean().default(false),
++      endpoint: z.string().default('https://api.indexnow.org/indexnow')
++    }).default({ enabled: false, submitOnProductionDeploy: false, endpoint: 'https://api.indexnow.org/indexnow' })
++  }).default({ indexNow: {} })
++});
+diff --git a/packages/site-core/src/types.ts b/packages/site-core/src/types.ts
+new file mode 100644
+index 0000000..d4ad3d9
+--- /dev/null
++++ b/packages/site-core/src/types.ts
+@@ -0,0 +1,43 @@
++import type { z } from 'zod';
++import type { SiteConfigSchema, ToolConfigSchema, ThemeConfigSchema, IntegrationsConfigSchema } from './schema';
++
++export type SiteConfig = z.infer<typeof SiteConfigSchema>;
++export type ToolConfig = z.infer<typeof ToolConfigSchema>;
++export type ThemeConfig = z.infer<typeof ThemeConfigSchema>;
++export type IntegrationsConfig = z.infer<typeof IntegrationsConfigSchema>;
++
++export type SiteContext = {
++  workspaceRoot: string;
++  siteId: string;
++  siteDir: string;
++  siteConfig: SiteConfig;
++  toolConfig: ToolConfig;
++  themeConfig: ThemeConfig;
++  integrationsConfig: IntegrationsConfig;
++};
++
++export type ContentFrontmatter = {
++  title: string;
++  description: string;
++  slug: string;
++  lastModified: string;
++  index: boolean;
++  contentStatus?: 'draft' | 'edited' | 'reviewed' | 'localized' | 'approved' | 'archived';
++  [key: string]: unknown;
++};
++
++export type ContentDocument = {
++  filePath: string;
++  locale: string;
++  kind: 'home' | 'faq' | 'guide';
++  frontmatter: ContentFrontmatter;
++  body: string;
++  html: string;
++};
++
++export type ValidationIssue = {
++  level: 'P0' | 'P1' | 'P2';
++  code: string;
++  message: string;
++  file?: string;
++};
+diff --git a/packages/site-core/src/validation.ts b/packages/site-core/src/validation.ts
+new file mode 100644
+index 0000000..c5f659e
+--- /dev/null
++++ b/packages/site-core/src/validation.ts
+@@ -0,0 +1,90 @@
++import { existsSync } from 'node:fs';
++import { join } from 'node:path';
++import type { SiteContext, ValidationIssue } from './types';
++import { contentExists, localeContentDirExists } from './content';
++import { listSiteIds, loadSiteContext } from './load';
++import { findWorkspaceRoot } from './workspace';
++
++export function validateSiteContext(ctx: SiteContext): ValidationIssue[] {
++  const issues: ValidationIssue[] = [];
++  const site = ctx.siteConfig;
++  const tool = ctx.toolConfig;
++  const integrations = ctx.integrationsConfig;
++
++  if (site.primaryTool !== tool.toolId) {
++    issues.push({ level: 'P0', code: 'TOOL_ID_MISMATCH', message: `site.primaryTool (${site.primaryTool}) does not match tool.config.yaml toolId (${tool.toolId}).` });
++  }
++  if (!site.locales[site.defaultLocale]?.enabled) {
++    issues.push({ level: 'P0', code: 'DEFAULT_LOCALE_DISABLED', message: `defaultLocale ${site.defaultLocale} must be enabled.` });
++  }
++  if (!contentExists(ctx, site.defaultLocale, 'home.mdx')) {
++    issues.push({ level: 'P0', code: 'MISSING_HOME_CONTENT', message: `Missing content/${site.defaultLocale}/home.mdx.` });
++  }
++  for (const [locale, cfg] of Object.entries(site.locales)) {
++    if (cfg.enabled && !localeContentDirExists(ctx, locale)) {
++      issues.push({ level: 'P1', code: 'LOCALE_ENABLED_NO_CONTENT_DIR', message: `${locale} is enabled but content/${locale}/ does not exist.` });
++    }
++    if (cfg.indexable && !cfg.reviewed) {
++      issues.push({ level: 'P1', code: 'LOCALE_INDEXABLE_NOT_REVIEWED', message: `${locale} is indexable but reviewed=false.` });
++    }
++  }
++  if (site.lifecycle.status !== 'live' && site.indexing.allowIndex) {
++    issues.push({ level: 'P1', code: 'INDEXING_ENABLED_WHILE_NOT_LIVE', message: `allowIndex=true but lifecycle.status=${site.lifecycle.status}. Draft/preview sites should usually remain noindex.` });
++  }
++  if (integrations.ads.enabled && site.lifecycle.status !== 'live') {
++    issues.push({ level: 'P1', code: 'ADS_ENABLED_WHILE_NOT_LIVE', message: `ads.enabled=true but lifecycle.status=${site.lifecycle.status}.` });
++  }
++  if (integrations.ads.enabled && integrations.ads.activeProvider === 'adsense') {
++    const adsense = integrations.ads.providers.adsense;
++    if (!adsense.enabled) issues.push({ level: 'P0', code: 'ADSENSE_ACTIVE_BUT_DISABLED', message: 'ads.activeProvider=adsense but adsense.enabled=false.' });
++    if (!adsense.publisherId) issues.push({ level: 'P0', code: 'ADSENSE_MISSING_PUBLISHER_ID', message: 'AdSense publisherId is required when AdSense is active.' });
++  }
++  if (integrations.ads.enabled && integrations.ads.activeProvider === 'adsterra') {
++    const adsterra = integrations.ads.providers.adsterra;
++    if (!adsterra.enabled) issues.push({ level: 'P0', code: 'ADSTERRA_ACTIVE_BUT_DISABLED', message: 'ads.activeProvider=adsterra but adsterra.enabled=false.' });
++  }
++  if (integrations.analytics.googleAnalytics.enabled && !integrations.analytics.googleAnalytics.measurementId) {
++    issues.push({ level: 'P0', code: 'GA4_MISSING_MEASUREMENT_ID', message: 'Google Analytics is enabled but measurementId is missing.' });
++  }
++  if (integrations.analytics.microsoftClarity.enabled && !integrations.analytics.microsoftClarity.projectId) {
++    issues.push({ level: 'P0', code: 'CLARITY_MISSING_PROJECT_ID', message: 'Microsoft Clarity is enabled but projectId is missing.' });
++  }
++  if (integrations.indexing.indexNow.enabled) {
++    if (!integrations.indexing.indexNow.key) issues.push({ level: 'P0', code: 'INDEXNOW_MISSING_KEY', message: 'IndexNow is enabled but key is missing.' });
++    if (!integrations.indexing.indexNow.keyFile) issues.push({ level: 'P0', code: 'INDEXNOW_MISSING_KEY_FILE', message: 'IndexNow is enabled but keyFile is missing.' });
++  }
++  for (const [placement, cfg] of Object.entries(integrations.ads.providers.adsterra.placements ?? {})) {
++    if (cfg.enabled && cfg.snippet) {
++      const snippetPath = join(ctx.siteDir, cfg.snippet);
++      if (!existsSync(snippetPath)) {
++        issues.push({ level: 'P0', code: 'ADSTERRA_SNIPPET_MISSING', message: `Adsterra placement ${placement} references missing snippet ${cfg.snippet}.` });
++      }
++    }
++  }
++  return issues;
++}
++
++export function validateAllSites(workspaceRoot = findWorkspaceRoot()): Map<string, ValidationIssue[]> {
++  const result = new Map<string, ValidationIssue[]>();
++  const domainOwner = new Map<string, string>();
++  for (const siteId of listSiteIds(workspaceRoot)) {
++    const ctx = loadSiteContext(siteId, workspaceRoot);
++    const issues = validateSiteContext(ctx);
++    const domains = [ctx.siteConfig.domains.production, ctx.siteConfig.domains.canonicalHost, ...ctx.siteConfig.domains.aliases].filter(Boolean);
++    for (const domain of domains) {
++      const normalized = domain.toLowerCase();
++      const owner = domainOwner.get(normalized);
++      if (owner && owner !== siteId) {
++        issues.push({ level: 'P0', code: 'DUPLICATE_DOMAIN', message: `Domain ${domain} is used by both ${owner} and ${siteId}.` });
++      } else {
++        domainOwner.set(normalized, siteId);
++      }
++    }
++    result.set(siteId, issues);
++  }
++  return result;
++}
++
++export function hasBlockingIssues(issues: ValidationIssue[]): boolean {
++  return issues.some((issue) => issue.level === 'P0');
++}
+diff --git a/packages/site-core/src/workspace.ts b/packages/site-core/src/workspace.ts
+new file mode 100644
+index 0000000..467e345
+--- /dev/null
++++ b/packages/site-core/src/workspace.ts
+@@ -0,0 +1,13 @@
++import { existsSync } from 'node:fs';
++import { dirname, join, resolve } from 'node:path';
++
++export function findWorkspaceRoot(start = process.env.FACTORY_ROOT ?? process.cwd()): string {
++  let dir = resolve(start);
++  while (true) {
++    if (existsSync(join(dir, 'pnpm-workspace.yaml')) && existsSync(join(dir, 'sites'))) return dir;
++    const parent = dirname(dir);
++    if (parent === dir) break;
++    dir = parent;
++  }
++  throw new Error(`Unable to find workspace root from ${start}. Set FACTORY_ROOT to the repository root.`);
++}
+diff --git a/packages/tools/image-converter/package.json b/packages/tools/image-converter/package.json
+new file mode 100644
+index 0000000..5088ae5
+--- /dev/null
++++ b/packages/tools/image-converter/package.json
+@@ -0,0 +1,9 @@
++{
++  "name": "@factory/image-converter",
++  "version": "0.1.0",
++  "private": true,
++  "type": "module",
++  "exports": {
++    ".": "./src/index.ts"
++  }
++}
+diff --git a/packages/tools/image-converter/src/index.ts b/packages/tools/image-converter/src/index.ts
+new file mode 100644
+index 0000000..7cbfc0f
+--- /dev/null
++++ b/packages/tools/image-converter/src/index.ts
+@@ -0,0 +1,35 @@
++export type FileValidationOptions = {
++  maxFileSizeMb: number;
++  acceptedInputTypes: string[];
++};
++
++export type FileValidationResult =
++  | { ok: true }
++  | { ok: false; reason: string; message: string };
++
++export function validateImageFile(file: File, options: FileValidationOptions): FileValidationResult {
++  if (!options.acceptedInputTypes.includes(file.type)) {
++    return { ok: false, reason: 'unsupported_type', message: `Unsupported file type: ${file.type || 'unknown'}.` };
++  }
++  const maxBytes = options.maxFileSizeMb * 1024 * 1024;
++  if (file.size > maxBytes) {
++    return { ok: false, reason: 'file_too_large', message: `File is too large. Maximum size is ${options.maxFileSizeMb} MB.` };
++  }
++  return { ok: true };
++}
++
++export async function convertImageToPng(file: File): Promise<{ blob: Blob; url: string; filename: string }> {
++  const bitmap = await createImageBitmap(file);
++  const canvas = document.createElement('canvas');
++  canvas.width = bitmap.width;
++  canvas.height = bitmap.height;
++  const context = canvas.getContext('2d');
++  if (!context) throw new Error('Canvas is not available in this browser.');
++  context.drawImage(bitmap, 0, 0);
++  const blob = await new Promise<Blob>((resolve, reject) => {
++    canvas.toBlob((value) => value ? resolve(value) : reject(new Error('Could not create PNG output.')), 'image/png');
++  });
++  const url = URL.createObjectURL(blob);
++  const filename = file.name.replace(/\.[^.]+$/, '') + '.png';
++  return { blob, url, filename };
++}
+diff --git a/packages/tools/typing-engine/package.json b/packages/tools/typing-engine/package.json
+new file mode 100644
+index 0000000..c6d5f1d
+--- /dev/null
++++ b/packages/tools/typing-engine/package.json
+@@ -0,0 +1,9 @@
++{
++  "name": "@factory/typing-engine",
++  "version": "0.1.0",
++  "private": true,
++  "type": "module",
++  "exports": {
++    ".": "./src/index.ts"
++  }
++}
+diff --git a/packages/tools/typing-engine/src/index.ts b/packages/tools/typing-engine/src/index.ts
+new file mode 100644
+index 0000000..f6b265e
+--- /dev/null
++++ b/packages/tools/typing-engine/src/index.ts
+@@ -0,0 +1,29 @@
++export type TypingResultInput = {
++  prompt: string;
++  typed: string;
++  elapsedSeconds: number;
++};
++
++export type TypingResult = {
++  wpm: number;
++  cpm: number;
++  accuracy: number;
++  correctChars: number;
++  incorrectChars: number;
++  errors: number;
++};
++
++export function calculateTypingResult(input: TypingResultInput): TypingResult {
++  const elapsedMinutes = Math.max(input.elapsedSeconds, 1) / 60;
++  let correctChars = 0;
++  let incorrectChars = 0;
++  const max = input.typed.length;
++  for (let i = 0; i < max; i++) {
++    if (input.typed[i] === input.prompt[i]) correctChars++;
++    else incorrectChars++;
++  }
++  const wpm = Math.round((correctChars / 5) / elapsedMinutes);
++  const cpm = Math.round(correctChars / elapsedMinutes);
++  const accuracy = input.typed.length === 0 ? 100 : Math.max(0, Math.round((correctChars / input.typed.length) * 100));
++  return { wpm, cpm, accuracy, correctChars, incorrectChars, errors: incorrectChars };
++}
+diff --git a/pnpm-workspace.yaml b/pnpm-workspace.yaml
+new file mode 100644
+index 0000000..4a2678d
+--- /dev/null
++++ b/pnpm-workspace.yaml
+@@ -0,0 +1,4 @@
++packages:
++  - "apps/*"
++  - "packages/*"
++  - "packages/tools/*"
+diff --git a/scripts/ops.ts b/scripts/ops.ts
+new file mode 100644
+index 0000000..77f9710
+--- /dev/null
++++ b/scripts/ops.ts
+@@ -0,0 +1,14 @@
++#!/usr/bin/env tsx
++import { generatePortfolioReport } from '@factory/ops';
++import { findWorkspaceRoot } from '@factory/site-core';
++
++const command = process.argv[2] ?? 'report';
++const workspaceRoot = findWorkspaceRoot();
++
++if (command !== 'report' && command !== 'dashboard') {
++  console.log('Usage: pnpm ops report');
++  process.exit(1);
++}
++
++const cards = generatePortfolioReport(workspaceRoot);
++console.log(`Generated .generated/portfolio.json and .generated/portfolio.html for ${cards.length} site(s).`);
+diff --git a/scripts/site.ts b/scripts/site.ts
+new file mode 100644
+index 0000000..60f5067
+--- /dev/null
++++ b/scripts/site.ts
+@@ -0,0 +1,185 @@
++#!/usr/bin/env tsx
++import { spawnSync } from 'node:child_process';
++import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
++import { join } from 'node:path';
++import { prepareGeneratedPublicFiles, submitIndexNow, verifyOnlineIntegrations } from '@factory/integrations';
++import { findWorkspaceRoot, hasBlockingIssues, listSiteIds, loadSiteContext, validateAllSites, validateSiteContext } from '@factory/site-core';
++
++const workspaceRoot = findWorkspaceRoot();
++const [command, maybeSiteId, ...args] = process.argv.slice(2);
++
++function usage() {
++  console.log(`Usage:
++  pnpm site list
++  pnpm site create <site-id> --category <category> --tool <tool-id> --default-locale <locale>
++  pnpm site check <site-id>|--all
++  pnpm site check-integrations <site-id>
++  pnpm site dev <site-id>
++  pnpm site build <site-id>
++  pnpm site preview <site-id>
++  pnpm site deploy <site-id> --preview|--production
++  pnpm site verify <site-id>
++  pnpm site verify-integrations <site-id>
++  pnpm site submit-indexnow <site-id>
++`);
++}
++
++function run(cmd: string, cmdArgs: string[], env: Record<string, string> = {}) {
++  const result = spawnSync(cmd, cmdArgs, {
++    cwd: workspaceRoot,
++    stdio: 'inherit',
++    shell: process.platform === 'win32',
++    env: { ...process.env, FACTORY_ROOT: workspaceRoot, ...env }
++  });
++  if (result.status !== 0) process.exit(result.status ?? 1);
++}
++
++function requireSiteId(): string {
++  if (!maybeSiteId || maybeSiteId.startsWith('--')) {
++    usage();
++    process.exit(1);
++  }
++  return maybeSiteId;
++}
++
++function prepare(siteId: string) {
++  const ctx = loadSiteContext(siteId, workspaceRoot);
++  const appPublicDir = join(workspaceRoot, 'apps', 'site', 'public');
++  const files = prepareGeneratedPublicFiles(ctx, appPublicDir);
++  if (files.length) console.log(`Generated public files for ${siteId}: ${files.join(', ')}`);
++  return ctx;
++}
++
++function printIssues(siteId: string, issues: ReturnType<typeof validateSiteContext>) {
++  const p0 = issues.filter((i) => i.level === 'P0').length;
++  const p1 = issues.filter((i) => i.level === 'P1').length;
++  const p2 = issues.filter((i) => i.level === 'P2').length;
++  console.log(`\n${siteId}: P0=${p0}, P1=${p1}, P2=${p2}`);
++  for (const issue of issues) console.log(`  [${issue.level}] ${issue.code}: ${issue.message}`);
++}
++
++switch (command) {
++  case 'list': {
++    for (const siteId of listSiteIds(workspaceRoot)) {
++      const ctx = loadSiteContext(siteId, workspaceRoot);
++      console.log(`${siteId}\t${ctx.siteConfig.domains.canonicalHost}\t${ctx.siteConfig.lifecycle.status}\t${ctx.siteConfig.primaryTool}`);
++    }
++    break;
++  }
++  case 'create': {
++    const siteId = requireSiteId();
++    createSite(siteId, args);
++    break;
++  }
++  case 'check': {
++    if (maybeSiteId === '--all') {
++      let failed = false;
++      for (const [siteId, issues] of validateAllSites(workspaceRoot)) {
++        printIssues(siteId, issues);
++        if (hasBlockingIssues(issues)) failed = true;
++      }
++      if (failed) process.exit(1);
++      break;
++    }
++    const siteId = requireSiteId();
++    const ctx = loadSiteContext(siteId, workspaceRoot);
++    const issues = validateSiteContext(ctx);
++    printIssues(siteId, issues);
++    if (hasBlockingIssues(issues)) process.exit(1);
++    break;
++  }
++  case 'check-integrations': {
++    const siteId = requireSiteId();
++    const ctx = loadSiteContext(siteId, workspaceRoot);
++    console.log(JSON.stringify(ctx.integrationsConfig, null, 2));
++    const issues = validateSiteContext(ctx).filter((issue) => issue.code.includes('ADS') || issue.code.includes('GA') || issue.code.includes('CLARITY') || issue.code.includes('INDEXNOW'));
++    printIssues(siteId, issues);
++    if (hasBlockingIssues(issues)) process.exit(1);
++    break;
++  }
++  case 'dev': {
++    const siteId = requireSiteId();
++    prepare(siteId);
++    run('pnpm', ['--filter', '@factory/site', 'dev'], { SITE_ID: siteId });
++    break;
++  }
++  case 'build': {
++    const siteId = requireSiteId();
++    const ctx = prepare(siteId);
++    const issues = validateSiteContext(ctx);
++    printIssues(siteId, issues);
++    if (hasBlockingIssues(issues)) process.exit(1);
++    run('pnpm', ['--filter', '@factory/site', 'build'], { SITE_ID: siteId });
++    break;
++  }
++  case 'preview': {
++    const siteId = requireSiteId();
++    run('pnpm', ['--filter', '@factory/site', 'preview'], { SITE_ID: siteId });
++    break;
++  }
++  case 'deploy': {
++    const siteId = requireSiteId();
++    const production = args.includes('--production');
++    const preview = args.includes('--preview');
++    if (!production && !preview) throw new Error('Pass --preview or --production.');
++    const ctx = prepare(siteId);
++    const issues = validateSiteContext(ctx);
++    printIssues(siteId, issues);
++    if (hasBlockingIssues(issues)) process.exit(1);
++    run('pnpm', ['--filter', '@factory/site', 'build'], { SITE_ID: siteId });
++    const outputDir = join('dist', 'sites', siteId);
++    const branch = production ? 'main' : 'preview';
++    run('pnpm', ['exec', 'wrangler', 'pages', 'deploy', outputDir, '--project-name', ctx.siteConfig.deployment.projectName, '--branch', branch], { SITE_ID: siteId });
++    break;
++  }
++  case 'verify':
++  case 'verify-integrations': {
++    const siteId = requireSiteId();
++    const ctx = loadSiteContext(siteId, workspaceRoot);
++    const results = await verifyOnlineIntegrations(ctx);
++    for (const result of results) console.log(`${result.ok ? '✓' : '✗'} ${result.label}: ${result.message}`);
++    if (results.some((r) => !r.ok)) process.exit(1);
++    break;
++  }
++  case 'submit-indexnow': {
++    const siteId = requireSiteId();
++    const ctx = loadSiteContext(siteId, workspaceRoot);
++    const result = await submitIndexNow(ctx);
++    console.log(`${result.ok ? '✓' : '✗'} HTTP ${result.status}: ${result.message}`);
++    if (!result.ok) process.exit(1);
++    break;
++  }
++  default:
++    usage();
++    process.exit(command ? 1 : 0);
++}
++
++function argValue(name: string, fallback = ''): string {
++  const index = args.indexOf(name);
++  return index >= 0 ? args[index + 1] ?? fallback : fallback;
++}
++
++function createSite(siteId: string, createArgs: string[]) {
++  const category = argValue('--category', 'generator');
++  const tool = argValue('--tool', siteId);
++  const locale = argValue('--default-locale', 'en');
++  const siteDir = join(workspaceRoot, 'sites', siteId);
++  if (existsSync(siteDir)) throw new Error(`Site already exists: ${siteDir}`);
++  mkdirSync(join(siteDir, 'content', locale, 'guides'), { recursive: true });
++  mkdirSync(join(siteDir, 'messages'), { recursive: true });
++  mkdirSync(join(siteDir, 'static'), { recursive: true });
++  mkdirSync(join(siteDir, 'snippets', 'ads'), { recursive: true });
++  writeFileSync(join(siteDir, 'brief.yaml'), `schemaVersion: 1\nprimaryKeyword: ${siteId.replaceAll('-', ' ')}\ncategory: ${category}\nintent:\n  userJob: \"Describe the user's job here.\"\nproductBoundary:\n  thisSiteIs: []\n  thisSiteIsNot: []\n`);
++  writeFileSync(join(siteDir, 'site.config.yaml'), `schemaVersion: 1\nid: ${siteId}\nbrandName: ${title(siteId)}\ncategory: ${category}\nprimaryKeyword: ${siteId.replaceAll('-', ' ')}\nlifecycle:\n  status: draft\ndomains:\n  production: example.com\n  canonicalHost: example.com\n  aliases: []\ndefaultLocale: ${locale}\nlocales:\n  ${locale}:\n    enabled: true\n    indexable: false\n    reviewed: false\nindexing:\n  allowIndex: false\nprimaryTool: ${tool}\nseo:\n  defaultTitle: ${title(siteId)}\n  defaultDescription: ${title(siteId)} online tool.\n  xDefaultLocale: ${locale}\n  structuredData:\n    - WebSite\n    - WebPage\ndeployment:\n  provider: cloudflare-pages\n  projectName: seo-tool-${siteId}\n  outputDir: dist/sites/${siteId}\n`);
++  writeFileSync(join(siteDir, 'tool.config.yaml'), `schemaVersion: 1\ntoolId: ${tool}\nexecutionModel: client-only\nprivacy:\n  storesUserInput: false\nanalytics:\n  safeFields:\n    - locale\noptions: {}\n`);
++  writeFileSync(join(siteDir, 'theme.config.yaml'), `schemaVersion: 1\nname: ${siteId}\ncolors:\n  primary: \"#2563eb\"\nradius: 18px\nlayout: tool-first\nadLayout:\n  avoidPrimaryActions: true\n  disableOnToolResultPanel: true\n`);
++  writeFileSync(join(siteDir, 'integrations.config.yaml'), `schemaVersion: 1\nconsent:\n  enabled: false\n  googleConsentMode: false\n  clarityConsentMode: false\nads:\n  enabled: false\n  activeProvider: adsense\n  adsTxt:\n    enabled: false\n    entries: []\n  providers:\n    adsense:\n      enabled: false\n      publisherId: \"\"\n      slots: {}\n    adsterra:\n      enabled: false\n      placements: {}\nanalytics:\n  googleAnalytics:\n    enabled: false\n  microsoftClarity:\n    enabled: false\nwebmaster:\n  googleSearchConsole:\n    enabled: false\n  bingWebmaster:\n    enabled: false\nindexing:\n  indexNow:\n    enabled: false\n`);
++  writeFileSync(join(siteDir, 'content', locale, 'home.mdx'), `---\ntitle: \"${title(siteId)}\"\ndescription: \"Use this online tool for ${siteId.replaceAll('-', ' ')}.\"\nslug: \"${siteId}\"\nlastModified: \"${new Date().toISOString().slice(0, 10)}\"\nindex: false\ncontentStatus: draft\n---\n\n## About this tool\n\nDescribe what the tool does and add real examples before enabling indexing.\n`);
++  writeFileSync(join(siteDir, 'content', locale, 'faq.mdx'), `---\ntitle: \"${title(siteId)} FAQ\"\ndescription: \"Frequently asked questions about ${siteId.replaceAll('-', ' ')}.\"\nslug: \"faq\"\nlastModified: \"${new Date().toISOString().slice(0, 10)}\"\nindex: false\ncontentStatus: draft\n---\n\n## FAQ\n\n### Is this tool free?\n\nYes. Update this FAQ with accurate site-specific answers.\n`);
++  writeFileSync(join(siteDir, 'messages', `${locale}.yaml`), `tool:\n  start: Start\n`);
++  console.log(`Created site pack: sites/${siteId}`);
++}
++
++function title(value: string) {
++  return value.split('-').map((part) => part.slice(0, 1).toUpperCase() + part.slice(1)).join(' ');
++}
+diff --git a/sites/convert-image-to-png/brief.yaml b/sites/convert-image-to-png/brief.yaml
+new file mode 100644
+index 0000000..fd53ab8
+--- /dev/null
++++ b/sites/convert-image-to-png/brief.yaml
+@@ -0,0 +1,17 @@
++schemaVersion: 1
++primaryKeyword: convert image to png
++category: converter
++keywordCluster:
++  - image to png
++  - jpg to png
++  - webp to png
++intent:
++  userJob: Convert a common image file into PNG format.
++  expectedAction: Select an image and download a PNG output.
++productBoundary:
++  thisSiteIs:
++    - a browser-based image-to-PNG converter
++    - a privacy-friendly file conversion tool
++  thisSiteIsNot:
++    - a full image editor
++    - a server-side batch conversion service
+diff --git a/sites/convert-image-to-png/content/en/faq.mdx b/sites/convert-image-to-png/content/en/faq.mdx
+new file mode 100644
+index 0000000..4aa2276
+--- /dev/null
++++ b/sites/convert-image-to-png/content/en/faq.mdx
+@@ -0,0 +1,22 @@
++---
++title: "Convert Image to PNG FAQ"
++description: "Common questions about converting images to PNG in the browser."
++slug: "faq"
++lastModified: "2026-04-28"
++index: false
++contentStatus: draft
++---
++
++## Frequently asked questions
++
++### Does this tool upload my image?
++
++No. The v1 converter uses browser APIs to create the PNG output locally.
++
++### What image types are supported?
++
++The initial version supports JPG, PNG, and WebP files.
++
++### Why use PNG?
++
++PNG is useful when you need a lossless image format or when transparency matters.
+diff --git a/sites/convert-image-to-png/content/en/guides/jpg-vs-png.mdx b/sites/convert-image-to-png/content/en/guides/jpg-vs-png.mdx
+new file mode 100644
+index 0000000..0eedc6d
+--- /dev/null
++++ b/sites/convert-image-to-png/content/en/guides/jpg-vs-png.mdx
+@@ -0,0 +1,14 @@
++---
++title: "JPG vs PNG: Which Format Should You Use?"
++description: "A quick guide to choosing between JPG and PNG for common image tasks."
++slug: "jpg-vs-png"
++lastModified: "2026-04-28"
++index: false
++contentStatus: draft
++---
++
++## JPG vs PNG
++
++JPG is usually smaller and works well for photos. PNG is lossless and better when you need crisp edges, screenshots, icons, or transparent backgrounds.
++
++Use the converter on this site when you need a PNG output from a common browser-supported image file.
+diff --git a/sites/convert-image-to-png/content/en/home.mdx b/sites/convert-image-to-png/content/en/home.mdx
+new file mode 100644
+index 0000000..a84e545
+--- /dev/null
++++ b/sites/convert-image-to-png/content/en/home.mdx
+@@ -0,0 +1,20 @@
++---
++title: "Convert Image to PNG"
++description: "Convert JPG, PNG, and WebP images to PNG directly in your browser with a simple privacy-friendly tool."
++slug: "convert-image-to-png"
++lastModified: "2026-04-28"
++index: false
++contentStatus: draft
++---
++
++## Convert an image to PNG
++
++This tool converts common image files to PNG format in your browser. Choose an image, wait for the conversion, and download the PNG result.
++
++## Supported formats
++
++The v1 browser converter supports JPG, PNG, and WebP input. HEIC and advanced batch processing can be added later if needed.
++
++## Privacy note
++
++The v1 conversion is client-side. Your selected image is not uploaded by this tool.
+diff --git a/sites/convert-image-to-png/integrations.config.yaml b/sites/convert-image-to-png/integrations.config.yaml
+new file mode 100644
+index 0000000..66e46b3
+--- /dev/null
++++ b/sites/convert-image-to-png/integrations.config.yaml
+@@ -0,0 +1,66 @@
++schemaVersion: 1
++consent:
++  enabled: false
++  googleConsentMode: false
++  clarityConsentMode: false
++ads:
++  enabled: false
++  activeProvider: adsense
++  policy:
++    allowPopunder: false
++    allowInterstitial: false
++    allowSocialBar: false
++    avoidPrimaryActions: true
++    disableOnToolResultPanel: true
++  adsTxt:
++    enabled: false
++    entries: []
++  providers:
++    adsense:
++      enabled: false
++      publisherId: ""
++      siteStatus: not_submitted
++      autoAds: false
++      verification:
++        method: none
++      slots:
++        afterTool:
++          enabled: false
++          adSlot: ""
++          format: auto
++    adsterra:
++      enabled: false
++      siteStatus: not_submitted
++      allowedFormats:
++        - banner
++        - native
++      blockedFormats:
++        - popunder
++        - interstitial
++        - social-bar
++      placements: {}
++analytics:
++  googleAnalytics:
++    enabled: false
++    measurementId: ""
++    trackToolEvents: true
++  microsoftClarity:
++    enabled: false
++    projectId: ""
++    consentMode: false
++webmaster:
++  googleSearchConsole:
++    enabled: false
++    propertyType: url-prefix
++    verification:
++      method: none
++  bingWebmaster:
++    enabled: false
++    verification:
++      method: import-from-gsc
++indexing:
++  indexNow:
++    enabled: false
++    key: ""
++    keyFile: ""
++    submitOnProductionDeploy: false
+diff --git a/sites/convert-image-to-png/messages/en.yaml b/sites/convert-image-to-png/messages/en.yaml
+new file mode 100644
+index 0000000..833c07b
+--- /dev/null
++++ b/sites/convert-image-to-png/messages/en.yaml
+@@ -0,0 +1,3 @@
++tool:
++  chooseImage: Choose image
++  download: Download PNG
+diff --git a/sites/convert-image-to-png/site.config.yaml b/sites/convert-image-to-png/site.config.yaml
+new file mode 100644
+index 0000000..999c242
+--- /dev/null
++++ b/sites/convert-image-to-png/site.config.yaml
+@@ -0,0 +1,33 @@
++schemaVersion: 1
++id: convert-image-to-png
++brandName: PNG Convert
++category: converter
++primaryKeyword: convert image to png
++lifecycle:
++  status: draft
++domains:
++  production: convertimagetopng.example.com
++  canonicalHost: convertimagetopng.example.com
++  aliases:
++    - www.convertimagetopng.example.com
++defaultLocale: en
++locales:
++  en:
++    enabled: true
++    indexable: false
++    reviewed: false
++indexing:
++  allowIndex: false
++primaryTool: convert-image-to-png
++seo:
++  defaultTitle: Convert Image to PNG
++  defaultDescription: Convert JPG, PNG, and WebP images to PNG in your browser.
++  xDefaultLocale: en
++  structuredData:
++    - WebSite
++    - WebPage
++    - SoftwareApplication
++deployment:
++  provider: cloudflare-pages
++  projectName: seo-tool-convert-image-to-png
++  outputDir: dist/sites/convert-image-to-png
+diff --git a/sites/convert-image-to-png/theme.config.yaml b/sites/convert-image-to-png/theme.config.yaml
+new file mode 100644
+index 0000000..ca39734
+--- /dev/null
++++ b/sites/convert-image-to-png/theme.config.yaml
+@@ -0,0 +1,9 @@
++schemaVersion: 1
++name: pngconvert
++colors:
++  primary: "#059669"
++radius: 20px
++layout: tool-first
++adLayout:
++  avoidPrimaryActions: true
++  disableOnToolResultPanel: true
+diff --git a/sites/convert-image-to-png/tool.config.yaml b/sites/convert-image-to-png/tool.config.yaml
+new file mode 100644
+index 0000000..7060e5d
+--- /dev/null
++++ b/sites/convert-image-to-png/tool.config.yaml
+@@ -0,0 +1,20 @@
++schemaVersion: 1
++toolId: convert-image-to-png
++executionModel: browser-file-processing
++privacy:
++  uploadsToServer: false
++  storesFiles: false
++analytics:
++  safeFields:
++    - locale
++    - inputMimeType
++    - fileSizeBucket
++    - success
++options:
++  acceptedInputTypes:
++    - image/jpeg
++    - image/png
++    - image/webp
++  outputType: image/png
++  maxFileSizeMb: 10
++  batchUpload: false
+diff --git a/sites/typing-speed-test/brief.yaml b/sites/typing-speed-test/brief.yaml
+new file mode 100644
+index 0000000..fd8c8c4
+--- /dev/null
++++ b/sites/typing-speed-test/brief.yaml
+@@ -0,0 +1,18 @@
++schemaVersion: 1
++primaryKeyword: typing speed test
++category: tester
++keywordCluster:
++  - typing test
++  - wpm test
++  - typing speed test online
++intent:
++  userJob: Measure typing speed and accuracy quickly.
++  expectedAction: Complete a timed typing test and read WPM/accuracy results.
++productBoundary:
++  thisSiteIs:
++    - timed WPM measurement
++    - simple accuracy feedback
++  thisSiteIsNot:
++    - a full typing course
++    - a paragraph practice library
++    - a certificate platform
+diff --git a/sites/typing-speed-test/content/en/faq.mdx b/sites/typing-speed-test/content/en/faq.mdx
+new file mode 100644
+index 0000000..3ee3903
+--- /dev/null
++++ b/sites/typing-speed-test/content/en/faq.mdx
+@@ -0,0 +1,22 @@
++---
++title: "Typing Speed Test FAQ"
++description: "Common questions about WPM, typing accuracy, and online typing tests."
++slug: "faq"
++lastModified: "2026-04-28"
++index: false
++contentStatus: draft
++---
++
++## Frequently asked questions
++
++### What is WPM?
++
++WPM means words per minute. A common typing-test convention treats five characters as one word.
++
++### Is accuracy more important than speed?
++
++Accuracy matters first. Fast typing with many mistakes is less useful than steady typing with fewer corrections.
++
++### Does this tool upload what I type?
++
++No. The v1 tool calculates results in your browser and avoids sending the full typed text to analytics.
+diff --git a/sites/typing-speed-test/content/en/guides/average-typing-speed.mdx b/sites/typing-speed-test/content/en/guides/average-typing-speed.mdx
+new file mode 100644
+index 0000000..1689475
+--- /dev/null
++++ b/sites/typing-speed-test/content/en/guides/average-typing-speed.mdx
+@@ -0,0 +1,14 @@
++---
++title: "What Is a Good Typing Speed?"
++description: "A practical guide to understanding WPM ranges and typing accuracy."
++slug: "average-typing-speed"
++lastModified: "2026-04-28"
++index: false
++contentStatus: draft
++---
++
++## What is a good typing speed?
++
++A good typing speed depends on the task. For casual writing, consistency and accuracy often matter more than a high WPM score. For transcription, data entry, or timed work, speed becomes more important.
++
++Use the typing test on this site to track your own baseline and focus on gradual improvement.
+diff --git a/sites/typing-speed-test/content/en/home.mdx b/sites/typing-speed-test/content/en/home.mdx
+new file mode 100644
+index 0000000..0d15882
+--- /dev/null
++++ b/sites/typing-speed-test/content/en/home.mdx
+@@ -0,0 +1,23 @@
++---
++title: "Typing Speed Test"
++description: "Test your typing speed online and measure WPM, CPM, accuracy, and errors in a clean browser-based tool."
++slug: "typing-speed-test"
++lastModified: "2026-04-28"
++index: false
++contentStatus: draft
++---
++
++## Test your typing speed online
++
++Use this typing speed test to measure how many words per minute you can type while keeping track of accuracy and mistakes. The test runs in your browser and is designed to stay focused on the core task: type the prompt, finish the timer, and review your result.
++
++## What the results mean
++
++- **WPM** estimates words per minute using the standard five-character word convention.
++- **CPM** measures correct characters per minute.
++- **Accuracy** compares correct characters with the text you typed.
++- **Errors** show how many typed characters did not match the prompt.
++
++## Privacy note
++
++This v1 typing test runs locally in the browser. It does not send the full typed text to analytics or to a server.
+diff --git a/sites/typing-speed-test/integrations.config.yaml b/sites/typing-speed-test/integrations.config.yaml
+new file mode 100644
+index 0000000..66e46b3
+--- /dev/null
++++ b/sites/typing-speed-test/integrations.config.yaml
+@@ -0,0 +1,66 @@
++schemaVersion: 1
++consent:
++  enabled: false
++  googleConsentMode: false
++  clarityConsentMode: false
++ads:
++  enabled: false
++  activeProvider: adsense
++  policy:
++    allowPopunder: false
++    allowInterstitial: false
++    allowSocialBar: false
++    avoidPrimaryActions: true
++    disableOnToolResultPanel: true
++  adsTxt:
++    enabled: false
++    entries: []
++  providers:
++    adsense:
++      enabled: false
++      publisherId: ""
++      siteStatus: not_submitted
++      autoAds: false
++      verification:
++        method: none
++      slots:
++        afterTool:
++          enabled: false
++          adSlot: ""
++          format: auto
++    adsterra:
++      enabled: false
++      siteStatus: not_submitted
++      allowedFormats:
++        - banner
++        - native
++      blockedFormats:
++        - popunder
++        - interstitial
++        - social-bar
++      placements: {}
++analytics:
++  googleAnalytics:
++    enabled: false
++    measurementId: ""
++    trackToolEvents: true
++  microsoftClarity:
++    enabled: false
++    projectId: ""
++    consentMode: false
++webmaster:
++  googleSearchConsole:
++    enabled: false
++    propertyType: url-prefix
++    verification:
++      method: none
++  bingWebmaster:
++    enabled: false
++    verification:
++      method: import-from-gsc
++indexing:
++  indexNow:
++    enabled: false
++    key: ""
++    keyFile: ""
++    submitOnProductionDeploy: false
+diff --git a/sites/typing-speed-test/messages/en.yaml b/sites/typing-speed-test/messages/en.yaml
+new file mode 100644
+index 0000000..cb9925f
+--- /dev/null
++++ b/sites/typing-speed-test/messages/en.yaml
+@@ -0,0 +1,4 @@
++tool:
++  start: Start typing
++  reset: Reset
++  finish: Finish now
+diff --git a/sites/typing-speed-test/site.config.yaml b/sites/typing-speed-test/site.config.yaml
+new file mode 100644
+index 0000000..c6b65a2
+--- /dev/null
++++ b/sites/typing-speed-test/site.config.yaml
+@@ -0,0 +1,33 @@
++schemaVersion: 1
++id: typing-speed-test
++brandName: SpeedType
++category: tester
++primaryKeyword: typing speed test
++lifecycle:
++  status: draft
++domains:
++  production: typingspeedtest.example.com
++  canonicalHost: typingspeedtest.example.com
++  aliases:
++    - www.typingspeedtest.example.com
++defaultLocale: en
++locales:
++  en:
++    enabled: true
++    indexable: false
++    reviewed: false
++indexing:
++  allowIndex: false
++primaryTool: typing-speed-test
++seo:
++  defaultTitle: Typing Speed Test
++  defaultDescription: Test your typing speed online and measure WPM, CPM, accuracy, and errors.
++  xDefaultLocale: en
++  structuredData:
++    - WebSite
++    - WebPage
++    - SoftwareApplication
++deployment:
++  provider: cloudflare-pages
++  projectName: seo-tool-typing-speed-test
++  outputDir: dist/sites/typing-speed-test
+diff --git a/sites/typing-speed-test/theme.config.yaml b/sites/typing-speed-test/theme.config.yaml
+new file mode 100644
+index 0000000..2310461
+--- /dev/null
++++ b/sites/typing-speed-test/theme.config.yaml
+@@ -0,0 +1,9 @@
++schemaVersion: 1
++name: speedtype
++colors:
++  primary: "#2563eb"
++radius: 18px
++layout: tool-first
++adLayout:
++  avoidPrimaryActions: true
++  disableOnToolResultPanel: true
+diff --git a/sites/typing-speed-test/tool.config.yaml b/sites/typing-speed-test/tool.config.yaml
+new file mode 100644
+index 0000000..036cc31
+--- /dev/null
++++ b/sites/typing-speed-test/tool.config.yaml
+@@ -0,0 +1,24 @@
++schemaVersion: 1
++toolId: typing-speed-test
++executionModel: client-only
++privacy:
++  storesTypedText: false
++  storesResults: false
++analytics:
++  safeFields:
++    - locale
++    - duration
++    - wpmBucket
++    - accuracyBucket
++options:
++  durations:
++    - 15
++    - 30
++    - 60
++    - 180
++    - 300
++  defaultDuration: 60
++  showWpm: true
++  showCpm: true
++  showAccuracy: true
++  showErrorHeatmap: false
+diff --git a/tsconfig.base.json b/tsconfig.base.json
+new file mode 100644
+index 0000000..b19b7d2
+--- /dev/null
++++ b/tsconfig.base.json
+@@ -0,0 +1,16 @@
++{
++  "compilerOptions": {
++    "target": "ES2022",
++    "module": "ESNext",
++    "moduleResolution": "Bundler",
++    "lib": ["ES2022", "DOM", "DOM.Iterable"],
++    "strict": true,
++    "allowJs": false,
++    "resolveJsonModule": true,
++    "isolatedModules": true,
++    "esModuleInterop": true,
++    "skipLibCheck": true,
++    "forceConsistentCasingInFileNames": true,
++    "jsx": "react-jsx"
++  }
++}
+diff --git a/tsconfig.json b/tsconfig.json
+new file mode 100644
+index 0000000..3fd3b5d
+--- /dev/null
++++ b/tsconfig.json
+@@ -0,0 +1,14 @@
++{
++  "extends": "./tsconfig.base.json",
++  "compilerOptions": {
++    "noEmit": true
++  },
++  "include": [
++    "apps/**/*.ts",
++    "apps/**/*.tsx",
++    "apps/**/*.astro",
++    "packages/**/*.ts",
++    "packages/**/*.tsx",
++    "scripts/**/*.ts"
++  ]
++}

@@ -1,0 +1,4 @@
+tool:
+  start: Start typing
+  reset: Reset
+  finish: Finish now
