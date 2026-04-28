@@ -1,9 +1,0 @@
-schemaVersion: 1
-name: pngconvert
-colors:
-  primary: "#059669"
-radius: 20px
-layout: tool-first
-adLayout:
-  avoidPrimaryActions: true
-  disableOnToolResultPanel: true
