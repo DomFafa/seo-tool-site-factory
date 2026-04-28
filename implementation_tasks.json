@@ -1,0 +1,119 @@
+{
+  "generated": "2026-04-28",
+  "p0": [
+    {
+      "id": "P0-001",
+      "title": "Initialize monorepo structure",
+      "doneCriteria": [
+        "apps/web exists",
+        "sites exists",
+        "packages/site-core exists",
+        "packages/seo exists",
+        "infra/cloudflare exists"
+      ]
+    },
+    {
+      "id": "P0-002",
+      "title": "Implement site config schema",
+      "doneCriteria": [
+        "zod schema validates required fields",
+        "invalid config errors are actionable",
+        "id must match directory"
+      ]
+    },
+    {
+      "id": "P0-003",
+      "title": "Implement site registry",
+      "doneCriteria": [
+        "site list reads all sites",
+        "duplicate domain detection works",
+        "unknown primaryTool fails"
+      ]
+    },
+    {
+      "id": "P0-004",
+      "title": "Implement SITE_ID selection",
+      "doneCriteria": [
+        "missing SITE_ID fails",
+        "unknown SITE_ID fails",
+        "selected manifest generated"
+      ]
+    },
+    {
+      "id": "P0-005",
+      "title": "Implement content frontmatter validation",
+      "doneCriteria": [
+        "title/description required",
+        "index=true requires approved",
+        "duplicate slugs fail"
+      ]
+    },
+    {
+      "id": "P0-006",
+      "title": "Implement SEO generators",
+      "doneCriteria": [
+        "canonical generation tested",
+        "hreflang generation tested",
+        "sitemap excludes noindex",
+        "robots points to sitemap"
+      ]
+    },
+    {
+      "id": "P0-007",
+      "title": "Implement typing engine pure logic",
+      "doneCriteria": [
+        "WPM unit tests",
+        "accuracy unit tests",
+        "no React dependency"
+      ]
+    },
+    {
+      "id": "P0-008",
+      "title": "Implement image converter pure validation",
+      "doneCriteria": [
+        "file type validation",
+        "max file size validation",
+        "filename generation tests"
+      ]
+    },
+    {
+      "id": "P0-009",
+      "title": "Implement site CLI",
+      "doneCriteria": [
+        "site list",
+        "site check",
+        "site build sets SITE_ID"
+      ]
+    },
+    {
+      "id": "P0-010",
+      "title": "Add first two draft site packs",
+      "doneCriteria": [
+        "typing-speed-test draft noindex ads off",
+        "convert-image-to-png draft noindex ads off"
+      ]
+    }
+  ],
+  "p1": [
+    {
+      "id": "P1-001",
+      "title": "Implement ads module with gates"
+    },
+    {
+      "id": "P1-002",
+      "title": "Implement analytics module with redaction"
+    },
+    {
+      "id": "P1-003",
+      "title": "Implement Cloudflare preview deploy script"
+    },
+    {
+      "id": "P1-004",
+      "title": "Implement Playwright smoke tests"
+    },
+    {
+      "id": "P1-005",
+      "title": "Implement site create generator"
+    }
+  ]
+}

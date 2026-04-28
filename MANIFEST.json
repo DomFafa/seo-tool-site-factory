@@ -1,0 +1,24 @@
+{
+  "name": "seo-tool-site-factory-handoff",
+  "generated": "2026-04-28",
+  "purpose": "Handoff docs for Codex/Claude Code to implement an internal SEO tool-site factory",
+  "source": "source/seo-tool-site-factory-requirements.original.md",
+  "entrypoints": [
+    "README.md",
+    "AI-HANDOFF.md",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "docs/08-implementation-roadmap.md"
+  ],
+  "firstSites": [
+    "typing-speed-test",
+    "convert-image-to-png"
+  ],
+  "coreDecisions": [
+    "apps/sites/packages/infra",
+    "build-time SITE_ID",
+    "Cloudflare Workers + OpenNext",
+    "Next.js App Router",
+    "site lifecycle gates"
+  ]
+}
