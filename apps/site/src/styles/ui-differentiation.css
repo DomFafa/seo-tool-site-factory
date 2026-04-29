@@ -110,4 +110,7 @@ body.recipe-glitch-playground .hero-lead, body.recipe-glitch-playground .guide-c
   body.recipe-file-drop-studio .format-row { margin-top: 10px; }
   body.recipe-file-drop-studio .format-row, body.recipe-file-drop-studio .converter-actions { justify-content: center; }
   body.recipe-file-drop-studio .choose-button, body.recipe-file-drop-studio .button, body.recipe-file-drop-studio button.secondary { width: 100%; justify-content: center; }
+  body.recipe-file-drop-studio .step-card { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: center; padding: 14px; }
+  body.recipe-file-drop-studio .step-card p { margin: 0; }
+  body.recipe-file-drop-studio .step-number { width: 30px; height: 30px; margin: 0; }
 }
