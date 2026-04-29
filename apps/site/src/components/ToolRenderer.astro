@@ -1,5 +1,5 @@
 ---
-import SelectedToolIsland from '../.generated/SelectedToolIsland.tsx';
+import SelectedToolRenderer from '../.generated/SelectedToolRenderer.astro';
 import { selectedToolMeta } from '../.generated/selected-tool-meta';
 import type { SiteContext } from '@factory/site-core';
 
@@ -9,8 +9,8 @@ const toolId = ctx.siteConfig.primaryTool;
 const toolConfig = ctx.toolConfig;
 ---
 <section class="tool-shell" aria-label="Interactive tool">
-  {selectedToolMeta.toolId === toolId && selectedToolMeta.renderer === 'react' && (
-    <SelectedToolIsland client:load locale={locale} config={toolConfig} />
+  {selectedToolMeta.toolId === toolId && (
+    <SelectedToolRenderer locale={locale} config={toolConfig} />
   )}
   {selectedToolMeta.toolId !== toolId && (
     <div class="error">Generated tool renderer is for <strong>{selectedToolMeta.toolId}</strong>, but this page needs <strong>{toolId}</strong>.</div>

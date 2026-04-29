@@ -1,0 +1,122 @@
+---
+type Props = {
+  locale: string;
+  config: any;
+  mode: 'cursive' | 'cursed';
+};
+
+const { locale, config, mode } = Astro.props;
+const sampleText = config?.options?.sampleText ?? (mode === 'cursive' ? 'Your beautiful text' : 'cursed text');
+const toolId = config?.toolId ?? (mode === 'cursive' ? 'cursive-generator' : 'cursed-text-generator');
+const inputId = `text-generator-${mode}-input`;
+const intensityId = `text-generator-${mode}-intensity`;
+---
+<div class="tool-grid" data-text-generator data-mode={mode} data-locale={locale} data-tool-id={toolId}>
+  <div>
+    <label for={inputId}><strong>{mode === 'cursive' ? 'Enter text to convert to cursive' : 'Enter text to curse'}</strong></label>
+    <textarea id={inputId} data-text-input placeholder="Type text here...">{sampleText}</textarea>
+  </div>
+  {mode === 'cursed' && (
+    <div>
+      <label for={intensityId}><strong>Intensity: <span data-intensity-value>3</span></strong></label>
+      <input id={intensityId} data-intensity-input type="range" min="1" max="8" value="3" />
+    </div>
+  )}
+  <div class="tool-grid">
+    <div class="result-panel">
+      <p class="small" data-output-label="0"></p>
+      <p data-output-value="0" style="font-size: 1.5rem; overflow-wrap: anywhere;"></p>
+      <button type="button" data-copy-output="0">Copy</button>
+    </div>
+    <div class="result-panel">
+      <p class="small" data-output-label="1"></p>
+      <p data-output-value="1" style="font-size: 1.5rem; overflow-wrap: anywhere;"></p>
+      <button type="button" data-copy-output="1">Copy</button>
+    </div>
+  </div>
+  <p class="small">Privacy: text generation runs in your browser. The input text is not sent to a server by this tool.</p>
+</div>
+
+<script>
+  const CURSIVE = {
+    A: '𝒜', B: 'ℬ', C: '𝒞', D: '𝒟', E: 'ℰ', F: 'ℱ', G: '𝒢', H: 'ℋ', I: 'ℐ', J: '𝒥', K: '𝒦', L: 'ℒ', M: 'ℳ',
+    N: '𝒩', O: '𝒪', P: '𝒫', Q: '𝒬', R: 'ℛ', S: '𝒮', T: '𝒯', U: '𝒰', V: '𝒱', W: '𝒲', X: '𝒳', Y: '𝒴', Z: '𝒵',
+    a: '𝒶', b: '𝒷', c: '𝒸', d: '𝒹', e: 'ℯ', f: '𝒻', g: 'ℊ', h: '𝒽', i: '𝒾', j: '𝒿', k: '𝓀', l: '𝓁', m: '𝓂',
+    n: '𝓃', o: 'ℴ', p: '𝓅', q: '𝓆', r: '𝓇', s: '𝓈', t: '𝓉', u: '𝓊', v: '𝓋', w: '𝓌', x: '𝓍', y: '𝓎', z: '𝓏'
+  };
+  const BOLD_SCRIPT = {
+    A: '𝓐', B: '𝓑', C: '𝓒', D: '𝓓', E: '𝓔', F: '𝓕', G: '𝓖', H: '𝓗', I: '𝓘', J: '𝓙', K: '𝓚', L: '𝓛', M: '𝓜',
+    N: '𝓝', O: '𝓞', P: '𝓟', Q: '𝓠', R: '𝓡', S: '𝓢', T: '𝓣', U: '𝓤', V: '𝓥', W: '𝓦', X: '𝓧', Y: '𝓨', Z: '𝓩',
+    a: '𝓪', b: '𝓫', c: '𝓬', d: '𝓭', e: '𝓮', f: '𝓯', g: '𝓰', h: '𝓱', i: '𝓲', j: '𝓳', k: '𝓴', l: '𝓵', m: '𝓶',
+    n: '𝓷', o: '𝓸', p: '𝓹', q: '𝓺', r: '𝓻', s: '𝓼', t: '𝓽', u: '𝓾', v: '𝓿', w: '𝔀', x: '𝔁', y: '𝔂', z: '𝔃'
+  };
+  const MARKS = ['\u0300', '\u0301', '\u0302', '\u0303', '\u0304', '\u0305', '\u0306', '\u0307', '\u0308', '\u0309', '\u030A', '\u030B', '\u030C', '\u0310', '\u0311', '\u0312', '\u0313', '\u0314', '\u0315', '\u0316', '\u0317', '\u0318', '\u0319', '\u031A', '\u031B', '\u0320', '\u0321', '\u0322', '\u0323', '\u0324', '\u0325', '\u0326', '\u0327', '\u0328', '\u0329'];
+
+  function mapText(text, map) {
+    return Array.from(text).map((char) => map[char] ?? char).join('');
+  }
+
+  function zalgo(text, intensity) {
+    return Array.from(text).map((char) => {
+      if (/\s/.test(char)) return char;
+      let extra = '';
+      for (let i = 0; i < intensity; i++) extra += MARKS[Math.floor(Math.random() * MARKS.length)];
+      return char + extra;
+    }).join('');
+  }
+
+  function cleanCombiningMarks(text) {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').normalize('NFC');
+  }
+
+  function track(eventName, params) {
+    window.__factoryTrack?.(eventName, params);
+  }
+
+  function outputsFor(mode, text, intensity) {
+    if (mode === 'cursive') {
+      return [
+        { label: 'Cursive script', value: mapText(text, CURSIVE) },
+        { label: 'Bold cursive', value: mapText(text, BOLD_SCRIPT) }
+      ];
+    }
+    return [
+      { label: 'Cursed text', value: zalgo(text, intensity) },
+      { label: 'Cleaned text', value: cleanCombiningMarks(text) }
+    ];
+  }
+
+  function render(root) {
+    const mode = root.dataset.mode ?? 'cursive';
+    const text = root.querySelector('[data-text-input]')?.value ?? '';
+    const intensityInput = root.querySelector('[data-intensity-input]');
+    const intensity = Number(intensityInput?.value ?? 3);
+    const intensityLabel = root.querySelector('[data-intensity-value]');
+    if (intensityLabel) intensityLabel.textContent = String(intensity);
+    const outputs = outputsFor(mode, text, intensity);
+    root.__textGeneratorOutputs = outputs;
+    outputs.forEach((output, index) => {
+      const label = root.querySelector(`[data-output-label="${index}"]`);
+      const value = root.querySelector(`[data-output-value="${index}"]`);
+      if (label) label.textContent = output.label;
+      if (value) value.textContent = output.value;
+    });
+  }
+
+  document.querySelectorAll('[data-text-generator]').forEach((root) => {
+    if (root.dataset.ready === 'true') return;
+    root.dataset.ready = 'true';
+    root.querySelector('[data-text-input]')?.addEventListener('input', () => render(root));
+    root.querySelector('[data-intensity-input]')?.addEventListener('input', () => render(root));
+    root.querySelectorAll('[data-copy-output]').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const index = Number(button.dataset.copyOutput ?? 0);
+        const output = root.__textGeneratorOutputs?.[index];
+        if (!output) return;
+        await navigator.clipboard?.writeText(output.value);
+        track('copy_action', { toolId: root.dataset.toolId, locale: root.dataset.locale, variant: output.label });
+      });
+    });
+    render(root);
+  });
+</script>

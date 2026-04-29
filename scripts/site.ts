@@ -70,31 +70,32 @@ function prepareSelectedToolIsland(toolId: string) {
   mkdirSync(generatedDir, { recursive: true });
   const selected = selectedToolFor(toolId);
   writeFileSync(join(generatedDir, 'SelectedToolIsland.tsx'), selected.componentSource);
-  writeFileSync(join(generatedDir, 'selected-tool-meta.ts'), `export const selectedToolMeta = ${JSON.stringify(selected.meta, null, 2)} as const;\n`);
+  writeFileSync(join(generatedDir, 'SelectedToolRenderer.astro'), selected.rendererSource);
+  writeFileSync(join(generatedDir, 'selected-tool-meta.ts'), selectedToolMetaSource(selected.meta));
 }
 
-function selectedToolFor(toolId: string): { componentSource: string; meta: Record<string, string> } {
+function selectedToolFor(toolId: string): { componentSource: string; rendererSource: string; meta: Record<string, string> } {
   const typingToolIds = new Set(['typing-speed-test', 'typing-practice', 'typing-practice-paragraph', 'typing-test-online']);
   if (typingToolIds.has(toolId)) {
-    return reactTool('../features/typing-test/TypingTestIsland', { renderer: 'react', toolId });
+    return reactTool('../features/typing-test/TypingTestIsland', { renderer: 'react', toolId, mode: '' });
   }
   if (toolId === 'convert-image-to-png') {
-    return reactTool('../features/image-converter/ImageConverterIsland', { renderer: 'react', toolId });
+    return reactTool('../features/image-converter/ImageConverterIsland', { renderer: 'react', toolId, mode: '' });
   }
   if (toolId === 'cursive-generator') {
-    return reactTool('../features/text-generator/TextGeneratorIsland', { renderer: 'react', toolId, mode: 'cursive' });
+    return vanillaTextGenerator(toolId, 'cursive');
   }
   if (toolId === 'cursed-text-generator') {
-    return reactTool('../features/text-generator/TextGeneratorIsland', { renderer: 'react', toolId, mode: 'cursed' });
+    return vanillaTextGenerator(toolId, 'cursed');
   }
   if (toolId === 'anagram-solver') {
-    return reactTool('../features/anagram-solver/AnagramSolverIsland', { renderer: 'react', toolId });
+    return reactTool('../features/anagram-solver/AnagramSolverIsland', { renderer: 'react', toolId, mode: '' });
   }
   if (toolId === 'cursive-alphabet') {
-    return reactTool('../features/cursive-alphabet/CursiveAlphabetIsland', { renderer: 'react', toolId });
+    return reactTool('../features/cursive-alphabet/CursiveAlphabetIsland', { renderer: 'react', toolId, mode: '' });
   }
   if (toolId === 'spellcheck') {
-    return reactTool('../features/spellcheck/SpellcheckIsland', { renderer: 'react', toolId });
+    return reactTool('../features/spellcheck/SpellcheckIsland', { renderer: 'react', toolId, mode: '' });
   }
   throw new Error(`Tool renderer for ${toolId} is not implemented yet.`);
 }
@@ -103,8 +104,21 @@ function reactTool(importPath: string, meta: Record<string, string>) {
   const modeProp = meta.mode ? ` mode="${meta.mode}"` : '';
   return {
     meta,
-    componentSource: `import ToolIsland from '${importPath}';\n\ntype SelectedToolProps = { locale: string; config: any };\n\nexport default function SelectedToolIsland(props: SelectedToolProps) {\n  return <ToolIsland {...props}${modeProp} />;\n}\n`
+    componentSource: `import ToolIsland from '${importPath}';\n\ntype SelectedToolProps = { locale: string; config: any };\n\nexport default function SelectedToolIsland(props: SelectedToolProps) {\n  return <ToolIsland {...props}${modeProp} />;\n}\n`,
+    rendererSource: `---\nimport SelectedToolIsland from './SelectedToolIsland.tsx';\ninterface Props { locale: string; config: any; }\nconst { locale, config } = Astro.props;\n---\n<SelectedToolIsland client:load locale={locale} config={config} />\n`
   };
+}
+
+function vanillaTextGenerator(toolId: string, mode: 'cursive' | 'cursed') {
+  return {
+    meta: { renderer: 'vanilla-text-generator', toolId, mode },
+    componentSource: `export default function SelectedToolIsland() {\n  return null;\n}\n`,
+    rendererSource: `---\nimport VanillaTextGenerator from '../features/text-generator/VanillaTextGenerator.astro';\ninterface Props { locale: string; config: any; }\nconst { locale, config } = Astro.props;\n---\n<VanillaTextGenerator locale={locale} config={config} mode="${mode}" />\n`
+  };
+}
+
+function selectedToolMetaSource(meta: Record<string, string>) {
+  return `export const selectedToolMeta = ${JSON.stringify(meta, null, 2)} as {\n  readonly renderer: 'react' | 'vanilla-text-generator';\n  readonly toolId: string;\n  readonly mode: '' | 'cursive' | 'cursed';\n};\n`;
 }
 
 function printIssues(siteId: string, issues: ReturnType<typeof validateSiteContext>) {
