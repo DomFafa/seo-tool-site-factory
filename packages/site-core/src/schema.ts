@@ -53,8 +53,14 @@ export const ToolConfigSchema = z.object({
 export const ThemeConfigSchema = z.object({
   schemaVersion: z.number().int().default(1),
   name: z.string().min(1).default('default'),
+  personality: z.string().optional(),
+  density: z.enum(['compact', 'comfortable', 'spacious']).default('comfortable'),
+  surface: z.enum(['flat', 'cards', 'panels', 'editorial']).default('cards'),
   colors: z.object({
-    primary: z.string().default('#2563eb')
+    primary: z.string().default('#2563eb'),
+    background: z.string().optional(),
+    surface: z.string().optional(),
+    accent: z.string().optional()
   }).default({ primary: '#2563eb' }),
   radius: z.string().default('18px'),
   layout: z.string().default('tool-first'),
@@ -62,6 +68,36 @@ export const ThemeConfigSchema = z.object({
     avoidPrimaryActions: z.boolean().default(true),
     disableOnToolResultPanel: z.boolean().default(true)
   }).default({ avoidPrimaryActions: true, disableOnToolResultPanel: true })
+});
+
+export const LayoutBlockSchema = z.object({
+  type: z.enum(['hero', 'tool', 'content', 'howItWorks', 'examples', 'guideLinks', 'faq', 'privacyNote', 'adSlot']),
+  variant: z.string().default('default'),
+  props: z.record(z.any()).default({})
+});
+
+export const LayoutConfigSchema = z.object({
+  schemaVersion: z.number().int().default(1),
+  recipe: z.string().default('tool-first'),
+  chrome: z.object({
+    navVariant: z.string().default('compact'),
+    footerVariant: z.string().default('simple')
+  }).default({ navVariant: 'compact', footerVariant: 'simple' }),
+  home: z.object({
+    blocks: z.array(LayoutBlockSchema).min(1).default([
+      { type: 'hero', variant: 'simple', props: {} },
+      { type: 'tool', variant: 'card', props: {} },
+      { type: 'content', variant: 'card', props: {} },
+      { type: 'faq', variant: 'accordion', props: {} }
+    ])
+  }).default({
+    blocks: [
+      { type: 'hero', variant: 'simple', props: {} },
+      { type: 'tool', variant: 'card', props: {} },
+      { type: 'content', variant: 'card', props: {} },
+      { type: 'faq', variant: 'accordion', props: {} }
+    ]
+  })
 });
 
 const VerificationSchema = z.object({
@@ -152,7 +188,6 @@ export const IntegrationsConfigSchema = z.object({
     }).default({ enabled: false, submitOnProductionDeploy: false, endpoint: 'https://api.indexnow.org/indexnow' })
   }).default({ indexNow: {} })
 });
-
 
 export const ContentFrontmatterSchema = z
   .object({

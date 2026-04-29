@@ -1,0 +1,26 @@
+schemaVersion: 1
+recipe: editorial-practice
+chrome:
+  navVariant: editorial
+  footerVariant: simple
+home:
+  blocks:
+    - type: hero
+      variant: library
+      props:
+        eyebrow: Paragraph practice
+        badges: [Short paragraphs, Long paragraphs, Difficulty]
+    - type: tool
+      variant: paragraph-panel
+    - type: examples
+      variant: editorial-list
+      props:
+        title: Paragraph practice styles
+        items:
+          - Short paragraphs for warmups.
+          - Longer paragraphs for endurance practice.
+          - Topic-based paragraphs for realistic typing.
+    - type: content
+      variant: editorial
+    - type: faq
+      variant: split

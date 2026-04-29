@@ -21,6 +21,7 @@ function usage() {
   pnpm site verify <site-id>
   pnpm site verify-integrations <site-id>
   pnpm site submit-indexnow <site-id>
+  pnpm site ui-audit <site-id>|--all
 `);
 }
 
@@ -139,6 +140,11 @@ switch (command) {
     const results = await verifyOnlineIntegrations(ctx);
     for (const result of results) console.log(`${result.ok ? '✓' : '✗'} ${result.label}: ${result.message}`);
     if (results.some((r) => !r.ok)) process.exit(1);
+    break;
+  }
+  case 'ui-audit': {
+    const target = maybeSiteId ?? '--all';
+    run('pnpm', ['exec', 'tsx', 'scripts/ui-audit.ts', target, ...args]);
     break;
   }
   case 'submit-indexnow': {

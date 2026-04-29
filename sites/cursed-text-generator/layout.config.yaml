@@ -1,0 +1,26 @@
+schemaVersion: 1
+recipe: glitch-playground
+chrome:
+  navVariant: dark-floating
+  footerVariant: simple
+home:
+  blocks:
+    - type: hero
+      variant: dramatic
+      props:
+        eyebrow: Glitch text playground
+        badges: [Cursed text, Clean text, Copy ready]
+    - type: tool
+      variant: neon-workbench
+    - type: examples
+      variant: copyable-grid
+      props:
+        title: Cursed text examples
+        items:
+          - Create a subtle glitch effect for a username.
+          - Turn a phrase into creepy text for a post or message.
+          - Clean the output if a platform displays it too aggressively.
+    - type: content
+      variant: dark-card
+    - type: faq
+      variant: compact-dark

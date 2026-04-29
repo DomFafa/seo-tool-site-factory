@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import '../styles/ui-differentiation.css';
 import VerificationMeta from '../components/integrations/VerificationMeta.astro';
 import AnalyticsScripts from '../components/integrations/AnalyticsScripts.astro';
 import AdProviderScripts from '../components/integrations/AdProviderScripts.astro';
@@ -19,7 +20,14 @@ const { ctx, locale, page, pageType, slug } = Astro.props;
 const seo = buildPageSeo(ctx, { locale, page, pageType, slug });
 const theme = ctx.themeConfig;
 const primary = theme?.colors?.primary ?? '#2563eb';
+const bg = theme?.colors?.background ?? '#f7f8fb';
+const surface = theme?.colors?.surface ?? '#ffffff';
+const accent = theme?.colors?.accent ?? primary;
 const radius = theme?.radius ?? '18px';
+const recipe = ctx.layoutConfig.recipe;
+const navVariant = ctx.layoutConfig.chrome.navVariant;
+const density = theme?.density ?? 'comfortable';
+const surfaceStyle = theme?.surface ?? 'cards';
 ---
 <!doctype html>
 <html lang={locale}>
@@ -38,16 +46,22 @@ const radius = theme?.radius ?? '18px';
     <meta property="og:url" content={seo.canonical} />
     <meta property="og:type" content={pageType === 'guide' ? 'article' : 'website'} />
     <meta name="twitter:card" content="summary_large_image" />
-    <style is:inline define:vars={{ primary, radius }}>
-      :root { --factory-primary: var(--primary); --factory-radius: var(--radius); }
+    <style is:inline define:vars={{ primary, bg, surface, accent, radius }}>
+      :root {
+        --factory-primary: var(--primary);
+        --factory-bg: var(--bg);
+        --factory-surface: var(--surface);
+        --factory-accent: var(--accent);
+        --factory-radius: var(--radius);
+      }
     </style>
     <script type="application/ld+json" set:html={JSON.stringify(seo.jsonLd)} />
     <VerificationMeta ctx={ctx} />
     <AnalyticsScripts ctx={ctx} />
     <AdProviderScripts ctx={ctx} />
   </head>
-  <body>
-    <header class="site-header">
+  <body class={`recipe-${recipe} nav-${navVariant} density-${density} surface-${surfaceStyle}`}>
+    <header class={`site-header site-header--${navVariant}`}>
       <div class="container site-header-inner">
         <a class="brand" href={seo.homeUrl}>
           <span class="brand-mark">{ctx.siteConfig.brandName.slice(0, 1).toUpperCase()}</span>
@@ -62,7 +76,7 @@ const radius = theme?.radius ?? '18px';
     <main>
       <slot />
     </main>
-    <footer class="footer">
+    <footer class={`footer footer--${ctx.layoutConfig.chrome.footerVariant}`}>
       <div class="container">
         <p>© {new Date().getFullYear()} {ctx.siteConfig.brandName}. Built as a lightweight tool site.</p>
       </div>

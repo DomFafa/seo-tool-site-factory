@@ -1,8 +1,8 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import YAML from 'yaml';
-import { IntegrationsConfigSchema, SiteConfigSchema, ThemeConfigSchema, ToolConfigSchema } from './schema';
-import type { IntegrationsConfig, SiteConfig, SiteContext, ThemeConfig, ToolConfig } from './types';
+import { IntegrationsConfigSchema, LayoutConfigSchema, SiteConfigSchema, ThemeConfigSchema, ToolConfigSchema } from './schema';
+import type { IntegrationsConfig, LayoutConfig, SiteConfig, SiteContext, ThemeConfig, ToolConfig } from './types';
 import { findWorkspaceRoot } from './workspace';
 
 function readYaml<T>(filePath: string, parser: { parse: (value: unknown) => T }): T {
@@ -10,6 +10,11 @@ function readYaml<T>(filePath: string, parser: { parse: (value: unknown) => T })
   const raw = readFileSync(filePath, 'utf8');
   const parsed = YAML.parse(raw);
   return parser.parse(parsed);
+}
+
+function readOptionalYaml<T>(filePath: string, parser: { parse: (value: unknown) => T }, fallback: unknown): T {
+  if (!existsSync(filePath)) return parser.parse(fallback);
+  return readYaml(filePath, parser);
 }
 
 export function listSiteIds(workspaceRoot = findWorkspaceRoot()): string[] {
@@ -28,10 +33,11 @@ export function loadSiteContext(siteId: string, workspaceRoot = findWorkspaceRoo
   const toolConfig = readYaml<ToolConfig>(join(siteDir, 'tool.config.yaml'), ToolConfigSchema);
   const themeConfig = readYaml<ThemeConfig>(join(siteDir, 'theme.config.yaml'), ThemeConfigSchema);
   const integrationsConfig = readYaml<IntegrationsConfig>(join(siteDir, 'integrations.config.yaml'), IntegrationsConfigSchema);
+  const layoutConfig = readOptionalYaml<LayoutConfig>(join(siteDir, 'layout.config.yaml'), LayoutConfigSchema, {});
   if (siteConfig.id !== siteId) {
     throw new Error(`Site id mismatch: directory is ${siteId}, site.config.yaml id is ${siteConfig.id}`);
   }
-  return { workspaceRoot, siteId, siteDir, siteConfig, toolConfig, themeConfig, integrationsConfig };
+  return { workspaceRoot, siteId, siteDir, siteConfig, toolConfig, themeConfig, integrationsConfig, layoutConfig };
 }
 
 export async function loadSelectedSite(): Promise<SiteContext> {

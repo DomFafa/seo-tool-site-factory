@@ -1,0 +1,25 @@
+schemaVersion: 1
+recipe: course-practice
+chrome:
+  navVariant: sidebar-lite
+  footerVariant: simple
+home:
+  blocks:
+    - type: hero
+      variant: lesson
+      props:
+        eyebrow: Typing practice
+        badges: [Lessons, Accuracy, Daily drills]
+    - type: tool
+      variant: course-panel
+    - type: howItWorks
+      variant: lesson-steps
+      props:
+        steps:
+          - Pick a practice mode or lesson.
+          - Type steadily and focus on correct keys.
+          - Repeat short sessions to build speed over time.
+    - type: content
+      variant: card
+    - type: faq
+      variant: accordion

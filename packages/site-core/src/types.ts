@@ -1,10 +1,12 @@
 import type { z } from 'zod';
-import type { SiteConfigSchema, ToolConfigSchema, ThemeConfigSchema, IntegrationsConfigSchema } from './schema';
+import type { SiteConfigSchema, ToolConfigSchema, ThemeConfigSchema, IntegrationsConfigSchema, LayoutConfigSchema } from './schema';
 
 export type SiteConfig = z.infer<typeof SiteConfigSchema>;
 export type ToolConfig = z.infer<typeof ToolConfigSchema>;
 export type ThemeConfig = z.infer<typeof ThemeConfigSchema>;
 export type IntegrationsConfig = z.infer<typeof IntegrationsConfigSchema>;
+export type LayoutConfig = z.infer<typeof LayoutConfigSchema>;
+export type LayoutBlock = LayoutConfig['home']['blocks'][number];
 
 export type SiteContext = {
   workspaceRoot: string;
@@ -14,6 +16,7 @@ export type SiteContext = {
   toolConfig: ToolConfig;
   themeConfig: ThemeConfig;
   integrationsConfig: IntegrationsConfig;
+  layoutConfig: LayoutConfig;
 };
 
 export type ContentFrontmatter = {

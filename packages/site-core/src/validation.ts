@@ -89,11 +89,68 @@ function validateVerification(label: string, enabled: boolean, verification: Ver
   return [];
 }
 
+function validateHomeLayout(ctx: SiteContext): ValidationIssue[] {
+  const issues: ValidationIssue[] = [];
+  const blocks = ctx.layoutConfig.home.blocks;
+  const heroIndexes = blocks.flatMap((block, index) => block.type === 'hero' ? [index] : []);
+  const toolIndexes = blocks.flatMap((block, index) => block.type === 'tool' ? [index] : []);
+  const adSlotIndexes = blocks.flatMap((block, index) => block.type === 'adSlot' ? [index] : []);
+
+  if (heroIndexes.length !== 1) {
+    issues.push({
+      level: 'P0',
+      code: 'HOME_HERO_BLOCK_COUNT',
+      message: `Homepage layout must contain exactly one hero block; found ${heroIndexes.length}.`
+    });
+  }
+
+  if (toolIndexes.length !== 1) {
+    issues.push({
+      level: 'P0',
+      code: 'HOME_TOOL_BLOCK_COUNT',
+      message: `Homepage layout must contain exactly one tool block; found ${toolIndexes.length}.`
+    });
+  }
+
+  if (toolIndexes.length === 1) {
+    const toolIndex = toolIndexes[0];
+    if (toolIndex > 2) {
+      issues.push({
+        level: 'P1',
+        code: 'HOME_TOOL_BLOCK_TOO_LOW',
+        message: `Homepage tool block should appear within the first 3 blocks; found at position ${toolIndex + 1}.`
+      });
+    }
+
+    for (const adSlotIndex of adSlotIndexes) {
+      if (Math.abs(adSlotIndex - toolIndex) === 1) {
+        issues.push({
+          level: 'P1',
+          code: 'HOME_AD_SLOT_NEAR_TOOL',
+          message: `Homepage adSlot block at position ${adSlotIndex + 1} must not be directly adjacent to the tool block.`
+        });
+      }
+    }
+  }
+
+  if (ctx.integrationsConfig.ads.enabled && adSlotIndexes.length === 0) {
+    issues.push({
+      level: 'P2',
+      code: 'HOME_ADS_ENABLED_WITHOUT_AD_SLOT',
+      message: 'ads.enabled=true, but the homepage layout does not include an adSlot block.'
+    });
+  }
+
+  return issues;
+}
+
 export function validateSiteContext(ctx: SiteContext): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
   const site = ctx.siteConfig;
   const tool = ctx.toolConfig;
   const integrations = ctx.integrationsConfig;
+
+  issues.push(...validateHomeLayout(ctx));
 
   if (site.primaryTool !== tool.toolId) {
     issues.push({ level: 'P0', code: 'TOOL_ID_MISMATCH', message: `site.primaryTool (${site.primaryTool}) does not match tool.config.yaml toolId (${tool.toolId}).` });

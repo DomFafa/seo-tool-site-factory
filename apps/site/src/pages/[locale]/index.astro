@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import ToolRenderer from '../../components/ToolRenderer.astro';
-import AdSlot from '../../components/AdSlot.astro';
+import BlockRenderer from '../../blocks/BlockRenderer.astro';
 import { loadSelectedSite, loadHomeContent, loadFaqContent, getEnabledNonDefaultLocales } from '@factory/site-core';
 
 export async function getStaticPaths() {
@@ -15,17 +14,5 @@ const home = await loadHomeContent(ctx, locale);
 const faq = await loadFaqContent(ctx, locale);
 ---
 <BaseLayout ctx={ctx} locale={locale} page={home} pageType="home">
-  <section class="hero">
-    <div class="container">
-      <h1>{home.frontmatter.title}</h1>
-      <p>{home.frontmatter.description}</p>
-    </div>
-  </section>
-  <div class="container">
-    <ToolRenderer ctx={ctx} locale={locale} />
-    <AdSlot ctx={ctx} placement="afterTool" />
-    <article class="content-card" set:html={home.html}></article>
-    {faq && <article class="content-card" set:html={faq.html}></article>}
-    <AdSlot ctx={ctx} placement="inArticle" />
-  </div>
+  <BlockRenderer ctx={ctx} locale={locale} home={home} faq={faq} />
 </BaseLayout>
