@@ -121,6 +121,7 @@ const verifyRedirects = args.includes('--verify');
 const markConfigured = args.includes('--mark-configured');
 const yes = args.includes('--yes');
 const waitSeconds = Number(argValue('--wait-seconds', '180'));
+const redirectWaitSeconds = Number(argValue('--wait-seconds', '10'));
 
 class CloudflareApiError extends Error {
   constructor(
@@ -138,7 +139,7 @@ function usage(): void {
   pnpm domain create-project <site-id>|--all [--dry-run]
   pnpm domain check <site-id>|--all
   pnpm domain bind <site-id>|--all [--dry-run] [--ensure-dns] [--wait-seconds <n>]
-  pnpm domain redirects <site-id>|--all [--dry-run] [--ensure] [--verify] [--mark-configured]
+  pnpm domain redirects <site-id>|--all [--dry-run] [--ensure] [--verify] [--mark-configured] [--wait-seconds <n>]
   pnpm domain configure <site-id>|--all [--dry-run]
   pnpm domain deploy <site-id>|--all
   pnpm domain verify <site-id>|--all [--wait-seconds <n>]
@@ -317,17 +318,29 @@ async function addPagesDomain(cf: ResolvedCloudflareAccount, projectName: string
   });
 }
 
+function compactSiteId(siteId: string): string {
+  return siteId.replace(/[^a-z0-9]+/g, '');
+}
+
 function bulkRedirectListName(siteId: string): string {
+  return `seotool${compactSiteId(siteId)}redirects`;
+}
+
+function legacyBulkRedirectListName(siteId: string): string {
   return `seo_tool_${siteId.replace(/[^a-z0-9]+/g, '_')}_canonical_redirects`;
 }
 
-function bulkRedirectRuleRef(siteId: string): string {
-  return `${bulkRedirectListName(siteId)}_rule`;
+function bulkRedirectRuleRef(listName: string): string {
+  return `${listName}rule`;
 }
 
-function bulkRedirectRule(listName: string, siteId: string): CfRulesetRule {
+function legacyBulkRedirectRuleRef(siteId: string): string {
+  return `${legacyBulkRedirectListName(siteId)}_rule`;
+}
+
+function bulkRedirectRule(listName: string, siteId: string, ruleRef = bulkRedirectRuleRef(listName)): CfRulesetRule {
   return {
-    ref: bulkRedirectRuleRef(siteId),
+    ref: ruleRef,
     expression: `http.request.full_uri in $${listName}`,
     description: `${siteId} canonical host redirects`,
     action: 'redirect',
@@ -365,7 +378,7 @@ function buildBulkRedirectItems(siteId: string, item: LaunchSite, pagesSubdomain
 function printBulkRedirectPlan(siteId: string, listName: string, items: CfBulkRedirectItem[]): void {
   console.log(`${siteId}: Cloudflare Bulk Redirects`);
   console.log(`  list: ${listName}`);
-  console.log(`  rule: ${bulkRedirectRuleRef(siteId)}`);
+  console.log(`  rule: ${bulkRedirectRuleRef(listName)}`);
   for (const item of items) {
     const redirect = item.redirect;
     console.log(`  ${redirect.status_code} ${redirect.source_url}* -> ${redirect.target_url}*`);
@@ -380,9 +393,10 @@ async function listBulkRedirectLists(cf: ResolvedCloudflareAccount): Promise<CfR
 
 async function ensureBulkRedirectList(cf: ResolvedCloudflareAccount, listName: string, siteId: string): Promise<CfRulesList> {
   const lists = await listBulkRedirectLists(cf);
-  const existing = lists.find((list) => list.name === listName);
+  const legacyName = legacyBulkRedirectListName(siteId);
+  const existing = lists.find((list) => list.name === listName) ?? lists.find((list) => list.name === legacyName);
   if (existing) {
-    console.log(`${siteId}: Bulk Redirect list already exists in ${cf.alias}: ${listName}`);
+    console.log(`${siteId}: Bulk Redirect list already exists in ${cf.alias}: ${existing.name}`);
     return existing;
   }
   const payload = await cfRequest<{ result: CfRulesList }>(cf, `/accounts/${cf.accountId}/rules/lists`, {
@@ -433,8 +447,10 @@ async function getRedirectEntrypointRuleset(cf: ResolvedCloudflareAccount): Prom
 }
 
 async function ensureBulkRedirectRule(cf: ResolvedCloudflareAccount, listName: string, siteId: string): Promise<void> {
-  const rule = bulkRedirectRule(listName, siteId);
+  const legacyRuleRef = legacyBulkRedirectRuleRef(siteId);
   const ruleset = await getRedirectEntrypointRuleset(cf);
+  const existing = ruleset?.rules.find((entry) => entry.ref === bulkRedirectRuleRef(listName) || entry.ref === legacyRuleRef || entry.expression === `http.request.full_uri in $${listName}`);
+  const rule = bulkRedirectRule(listName, siteId, existing?.ref);
   if (!ruleset) {
     await cfRequest(cf, `/accounts/${cf.accountId}/rulesets`, {
       method: 'POST',
@@ -450,7 +466,6 @@ async function ensureBulkRedirectRule(cf: ResolvedCloudflareAccount, listName: s
     return;
   }
 
-  const existing = ruleset.rules.find((entry) => entry.ref === rule.ref || entry.expression === rule.expression);
   if (existing?.id) {
     await cfRequest(cf, `/accounts/${cf.accountId}/rulesets/${ruleset.id}/rules/${existing.id}`, {
       method: 'PATCH',
@@ -499,6 +514,21 @@ async function verifyBulkRedirects(items: CfBulkRedirectItem[]): Promise<boolean
     if (!await verifyRedirect(sourceSubpath, targetSubpath)) ok = false;
   }
   return ok;
+}
+
+async function waitForBulkRedirectsActive(siteId: string, items: CfBulkRedirectItem[], maxSeconds: number): Promise<boolean> {
+  if (!Number.isFinite(maxSeconds) || maxSeconds <= 0) return verifyBulkRedirects(items);
+  const deadline = Date.now() + maxSeconds * 1000;
+  while (true) {
+    const ok = await verifyBulkRedirects(items);
+    if (ok) return true;
+    if (Date.now() >= deadline) {
+      console.log(`${siteId}: Bulk Redirect wait timed out after ${maxSeconds}s.`);
+      return false;
+    }
+    console.log(`${siteId}: waiting for Bulk Redirects to propagate...`);
+    await sleep(Math.min(10_000, Math.max(1000, deadline - Date.now())));
+  }
 }
 
 async function findZone(cf: ResolvedCloudflareAccount, item: LaunchSite, domain: string): Promise<CfZone | null> {
@@ -815,11 +845,11 @@ async function redirectsSite(siteId: string, item: LaunchSite): Promise<void> {
   if (ensureRedirects) {
     const list = await ensureBulkRedirectList(cf, listName, siteId);
     await replaceBulkRedirectItems(cf, list, items, siteId);
-    await ensureBulkRedirectRule(cf, listName, siteId);
+    await ensureBulkRedirectRule(cf, list.name, siteId);
   }
 
   if (verifyRedirects) {
-    const ok = await verifyBulkRedirects(items);
+    const ok = await waitForBulkRedirectsActive(siteId, items, redirectWaitSeconds);
     if (!ok) throw new Error(`${siteId}: one or more canonical redirects are not active yet.`);
     if (markConfigured) markPagesDevRedirectConfigured(siteId, false);
   }

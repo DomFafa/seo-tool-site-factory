@@ -101,6 +101,8 @@ pnpm domain redirects typing-speed-test --ensure
 pnpm domain redirects typing-speed-test --verify --mark-configured
 ```
 
+`domain redirects --verify` also uses `--wait-seconds` and waits up to 10 seconds by default for Cloudflare Bulk Redirects to propagate after creation.
+
 The redirect command creates an account-level Bulk Redirect List and enables it in the `http_request_redirect` ruleset. The site token needs account-level `Account Rule Lists` read/write and `Mass URL Redirects` read/write permissions. Cloudflare may show older labels as `Account Filter Lists` and `Bulk URL Redirects`; grant the read/write variants for both groups.
 
 ## Noindex-first flow
