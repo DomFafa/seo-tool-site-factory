@@ -58,10 +58,53 @@ function requireSiteId(): string {
 
 function prepare(siteId: string) {
   const ctx = loadSiteContext(siteId, workspaceRoot);
+  prepareSelectedToolIsland(ctx.siteConfig.primaryTool);
   const appPublicDir = join(workspaceRoot, 'apps', 'site', 'public');
   const files = prepareGeneratedPublicFiles(ctx, appPublicDir);
   if (files.length) console.log(`Generated public files for ${siteId}: ${files.join(', ')}`);
   return ctx;
+}
+
+function prepareSelectedToolIsland(toolId: string) {
+  const generatedDir = join(workspaceRoot, 'apps', 'site', 'src', '.generated');
+  mkdirSync(generatedDir, { recursive: true });
+  const selected = selectedToolFor(toolId);
+  writeFileSync(join(generatedDir, 'SelectedToolIsland.tsx'), selected.componentSource);
+  writeFileSync(join(generatedDir, 'selected-tool-meta.ts'), `export const selectedToolMeta = ${JSON.stringify(selected.meta, null, 2)} as const;\n`);
+}
+
+function selectedToolFor(toolId: string): { componentSource: string; meta: Record<string, string> } {
+  const typingToolIds = new Set(['typing-speed-test', 'typing-practice', 'typing-practice-paragraph', 'typing-test-online']);
+  if (typingToolIds.has(toolId)) {
+    return reactTool('../features/typing-test/TypingTestIsland', { renderer: 'react', toolId });
+  }
+  if (toolId === 'convert-image-to-png') {
+    return reactTool('../features/image-converter/ImageConverterIsland', { renderer: 'react', toolId });
+  }
+  if (toolId === 'cursive-generator') {
+    return reactTool('../features/text-generator/TextGeneratorIsland', { renderer: 'react', toolId, mode: 'cursive' });
+  }
+  if (toolId === 'cursed-text-generator') {
+    return reactTool('../features/text-generator/TextGeneratorIsland', { renderer: 'react', toolId, mode: 'cursed' });
+  }
+  if (toolId === 'anagram-solver') {
+    return reactTool('../features/anagram-solver/AnagramSolverIsland', { renderer: 'react', toolId });
+  }
+  if (toolId === 'cursive-alphabet') {
+    return reactTool('../features/cursive-alphabet/CursiveAlphabetIsland', { renderer: 'react', toolId });
+  }
+  if (toolId === 'spellcheck') {
+    return reactTool('../features/spellcheck/SpellcheckIsland', { renderer: 'react', toolId });
+  }
+  throw new Error(`Tool renderer for ${toolId} is not implemented yet.`);
+}
+
+function reactTool(importPath: string, meta: Record<string, string>) {
+  const modeProp = meta.mode ? ` mode="${meta.mode}"` : '';
+  return {
+    meta,
+    componentSource: `import ToolIsland from '${importPath}';\n\ntype SelectedToolProps = { locale: string; config: any };\n\nexport default function SelectedToolIsland(props: SelectedToolProps) {\n  return <ToolIsland {...props}${modeProp} />;\n}\n`
+  };
 }
 
 function printIssues(siteId: string, issues: ReturnType<typeof validateSiteContext>) {

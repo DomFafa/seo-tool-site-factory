@@ -3,6 +3,7 @@ node_modules/
 .astro/
 dist/
 .generated/
+apps/site/src/.generated/
 .cache/
 .DS_Store
 apps/site/public/.generated-public-manifest.json
