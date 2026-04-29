@@ -4,19 +4,21 @@ brandName: PNG Fácil
 category: converter
 primaryKeyword: convertir imagen a png
 lifecycle:
-  status: draft
+  status: live
 domains:
-  production: seo-tool-convertir-imagen-a-png.pages.dev
-  canonicalHost: seo-tool-convertir-imagen-a-png.pages.dev
-  aliases: []
+  production: convertirimagenapng.net
+  canonicalHost: convertirimagenapng.net
+  aliases:
+    - www.convertirimagenapng.net
 defaultLocale: es
 locales:
   es:
     enabled: true
-    indexable: false
-    reviewed: false
+    indexable: true
+    reviewed: true
 indexing:
-  allowIndex: false
+  allowIndex: true
+  mode: index
 primaryTool: convert-image-to-png
 seo:
   defaultTitle: Convertir Imagen a PNG
@@ -26,8 +28,13 @@ seo:
     - WebSite
     - WebPage
     - SoftwareApplication
+  pagesDevRedirect:
+    status: configured
+    notes: Cloudflare Bulk Redirects verified for pages.dev and alias canonical redirects.
 deployment:
   provider: cloudflare-pages
   projectName: seo-tool-convertir-imagen-a-png
   outputDir: dist/sites/convertir-imagen-a-png
   accountAlias: convertir-imagen-a-png
+launch:
+  stage: real-domain-indexed
