@@ -28,6 +28,17 @@ const recipe = ctx.layoutConfig.recipe;
 const navVariant = ctx.layoutConfig.chrome.navVariant;
 const density = theme?.density ?? 'comfortable';
 const surfaceStyle = theme?.surface ?? 'cards';
+const chromeCopy = locale === 'es'
+  ? {
+      home: 'Inicio',
+      navLabel: 'Navegación principal',
+      footer: 'Herramienta ligera para convertir imágenes a PNG en el navegador.'
+    }
+  : {
+      home: 'Home',
+      navLabel: 'Main navigation',
+      footer: 'Built as a lightweight tool site.'
+    };
 ---
 <!doctype html>
 <html lang={locale}>
@@ -69,8 +80,8 @@ const surfaceStyle = theme?.surface ?? 'cards';
           <span class="brand-mark">{ctx.siteConfig.brandName.slice(0, 1).toUpperCase()}</span>
           <span>{ctx.siteConfig.brandName}</span>
         </a>
-        <nav class="nav" aria-label="Main navigation">
-          <a href={seo.homeUrl}>Home</a>
+        <nav class="nav" aria-label={chromeCopy.navLabel}>
+          <a href={seo.homeUrl}>{chromeCopy.home}</a>
           <LanguageSwitcher ctx={ctx} locale={locale} />
         </nav>
       </div>
@@ -80,7 +91,7 @@ const surfaceStyle = theme?.surface ?? 'cards';
     </main>
     <footer class={`footer footer--${ctx.layoutConfig.chrome.footerVariant}`}>
       <div class="container">
-        <p>© {new Date().getFullYear()} {ctx.siteConfig.brandName}. Built as a lightweight tool site.</p>
+        <p>© {new Date().getFullYear()} {ctx.siteConfig.brandName}. {chromeCopy.footer}</p>
       </div>
     </footer>
   </body>

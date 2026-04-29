@@ -15,6 +15,27 @@ interface Props {
 const { ctx, locale, home, faq } = Astro.props;
 const blocks = ctx.layoutConfig.home.blocks;
 const guides = await listGuideContent(ctx, locale);
+const defaultCopy = locale === 'es'
+  ? {
+      howItWorks: 'Cómo funciona',
+      howToUse: 'Cómo usar esta herramienta',
+      examples: 'Ejemplos',
+      examplesTitle: 'Ejemplos que puedes probar',
+      guides: 'Guías',
+      guidesTitle: 'Guías útiles',
+      privacyTitle: 'Privacidad',
+      privacyText: 'Esta herramienta evita recopilar el contenido original del usuario en analítica.'
+    }
+  : {
+      howItWorks: 'How it works',
+      howToUse: 'How to use this tool',
+      examples: 'Examples',
+      examplesTitle: 'Examples you can try',
+      guides: 'Guides',
+      guidesTitle: 'Helpful guides',
+      privacyTitle: 'Privacy note',
+      privacyText: 'This tool is designed to avoid collecting raw user input in analytics.'
+    };
 
 function blockClass(block: LayoutBlock): string {
   return `page-block page-block--${block.type} page-block--${block.type}-${block.variant}`;
@@ -84,8 +105,8 @@ function examplesFor(block: LayoutBlock): string[] {
         <section class={blockClass(block)}>
           <div class="container block-inner">
             <div class="section-heading">
-              <p class="eyebrow">{propString(block, 'eyebrow', 'How it works')}</p>
-              <h2>{propString(block, 'title', 'How to use this tool')}</h2>
+              <p class="eyebrow">{propString(block, 'eyebrow', defaultCopy.howItWorks)}</p>
+              <h2>{propString(block, 'title', defaultCopy.howToUse)}</h2>
             </div>
             <div class="step-grid">
               {stepsFor(block).map((step, index) => (
@@ -103,8 +124,8 @@ function examplesFor(block: LayoutBlock): string[] {
         <section class={blockClass(block)}>
           <div class="container block-inner">
             <div class="section-heading">
-              <p class="eyebrow">{propString(block, 'eyebrow', 'Examples')}</p>
-              <h2>{propString(block, 'title', 'Examples you can try')}</h2>
+              <p class="eyebrow">{propString(block, 'eyebrow', defaultCopy.examples)}</p>
+              <h2>{propString(block, 'title', defaultCopy.examplesTitle)}</h2>
             </div>
             <div class="example-grid">
               {examplesFor(block).map((item) => <div class="example-card">{item}</div>)}
@@ -117,8 +138,8 @@ function examplesFor(block: LayoutBlock): string[] {
         <section class={blockClass(block)}>
           <div class="container block-inner">
             <div class="section-heading">
-              <p class="eyebrow">{propString(block, 'eyebrow', 'Guides')}</p>
-              <h2>{propString(block, 'title', 'Helpful guides')}</h2>
+              <p class="eyebrow">{propString(block, 'eyebrow', defaultCopy.guides)}</p>
+              <h2>{propString(block, 'title', defaultCopy.guidesTitle)}</h2>
             </div>
             <div class="guide-grid">
               {guides.map((guide) => (
@@ -144,8 +165,8 @@ function examplesFor(block: LayoutBlock): string[] {
         <section class={blockClass(block)}>
           <div class="container block-inner">
             <div class="privacy-panel">
-              <strong>{propString(block, 'title', 'Privacy note')}</strong>
-              <p>{propString(block, 'text', 'This tool is designed to avoid collecting raw user input in analytics.')}</p>
+              <strong>{propString(block, 'title', defaultCopy.privacyTitle)}</strong>
+              <p>{propString(block, 'text', defaultCopy.privacyText)}</p>
             </div>
           </div>
         </section>

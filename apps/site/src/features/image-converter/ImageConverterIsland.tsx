@@ -8,7 +8,9 @@ type Props = {
 
 type Labels = {
   intro: string;
+  idle: string;
   dropTitle: string;
+  dropHint: string;
   supportedPrefix: string;
   maxSizePrefix: string;
   chooseImage: string;
@@ -18,6 +20,7 @@ type Labels = {
   download: string;
   convertAnother: string;
   privacy: string;
+  selectedPrefix: string;
   unsupportedType: (type: string) => string;
   fileTooLarge: (maxMb: number) => string;
 };
@@ -25,7 +28,9 @@ type Labels = {
 const LABELS: Record<string, Labels> = {
   es: {
     intro: 'Elige una imagen para convertirla a PNG.',
+    idle: 'Lista para convertir',
     dropTitle: 'Suelta una imagen aquí',
+    dropHint: 'O elige un archivo desde tu dispositivo.',
     supportedPrefix: 'Formatos compatibles',
     maxSizePrefix: 'Tamaño máximo',
     chooseImage: 'Elegir imagen',
@@ -34,13 +39,16 @@ const LABELS: Record<string, Labels> = {
     failed: 'No se pudo convertir la imagen.',
     download: 'Descargar PNG',
     convertAnother: 'Convertir otra imagen',
-    privacy: 'Privacidad: la conversión se ejecuta en tu navegador. Esta herramienta no sube la imagen seleccionada a un servidor.',
+    privacy: 'La conversión se ejecuta en tu navegador. La imagen seleccionada no se sube a un servidor.',
+    selectedPrefix: 'Archivo',
     unsupportedType: (type) => `Formato no compatible: ${type || 'desconocido'}.`,
     fileTooLarge: (maxMb) => `El archivo es demasiado grande. El tamaño máximo es ${maxMb} MB.`
   },
   en: {
     intro: 'Choose an image file to convert it to PNG.',
+    idle: 'Ready to convert',
     dropTitle: 'Drop an image here',
+    dropHint: 'Or choose a file from your device.',
     supportedPrefix: 'Supported formats',
     maxSizePrefix: 'Maximum size',
     chooseImage: 'Choose image',
@@ -50,6 +58,7 @@ const LABELS: Record<string, Labels> = {
     download: 'Download PNG',
     convertAnother: 'Convert another image',
     privacy: 'Privacy: conversion runs in your browser. This tool does not upload the selected image to a server.',
+    selectedPrefix: 'File',
     unsupportedType: (type) => `Unsupported file type: ${type || 'unknown'}.`,
     fileTooLarge: (maxMb) => `File is too large. Maximum size is ${maxMb} MB.`
   }
@@ -76,10 +85,10 @@ export default function ImageConverterIsland({ locale, config }: Props) {
   const labels = labelsFor(locale);
   const maxFileSizeMb = config?.options?.maxFileSizeMb ?? 10;
   const acceptedInputTypes = config?.options?.acceptedInputTypes ?? ['image/jpeg', 'image/png', 'image/webp'];
-  const supportedText = acceptedInputTypes.map(humanMime).join(', ');
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [status, setStatus] = useState<string>(labels.intro);
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null);
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [downloadName, setDownloadName] = useState<string>('converted.png');
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -106,6 +115,7 @@ export default function ImageConverterIsland({ locale, config }: Props) {
     clearDownload();
     const validation = validateImageFile(file, { maxFileSizeMb, acceptedInputTypes });
     if (!validation.ok) {
+      setSelectedFileName(null);
       setError(validationMessage(file, validation));
       setStatus(labels.intro);
       track('tool_error', { toolId: 'convert-image-to-png', locale, reason: validation.reason });
@@ -113,6 +123,7 @@ export default function ImageConverterIsland({ locale, config }: Props) {
     }
     track('file_selected', { toolId: 'convert-image-to-png', locale, inputMimeType: file.type, fileSizeBucket: sizeBucket(file.size) });
     track('tool_start', { toolId: 'convert-image-to-png', locale, inputMimeType: file.type, fileSizeBucket: sizeBucket(file.size) });
+    setSelectedFileName(file.name);
     setStatus(labels.converting);
     try {
       const result = await convertImageToPng(file);
@@ -134,33 +145,44 @@ export default function ImageConverterIsland({ locale, config }: Props) {
   }
 
   return (
-    <div className="tool-grid">
+    <div className="tool-grid image-converter">
       <input
         ref={inputRef}
         type="file"
         accept={acceptedInputTypes.join(',')}
-        style={{ display: 'none' }}
+        className="visually-hidden"
         onChange={(e) => onFiles(e.target.files)}
       />
       <div
-        className={`dropzone${dragging ? ' dragging' : ''}`}
+        className={`dropzone image-dropzone${dragging ? ' dragging' : ''}`}
         onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
         onDragLeave={() => setDragging(false)}
         onDrop={(e) => { e.preventDefault(); setDragging(false); onFiles(e.dataTransfer.files); }}
       >
-        <p><strong>{labels.dropTitle}</strong></p>
-        <p className="small">{labels.supportedPrefix}: {supportedText}. {labels.maxSizePrefix}: {maxFileSizeMb} MB.</p>
-        <button type="button" onClick={() => inputRef.current?.click()}>{labels.chooseImage}</button>
+        <div className="dropzone-icon" aria-hidden="true">PNG</div>
+        <div className="dropzone-copy">
+          <p className="dropzone-title">{labels.dropTitle}</p>
+          <p className="dropzone-hint">{labels.dropHint}</p>
+          <div className="format-row" aria-label={labels.supportedPrefix}>
+            {acceptedInputTypes.map((type: string) => <span className="format-chip" key={type}>{humanMime(type)}</span>)}
+            <span className="format-chip">{maxFileSizeMb} MB</span>
+          </div>
+        </div>
+        <button className="choose-button" type="button" onClick={() => inputRef.current?.click()}>{labels.chooseImage}</button>
       </div>
       {error && <div className="error">{error}</div>}
-      <div className={downloadUrl ? 'success' : 'result-panel'}>{status}</div>
+      <div className={downloadUrl ? 'success converter-status converter-status--ready' : 'result-panel converter-status'}>
+        <strong>{downloadUrl ? labels.ready : labels.idle}</strong>
+        {(!downloadUrl || status !== labels.ready) && <span>{status}</span>}
+        {selectedFileName && <span className="selected-file">{labels.selectedPrefix}: {selectedFileName}</span>}
+      </div>
       {downloadUrl && (
-        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        <div className="converter-actions">
           <a className="button" href={downloadUrl} download={downloadName} onClick={() => track('download_action', { toolId: 'convert-image-to-png', locale })}>{labels.download}</a>
-          <button type="button" className="secondary" onClick={() => { clearDownload(); setStatus(labels.intro); }}>{labels.convertAnother}</button>
+          <button type="button" className="secondary" onClick={() => { clearDownload(); setSelectedFileName(null); setStatus(labels.intro); }}>{labels.convertAnother}</button>
         </div>
       )}
-      <p className="small">{labels.privacy}</p>
+      <p className="small privacy-line">{labels.privacy}</p>
     </div>
   );
 }
