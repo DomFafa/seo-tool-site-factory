@@ -1,0 +1,116 @@
+schemaVersion: 1
+
+defaults:
+  mode: noindex-first
+  createDnsRecords: false
+
+# Fill the domain fields after buying domains and moving nameservers to Cloudflare.
+# Keep mode: noindex-first until the site is verified, reviewed, and ready for indexing.
+sites:
+  typing-speed-test:
+    domain: ""
+    canonicalHost: ""
+    aliases: []
+    projectName: seo-tool-typing-speed-test
+    mode: noindex-first
+    integrations:
+      googleAnalytics:
+        measurementId: ""
+      microsoftClarity:
+        projectId: ""
+      googleSearchConsole:
+        enabled: false
+        propertyType: url-prefix
+        verification:
+          method: meta
+          metaName: google-site-verification
+          content: ""
+      bingWebmaster:
+        enabled: false
+        verification:
+          method: import-from-gsc
+      indexNow:
+        enabled: false
+        key: ""
+        keyFile: ""
+        submitOnProductionDeploy: false
+      ads:
+        activeProvider: adsense
+        adsTxtEntries: []
+        adsense:
+          enabled: false
+          publisherId: ""
+          siteStatus: not_submitted
+          verificationContent: ""
+
+  convertir-imagen-a-png:
+    domain: ""
+    canonicalHost: ""
+    aliases: []
+    projectName: seo-tool-convertir-imagen-a-png
+    mode: noindex-first
+    integrations:
+      googleAnalytics:
+        measurementId: ""
+      microsoftClarity:
+        projectId: ""
+      googleSearchConsole:
+        enabled: false
+        propertyType: url-prefix
+        verification:
+          method: meta
+          metaName: google-site-verification
+          content: ""
+      bingWebmaster:
+        enabled: false
+        verification:
+          method: import-from-gsc
+      indexNow:
+        enabled: false
+        key: ""
+        keyFile: ""
+        submitOnProductionDeploy: false
+      ads:
+        activeProvider: adsense
+        adsTxtEntries: []
+        adsense:
+          enabled: false
+          publisherId: ""
+          siteStatus: not_submitted
+          verificationContent: ""
+
+  cursive-generator:
+    domain: ""
+    canonicalHost: ""
+    aliases: []
+    projectName: seo-tool-cursive-generator
+    mode: noindex-first
+    integrations:
+      googleAnalytics:
+        measurementId: ""
+      microsoftClarity:
+        projectId: ""
+      googleSearchConsole:
+        enabled: false
+        propertyType: url-prefix
+        verification:
+          method: meta
+          metaName: google-site-verification
+          content: ""
+      bingWebmaster:
+        enabled: false
+        verification:
+          method: import-from-gsc
+      indexNow:
+        enabled: false
+        key: ""
+        keyFile: ""
+        submitOnProductionDeploy: false
+      ads:
+        activeProvider: adsense
+        adsTxtEntries: []
+        adsense:
+          enabled: false
+          publisherId: ""
+          siteStatus: not_submitted
+          verificationContent: ""

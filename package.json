@@ -10,7 +10,8 @@
     "check": "pnpm site check --all",
     "ops:report": "pnpm ops report",
     "typecheck": "tsc --noEmit",
-    "lint": "echo \"lint placeholder: add eslint when code style is finalized\""
+    "lint": "echo \"lint placeholder: add eslint when code style is finalized\"",
+    "domain": "tsx scripts/domain.ts"
   },
   "devDependencies": {
     "@astrojs/react": "^4.2.0",
