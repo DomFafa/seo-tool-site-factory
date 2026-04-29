@@ -4,9 +4,7 @@ defaults:
   createDnsRecords: false
 sites:
   typing-speed-test:
-    domain: ""
-    canonicalHost: ""
-    aliases: []
+    domain: "typing-speed-test.com"
     projectName: seo-tool-typing-speed-test
     mode: noindex-first
     integrations:
@@ -40,9 +38,7 @@ sites:
           verificationContent: ""
     cloudflareAccount: typing-speed-test
   convertir-imagen-a-png:
-    domain: ""
-    canonicalHost: ""
-    aliases: []
+    domain: "convertirimagenapng.net"
     projectName: seo-tool-convertir-imagen-a-png
     mode: noindex-first
     integrations:
@@ -76,9 +72,7 @@ sites:
           verificationContent: ""
     cloudflareAccount: convertir-imagen-a-png
   cursive-generator:
-    domain: ""
-    canonicalHost: ""
-    aliases: []
+    domain: "cursivegenerators.net"
     projectName: seo-tool-cursive-generator
     mode: noindex-first
     integrations:

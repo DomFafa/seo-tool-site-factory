@@ -33,15 +33,12 @@ Edit `domains.launch.yaml` after buying domains:
 sites:
   typing-speed-test:
     domain: typing-example.com
-    canonicalHost: typing-example.com
-    aliases:
-      - www.typing-example.com
     projectName: seo-tool-typing-speed-test
     cloudflareAccount: typing-speed-test
     mode: noindex-first
 ```
 
-Keep `mode: noindex-first` until the site is verified and reviewed. This deploys the real domain while retaining draft/noindex behavior.
+Fill `domain` with the primary host, without `www.`. The domain automation uses that as the canonical host and automatically binds `www.<domain>` as the alias. Keep `mode: noindex-first` until the site is verified and reviewed. This deploys the real domain while retaining draft/noindex behavior.
 
 ## Commands
 

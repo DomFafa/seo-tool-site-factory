@@ -14,9 +14,7 @@ import {
 
 type LaunchSite = {
   cloudflareAccount?: string;
-  domain?: string;
-  canonicalHost?: string;
-  aliases?: string[];
+  domain: string;
   projectName?: string;
   zoneName?: string;
   mode?: 'noindex-first' | 'live';
@@ -148,13 +146,14 @@ function resolveCf(siteId: string, item: LaunchSite): ResolvedCloudflareAccount 
 }
 
 function getDomainForSite(siteId: string, item: LaunchSite): string {
-  const domain = (item.canonicalHost || item.domain || '').trim();
-  if (!domain) throw new Error(`${siteId}: fill domain or canonicalHost in domains.launch.yaml first.`);
+  const domain = (item.domain ?? '').trim();
+  if (!domain) throw new Error(`${siteId}: fill domain in domains.launch.yaml first.`);
+  if (domain.startsWith('www.')) throw new Error(`${siteId}: domain must be the primary host without www.; use ${domain.replace(/^www\./, '')}.`);
   return domain;
 }
 
-function getAliases(item: LaunchSite): string[] {
-  return Array.from(new Set((item.aliases ?? []).filter(Boolean)));
+function getAliases(siteId: string, item: LaunchSite): string[] {
+  return [`www.${getDomainForSite(siteId, item)}`];
 }
 
 function zoneNameFor(domain: string, item: LaunchSite): string {
@@ -231,9 +230,9 @@ function updateSiteConfig(siteId: string, item: LaunchSite, mode: 'noindex-first
   const domain = getDomainForSite(siteId, item);
   data.domains = {
     ...(data.domains ?? {}),
-    production: item.domain || domain,
+    production: domain,
     canonicalHost: domain,
-    aliases: getAliases(item)
+    aliases: getAliases(siteId, item)
   };
   data.deployment = {
     ...(data.deployment ?? {}),
@@ -389,11 +388,10 @@ function approveContent(siteId: string, dry = false): void {
 
 async function printPlan(siteId: string, item: LaunchSite): Promise<void> {
   const ctx = loadSiteContext(siteId, workspaceRoot);
-  const domain = item.domain || item.canonicalHost || '(missing)';
-  const canonical = item.canonicalHost || item.domain || '(missing)';
-  const aliases = getAliases(item);
+  const domain = getDomainForSite(siteId, item);
+  const aliases = getAliases(siteId, item);
   const accountAlias = item.cloudflareAccount ?? getCloudflareAccountAliasForSite(ctx);
-  console.log(`${siteId}\n  cloudflare account: ${accountAlias}\n  project: ${item.projectName}\n  domain: ${domain}\n  canonical: ${canonical}\n  aliases: ${aliases.join(', ') || '-'}\n  mode: ${item.mode ?? 'noindex-first'}\n`);
+  console.log(`${siteId}\n  cloudflare account: ${accountAlias}\n  project: ${item.projectName}\n  domain: ${domain}\n  canonical: ${domain}\n  aliases: ${aliases.join(', ')}\n  mode: ${item.mode ?? 'noindex-first'}\n`);
 }
 
 async function checkSite(siteId: string, item: LaunchSite): Promise<void> {
@@ -405,7 +403,7 @@ async function checkSite(siteId: string, item: LaunchSite): Promise<void> {
   console.log(`  domain: ${domain}`);
   console.log(`  zone: ${zone ? `${zone.name} (${zone.status})` : 'not found'}`);
   const domains = await listPagesDomains(cf, item.projectName!);
-  const targetDomains = [domain, ...getAliases(item)];
+  const targetDomains = [domain, ...getAliases(siteId, item)];
   for (const target of targetDomains) {
     const bound = domains.find((entry) => entry.name === target);
     console.log(`  pages domain ${target}: ${bound ? `bound (${bound.status ?? 'unknown'})` : 'not bound'}`);
@@ -415,7 +413,7 @@ async function checkSite(siteId: string, item: LaunchSite): Promise<void> {
 async function bindSite(siteId: string, item: LaunchSite): Promise<void> {
   const cf = resolveCf(siteId, item);
   const domain = getDomainForSite(siteId, item);
-  const allDomains = [domain, ...getAliases(item)];
+  const allDomains = [domain, ...getAliases(siteId, item)];
   const existing = await listPagesDomains(cf, item.projectName!);
   for (const target of allDomains) {
     if (existing.some((entry) => entry.name === target)) {
