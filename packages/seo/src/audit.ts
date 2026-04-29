@@ -1,5 +1,6 @@
-import { existsSync, readdirSync, statSync } from 'node:fs';
-import { join, relative } from 'node:path';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
+import { dirname, join, relative, resolve } from 'node:path';
+import { gzipSync } from 'node:zlib';
 import type { ContentDocument, SiteContext } from '@factory/site-core';
 import { getIndexableLocales, getIndexingMode, isPagesDevHost, isRealDomain, listGuideContent, loadFaqContent, loadHomeContent, shouldAllowRobotsCrawl } from '@factory/site-core';
 import { buildPageSeo } from './metadata';
@@ -77,14 +78,92 @@ function walkDistFiles(dir: string): string[] {
   return out;
 }
 
+function extractAstroScriptRefs(html: string): string[] {
+  const refs = new Set<string>();
+  const scriptRefPattern = /["'](\/_astro\/[^"']+\.js)["']/g;
+  for (const match of html.matchAll(scriptRefPattern)) refs.add(match[1]);
+  return [...refs];
+}
+
+function extractRelativeStaticImports(js: string): string[] {
+  const refs = new Set<string>();
+  const patterns = [
+    /\bimport\s+["'](\.{1,2}\/[^"']+\.js)["']/g,
+    /\bfrom\s+["'](\.{1,2}\/[^"']+\.js)["']/g
+  ];
+  for (const pattern of patterns) {
+    for (const match of js.matchAll(pattern)) refs.add(match[1]);
+  }
+  return [...refs];
+}
+
+function extractRelativeDynamicImports(js: string): string[] {
+  const refs = new Set<string>();
+  const pattern = /\bimport\(\s*["'](\.{1,2}\/[^"']+\.js)["']\s*\)/g;
+  for (const match of js.matchAll(pattern)) refs.add(match[1]);
+  return [...refs];
+}
+
+function toDistJsFile(outDir: string, ref: string): string {
+  return ref.startsWith('/_astro/') ? join(outDir, ref.slice(1)) : ref;
+}
+
+function collectReachableClientJs(outDir: string): {
+  initialStaticJsFiles: Set<string>;
+  lazyDynamicJsFiles: Set<string>;
+  missingRefs: string[];
+} {
+  const initialStaticJsFiles = new Set<string>();
+  const lazyDynamicJsFiles = new Set<string>();
+  const missingRefs: string[] = [];
+  const htmlFiles = walkDistFiles(outDir).filter((file) => file.endsWith('.html'));
+  const queue = htmlFiles.flatMap((file) => extractAstroScriptRefs(readFileSync(file, 'utf8')).map((ref) => toDistJsFile(outDir, ref)));
+
+  while (queue.length > 0) {
+    const file = resolve(queue.shift() ?? '');
+    if (initialStaticJsFiles.has(file)) continue;
+    if (!existsSync(file)) {
+      missingRefs.push(relative(outDir, file));
+      continue;
+    }
+    initialStaticJsFiles.add(file);
+    const js = readFileSync(file, 'utf8');
+    for (const ref of extractRelativeStaticImports(js)) queue.push(resolve(dirname(file), ref));
+    for (const ref of extractRelativeDynamicImports(js)) {
+      const dynamicFile = resolve(dirname(file), ref);
+      if (!existsSync(dynamicFile)) missingRefs.push(relative(outDir, dynamicFile));
+      else lazyDynamicJsFiles.add(dynamicFile);
+    }
+  }
+
+  return { initialStaticJsFiles, lazyDynamicJsFiles, missingRefs: [...new Set(missingRefs)].sort() };
+}
+
+function sumRawBytes(files: Iterable<string>): number {
+  let total = 0;
+  for (const file of files) total += statSync(file).size;
+  return total;
+}
+
+function sumGzipBytes(files: Iterable<string>): number {
+  let total = 0;
+  for (const file of files) total += gzipSync(readFileSync(file)).length;
+  return total;
+}
+
 function auditCloudflareStaticFiles(ctx: SiteContext): SeoIssue[] {
   const issues: SeoIssue[] = [];
   const outDir = join(ctx.workspaceRoot, 'dist', 'sites', ctx.siteId);
   if (!existsSync(outDir)) return [issue('P2', 'DIST_NOT_BUILT', `dist/sites/${ctx.siteId} does not exist. Build the site before final SEO QA.`)];
   if (!existsSync(join(outDir, '_headers'))) issues.push(issue('P2', 'HEADERS_FILE_MISSING', '_headers is missing. Static asset cache headers are recommended.'));
   if (ctx.siteConfig.seo.ogImage?.mode !== 'none' && !existsSync(join(outDir, 'og-image.svg'))) issues.push(issue('P2', 'OG_IMAGE_MISSING', 'Generated OG image is missing from the build output.'));
-  const jsTotal = walkDistFiles(join(outDir, '_astro')).filter((file) => file.endsWith('.js')).reduce((sum, file) => sum + statSync(file).size, 0);
-  if (jsTotal > 180 * 1024) issues.push(issue('P2', 'CLIENT_JS_BUDGET_WARNING', `Client JS is ${(jsTotal / 1024).toFixed(1)} KiB, above 180 KiB guideline.`));
+  const reachableJs = collectReachableClientJs(outDir);
+  for (const ref of reachableJs.missingRefs) issues.push(issue('P2', 'CLIENT_JS_REFERENCE_MISSING', `Referenced client JS is missing from build output: ${ref}.`));
+  const reachableInitialJsGzipKiB = sumGzipBytes(reachableJs.initialStaticJsFiles) / 1024;
+  const reachableInitialJsRawKiB = sumRawBytes(reachableJs.initialStaticJsFiles) / 1024;
+  if (reachableInitialJsGzipKiB > 80) {
+    issues.push(issue('P2', 'CLIENT_JS_BUDGET_WARNING', `Reachable client JS is ${reachableInitialJsGzipKiB.toFixed(1)} KiB gzip / ${reachableInitialJsRawKiB.toFixed(1)} KiB raw.`));
+  }
   return issues;
 }
 
