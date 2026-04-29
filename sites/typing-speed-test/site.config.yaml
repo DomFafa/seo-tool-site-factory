@@ -30,3 +30,4 @@ deployment:
   provider: cloudflare-pages
   projectName: seo-tool-typing-speed-test
   outputDir: dist/sites/typing-speed-test
+  accountAlias: typing-speed-test

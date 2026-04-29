@@ -1,11 +1,7 @@
 schemaVersion: 1
-
 defaults:
   mode: noindex-first
   createDnsRecords: false
-
-# Fill the domain fields after buying domains and moving nameservers to Cloudflare.
-# Keep mode: noindex-first until the site is verified, reviewed, and ready for indexing.
 sites:
   typing-speed-test:
     domain: ""
@@ -42,7 +38,7 @@ sites:
           publisherId: ""
           siteStatus: not_submitted
           verificationContent: ""
-
+    cloudflareAccount: typing-speed-test
   convertir-imagen-a-png:
     domain: ""
     canonicalHost: ""
@@ -78,7 +74,7 @@ sites:
           publisherId: ""
           siteStatus: not_submitted
           verificationContent: ""
-
+    cloudflareAccount: convertir-imagen-a-png
   cursive-generator:
     domain: ""
     canonicalHost: ""
@@ -114,3 +110,4 @@ sites:
           publisherId: ""
           siteStatus: not_submitted
           verificationContent: ""
+    cloudflareAccount: cursive-generator

@@ -3,6 +3,7 @@ import { join } from 'node:path';
 import matter from 'gray-matter';
 import type { SiteContext, ValidationIssue } from './types';
 import { contentExists, localeContentDirExists } from './content';
+import { loadCloudflareAccountsConfig } from './cloudflare-accounts';
 import { getIndexingMode, isIndexingEnabled, isPagesDevHost, listSiteIds, loadSiteContext } from './load';
 import { ContentFrontmatterSchema } from './schema';
 import { findWorkspaceRoot } from './workspace';
@@ -144,11 +145,32 @@ function validateHomeLayout(ctx: SiteContext): ValidationIssue[] {
   return issues;
 }
 
+function validateDeploymentAccount(ctx: SiteContext): ValidationIssue[] {
+  const issues: ValidationIssue[] = [];
+  const alias = ctx.siteConfig.deployment.accountAlias ?? ctx.siteId;
+  if (!ctx.siteConfig.deployment.accountAlias) {
+    issues.push({ level: 'P1', code: 'CLOUDFLARE_ACCOUNT_ALIAS_MISSING', message: 'deployment.accountAlias is missing; local deploy will fall back to site id.' });
+  }
+
+  try {
+    const config = loadCloudflareAccountsConfig(ctx.workspaceRoot);
+    if (!config.accounts[alias]) {
+      issues.push({ level: 'P0', code: 'CLOUDFLARE_ACCOUNT_PROFILE_MISSING', message: `Cloudflare account alias "${alias}" is not defined in cloudflare.accounts.yaml.` });
+    }
+  } catch (error) {
+    return [{ level: 'P0', code: 'CLOUDFLARE_ACCOUNTS_CONFIG_INVALID', message: error instanceof Error ? error.message : 'Could not load cloudflare.accounts.yaml.' }];
+  }
+
+  return issues;
+}
+
 export function validateSiteContext(ctx: SiteContext): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
   const site = ctx.siteConfig;
   const tool = ctx.toolConfig;
   const integrations = ctx.integrationsConfig;
+
+  issues.push(...validateDeploymentAccount(ctx));
 
   issues.push(...validateHomeLayout(ctx));
 

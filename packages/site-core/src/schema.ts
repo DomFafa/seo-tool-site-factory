@@ -61,6 +61,7 @@ export const SiteConfigSchema = z.object({
   }),
   deployment: z.object({
     provider: z.enum(['cloudflare-pages']).default('cloudflare-pages'),
+    accountAlias: z.string().min(1).optional(),
     projectName: z.string().min(1),
     outputDir: z.string().min(1).optional()
   })

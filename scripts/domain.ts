@@ -1,12 +1,19 @@
 #!/usr/bin/env tsx
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import YAML from 'yaml';
 import matter from 'gray-matter';
-import { findWorkspaceRoot, loadSiteContext } from '@factory/site-core';
+import {
+  findWorkspaceRoot,
+  getCloudflareAccountAliasForSite,
+  loadSiteContext,
+  resolveCloudflareAccountForSite,
+  type ResolvedCloudflareAccount
+} from '@factory/site-core';
 
 type LaunchSite = {
+  cloudflareAccount?: string;
   domain?: string;
   canonicalHost?: string;
   aliases?: string[];
@@ -70,7 +77,6 @@ type LaunchConfig = {
 };
 
 type CfZone = { id: string; name: string; status: string };
-
 type CfPageDomain = { name?: string; status?: string; [key: string]: unknown };
 
 const workspaceRoot = findWorkspaceRoot();
@@ -92,9 +98,12 @@ function usage(): void {
   pnpm domain verify <site-id>|--all
   pnpm domain go-live <site-id> --yes [--dry-run]
 
-Environment for Cloudflare API calls:
-  CLOUDFLARE_ACCOUNT_ID
-  CLOUDFLARE_API_TOKEN
+Cloudflare accounts are resolved per site from:
+  cloudflare.accounts.yaml
+  sites/<site-id>/site.config.yaml deployment.accountAlias
+  domains.launch.yaml sites.<site-id>.cloudflareAccount override
+
+Deployments are intentionally local-only. GitHub Actions should run checks/builds only, not deploy.
 `);
 }
 
@@ -128,8 +137,14 @@ function getLaunchSite(config: LaunchConfig, siteId: string): Required<Pick<Laun
   const ctx = loadSiteContext(siteId, workspaceRoot);
   return {
     ...item,
+    cloudflareAccount: item.cloudflareAccount ?? ctx.siteConfig.deployment.accountAlias ?? siteId,
     projectName: item.projectName ?? ctx.siteConfig.deployment.projectName
   };
+}
+
+function resolveCf(siteId: string, item: LaunchSite): ResolvedCloudflareAccount {
+  const ctx = loadSiteContext(siteId, workspaceRoot);
+  return resolveCloudflareAccountForSite(ctx, { accountAlias: item.cloudflareAccount });
 }
 
 function getDomainForSite(siteId: string, item: LaunchSite): string {
@@ -146,21 +161,11 @@ function zoneNameFor(domain: string, item: LaunchSite): string {
   return item.zoneName || domain.replace(/^www\./, '');
 }
 
-function cfRequiredEnv(): { accountId: string; token: string } {
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-  const token = process.env.CLOUDFLARE_API_TOKEN;
-  if (!accountId) throw new Error('Missing CLOUDFLARE_ACCOUNT_ID.');
-  if (!token) throw new Error('Missing CLOUDFLARE_API_TOKEN.');
-  return { accountId, token };
-}
-
-async function cfRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const { token } = cfRequiredEnv();
-  const base = process.env.CLOUDFLARE_API_BASE || 'https://api.cloudflare.com/client/v4';
-  const response = await fetch(`${base}${path}`, {
+async function cfRequest<T>(cf: ResolvedCloudflareAccount, path: string, init: RequestInit = {}): Promise<T> {
+  const response = await fetch(`${cf.apiBase}${path}`, {
     ...init,
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${cf.apiToken}`,
       'Content-Type': 'application/json',
       ...(init.headers ?? {})
     }
@@ -168,33 +173,32 @@ async function cfRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
   const payload = await response.json().catch(() => ({}));
   if (!response.ok || payload?.success === false) {
     const errors = Array.isArray(payload?.errors) ? payload.errors.map((e: any) => e.message).join('; ') : '';
-    throw new Error(`Cloudflare API ${init.method ?? 'GET'} ${path} failed: HTTP ${response.status}${errors ? ` - ${errors}` : ''}`);
+    throw new Error(`Cloudflare API ${init.method ?? 'GET'} ${path} failed for profile "${cf.alias}": HTTP ${response.status}${errors ? ` - ${errors}` : ''}`);
   }
   return payload as T;
 }
 
-async function listPagesDomains(projectName: string): Promise<CfPageDomain[]> {
-  const { accountId } = cfRequiredEnv();
-  const payload = await cfRequest<{ result?: CfPageDomain[] }>(`/accounts/${accountId}/pages/projects/${projectName}/domains`);
+async function listPagesDomains(cf: ResolvedCloudflareAccount, projectName: string): Promise<CfPageDomain[]> {
+  const payload = await cfRequest<{ result?: CfPageDomain[] }>(cf, `/accounts/${cf.accountId}/pages/projects/${projectName}/domains`);
   return payload.result ?? [];
 }
 
-async function addPagesDomain(projectName: string, domain: string): Promise<void> {
-  const { accountId } = cfRequiredEnv();
-  await cfRequest(`/accounts/${accountId}/pages/projects/${projectName}/domains`, {
+async function addPagesDomain(cf: ResolvedCloudflareAccount, projectName: string, domain: string): Promise<void> {
+  await cfRequest(cf, `/accounts/${cf.accountId}/pages/projects/${projectName}/domains`, {
     method: 'POST',
     body: JSON.stringify({ name: domain })
   });
 }
 
-async function findZone(item: LaunchSite, domain: string): Promise<CfZone | null> {
+async function findZone(cf: ResolvedCloudflareAccount, item: LaunchSite, domain: string): Promise<CfZone | null> {
   const zoneName = zoneNameFor(domain, item);
-  const payload = await cfRequest<{ result?: CfZone[] }>(`/zones?name=${encodeURIComponent(zoneName)}`);
+  const payload = await cfRequest<{ result?: CfZone[] }>(cf, `/zones?name=${encodeURIComponent(zoneName)}`);
   return payload.result?.[0] ?? null;
 }
 
-async function ensureCnameRecord(zoneId: string, name: string, target: string): Promise<string> {
+async function ensureCnameRecord(cf: ResolvedCloudflareAccount, zoneId: string, name: string, target: string): Promise<string> {
   const existing = await cfRequest<{ result?: Array<{ id: string; type: string; name: string; content: string }> }>(
+    cf,
     `/zones/${zoneId}/dns_records?name=${encodeURIComponent(name)}`
   );
   const records = existing.result ?? [];
@@ -204,19 +208,19 @@ async function ensureCnameRecord(zoneId: string, name: string, target: string): 
     return `DNS SKIP: ${name} already has ${records.length} record(s). Review manually before changing.`;
   }
   if (dryRun) return `DRY RUN DNS CREATE: CNAME ${name} -> ${target}`;
-  await cfRequest(`/zones/${zoneId}/dns_records`, {
+  await cfRequest(cf, `/zones/${zoneId}/dns_records`, {
     method: 'POST',
     body: JSON.stringify({ type: 'CNAME', name, content: target, proxied: true })
   });
   return `DNS CREATED: CNAME ${name} -> ${target}`;
 }
 
-function run(cmd: string, cmdArgs: string[]): void {
+function run(cmd: string, cmdArgs: string[], env: Record<string, string> = {}): void {
   const result = spawnSync(cmd, cmdArgs, {
     cwd: workspaceRoot,
     stdio: 'inherit',
     shell: process.platform === 'win32',
-    env: process.env
+    env: { ...process.env, ...env }
   });
   if (result.status !== 0) process.exit(result.status ?? 1);
 }
@@ -234,18 +238,19 @@ function updateSiteConfig(siteId: string, item: LaunchSite, mode: 'noindex-first
   data.deployment = {
     ...(data.deployment ?? {}),
     provider: 'cloudflare-pages',
+    accountAlias: item.cloudflareAccount ?? data.deployment?.accountAlias ?? siteId,
     projectName: item.projectName,
     outputDir: `dist/sites/${siteId}`
   };
   if (mode === 'noindex-first') {
     data.lifecycle = { ...(data.lifecycle ?? {}), status: 'draft' };
-    data.indexing = { ...(data.indexing ?? {}), allowIndex: false, mode: 'allow-noindex' };
     data.launch = { ...(data.launch ?? {}), stage: 'real-domain-noindex' };
+    data.indexing = { ...(data.indexing ?? {}), allowIndex: false, mode: 'allow-noindex' };
   }
   if (mode === 'live') {
     data.lifecycle = { ...(data.lifecycle ?? {}), status: 'live' };
-    data.indexing = { ...(data.indexing ?? {}), allowIndex: true, mode: 'index' };
     data.launch = { ...(data.launch ?? {}), stage: 'real-domain-indexed' };
+    data.indexing = { ...(data.indexing ?? {}), allowIndex: true, mode: 'index' };
     const defaultLocale = data.defaultLocale;
     data.locales = data.locales ?? {};
     data.locales[defaultLocale] = { ...(data.locales[defaultLocale] ?? {}), enabled: true, indexable: true, reviewed: true };
@@ -383,19 +388,23 @@ function approveContent(siteId: string, dry = false): void {
 }
 
 async function printPlan(siteId: string, item: LaunchSite): Promise<void> {
+  const ctx = loadSiteContext(siteId, workspaceRoot);
   const domain = item.domain || item.canonicalHost || '(missing)';
   const canonical = item.canonicalHost || item.domain || '(missing)';
   const aliases = getAliases(item);
-  console.log(`${siteId}\n  project: ${item.projectName}\n  domain: ${domain}\n  canonical: ${canonical}\n  aliases: ${aliases.join(', ') || '-'}\n  mode: ${item.mode ?? 'noindex-first'}\n`);
+  const accountAlias = item.cloudflareAccount ?? getCloudflareAccountAliasForSite(ctx);
+  console.log(`${siteId}\n  cloudflare account: ${accountAlias}\n  project: ${item.projectName}\n  domain: ${domain}\n  canonical: ${canonical}\n  aliases: ${aliases.join(', ') || '-'}\n  mode: ${item.mode ?? 'noindex-first'}\n`);
 }
 
 async function checkSite(siteId: string, item: LaunchSite): Promise<void> {
+  const cf = resolveCf(siteId, item);
   const domain = getDomainForSite(siteId, item);
-  const zone = await findZone(item, domain);
+  const zone = await findZone(cf, item, domain);
   console.log(`${siteId}:`);
+  console.log(`  cloudflare account: ${cf.alias} (${cf.accountIdEnv})`);
   console.log(`  domain: ${domain}`);
   console.log(`  zone: ${zone ? `${zone.name} (${zone.status})` : 'not found'}`);
-  const domains = await listPagesDomains(item.projectName!);
+  const domains = await listPagesDomains(cf, item.projectName!);
   const targetDomains = [domain, ...getAliases(item)];
   for (const target of targetDomains) {
     const bound = domains.find((entry) => entry.name === target);
@@ -404,29 +413,30 @@ async function checkSite(siteId: string, item: LaunchSite): Promise<void> {
 }
 
 async function bindSite(siteId: string, item: LaunchSite): Promise<void> {
+  const cf = resolveCf(siteId, item);
   const domain = getDomainForSite(siteId, item);
   const allDomains = [domain, ...getAliases(item)];
-  const existing = await listPagesDomains(item.projectName!);
+  const existing = await listPagesDomains(cf, item.projectName!);
   for (const target of allDomains) {
     if (existing.some((entry) => entry.name === target)) {
-      console.log(`${siteId}: Pages domain already bound: ${target}`);
+      console.log(`${siteId}: Pages domain already bound in ${cf.alias}: ${target}`);
     } else if (dryRun) {
-      console.log(`${siteId}: DRY RUN Pages domain add: ${target}`);
+      console.log(`${siteId}: DRY RUN Pages domain add in ${cf.alias}: ${target}`);
     } else {
-      await addPagesDomain(item.projectName!, target);
-      console.log(`${siteId}: Pages domain added: ${target}`);
+      await addPagesDomain(cf, item.projectName!, target);
+      console.log(`${siteId}: Pages domain added in ${cf.alias}: ${target}`);
     }
   }
 
   if (ensureDns || item.mode === 'live') {
-    const zone = await findZone(item, domain);
+    const zone = await findZone(cf, item, domain);
     if (!zone) {
-      console.log(`${siteId}: DNS SKIP: Cloudflare zone not found for ${zoneNameFor(domain, item)}.`);
+      console.log(`${siteId}: DNS SKIP: Cloudflare zone not found for ${zoneNameFor(domain, item)} in account ${cf.alias}.`);
       return;
     }
     const target = `${item.projectName}.pages.dev`;
     for (const targetDomain of allDomains) {
-      console.log(`${siteId}: ${await ensureCnameRecord(zone.id, targetDomain, target)}`);
+      console.log(`${siteId}: ${await ensureCnameRecord(cf, zone.id, targetDomain, target)}`);
     }
   }
 }
@@ -437,10 +447,22 @@ async function configureSite(siteId: string, item: LaunchSite, mode: 'noindex-fi
   console.log(`${siteId}: ${dryRun ? 'planned config update' : 'configuration updated'} (${mode}).`);
 }
 
-function deploySite(siteId: string): void {
+function deploySite(siteId: string, item: LaunchSite): void {
+  const cf = resolveCf(siteId, item);
   run('pnpm', ['site', 'check', siteId]);
   run('pnpm', ['site', 'build', siteId]);
-  run('pnpm', ['site', 'deploy', siteId, '--production']);
+  const outputDir = join('dist', 'sites', siteId);
+  console.log(`Deploying ${siteId} to Cloudflare account profile "${cf.alias}".`);
+  run(
+    'pnpm',
+    ['exec', 'wrangler', 'pages', 'deploy', outputDir, '--project-name', item.projectName!, '--branch', 'main'],
+    {
+      SITE_ID: siteId,
+      CLOUDFLARE_ACCOUNT_ID: cf.accountId,
+      CLOUDFLARE_API_TOKEN: cf.apiToken,
+      CLOUDFLARE_API_BASE: cf.apiBase
+    }
+  );
 }
 
 function verifySite(siteId: string): void {
@@ -464,13 +486,11 @@ async function main(): Promise<void> {
   }
 
   if (command === 'check') {
-    cfRequiredEnv();
     for (const siteId of siteIds) await checkSite(siteId, getLaunchSite(config, siteId));
     return;
   }
 
   if (command === 'bind') {
-    cfRequiredEnv();
     for (const siteId of siteIds) await bindSite(siteId, getLaunchSite(config, siteId));
     return;
   }
@@ -484,7 +504,7 @@ async function main(): Promise<void> {
   }
 
   if (command === 'deploy') {
-    for (const siteId of siteIds) deploySite(siteId);
+    for (const siteId of siteIds) deploySite(siteId, getLaunchSite(config, siteId));
     return;
   }
 
@@ -501,7 +521,7 @@ async function main(): Promise<void> {
     await configureSite(siteId, item, 'live');
     approveContent(siteId, dryRun);
     if (dryRun) return;
-    deploySite(siteId);
+    deploySite(siteId, item);
     verifySite(siteId);
     const indexNow = loadSiteContext(siteId, workspaceRoot).integrationsConfig.indexing.indexNow;
     if (indexNow.enabled) run('pnpm', ['site', 'submit-indexnow', siteId]);

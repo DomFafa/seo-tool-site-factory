@@ -12,3 +12,8 @@ apps/site/public/*.xml
 apps/site/public/_headers
 apps/site/public/og-image.svg
 apps/site/public/google*.html
+.env.local
+*.zip
+*.patch
+overlay/
+*-overlay/

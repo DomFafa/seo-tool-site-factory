@@ -31,3 +31,4 @@ deployment:
   provider: cloudflare-pages
   projectName: seo-tool-convert-image-to-png
   outputDir: dist/sites/convert-image-to-png
+  accountAlias: convert-image-to-png

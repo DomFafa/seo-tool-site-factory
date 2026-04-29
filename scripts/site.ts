@@ -3,7 +3,16 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { prepareGeneratedPublicFiles, submitIndexNow, verifyOnlineIntegrations } from '@factory/integrations';
-import { findWorkspaceRoot, hasBlockingIssues, listSiteIds, loadSiteContext, validateAllSites, validateSiteContext } from '@factory/site-core';
+import {
+  findWorkspaceRoot,
+  getCloudflareAccountAliasForSite,
+  getCloudflareEnvForSite,
+  hasBlockingIssues,
+  listSiteIds,
+  loadSiteContext,
+  validateAllSites,
+  validateSiteContext
+} from '@factory/site-core';
 
 const workspaceRoot = findWorkspaceRoot();
 const [command, maybeSiteId, ...args] = process.argv.slice(2);
@@ -22,6 +31,9 @@ function usage() {
   pnpm site verify-integrations <site-id>
   pnpm site submit-indexnow <site-id>
   pnpm site ui-audit <site-id>|--all
+
+Deployment uses the site's deployment.accountAlias and cloudflare.accounts.yaml.
+Do not rely on a globally logged-in Wrangler account for production deploys.
 `);
 }
 
@@ -63,7 +75,8 @@ switch (command) {
   case 'list': {
     for (const siteId of listSiteIds(workspaceRoot)) {
       const ctx = loadSiteContext(siteId, workspaceRoot);
-      console.log(`${siteId}\t${ctx.siteConfig.domains.canonicalHost}\t${ctx.siteConfig.lifecycle.status}\t${ctx.siteConfig.primaryTool}`);
+      const accountAlias = getCloudflareAccountAliasForSite(ctx);
+      console.log(`${siteId}\t${ctx.siteConfig.domains.canonicalHost}\t${ctx.siteConfig.lifecycle.status}\t${ctx.siteConfig.primaryTool}\tcf:${accountAlias}`);
     }
     break;
   }
@@ -130,7 +143,9 @@ switch (command) {
     run('pnpm', ['--filter', '@factory/site', 'build'], { SITE_ID: siteId });
     const outputDir = join('dist', 'sites', siteId);
     const branch = production ? 'main' : 'preview';
-    run('pnpm', ['exec', 'wrangler', 'pages', 'deploy', outputDir, '--project-name', ctx.siteConfig.deployment.projectName, '--branch', branch], { SITE_ID: siteId });
+    const cfEnv = getCloudflareEnvForSite(ctx);
+    console.log(`Deploying ${siteId} to Cloudflare account profile "${getCloudflareAccountAliasForSite(ctx)}".`);
+    run('pnpm', ['exec', 'wrangler', 'pages', 'deploy', outputDir, '--project-name', ctx.siteConfig.deployment.projectName, '--branch', branch], { SITE_ID: siteId, ...cfEnv });
     break;
   }
   case 'verify':
@@ -142,17 +157,17 @@ switch (command) {
     if (results.some((r) => !r.ok)) process.exit(1);
     break;
   }
-  case 'ui-audit': {
-    const target = maybeSiteId ?? '--all';
-    run('pnpm', ['exec', 'tsx', 'scripts/ui-audit.ts', target, ...args]);
-    break;
-  }
   case 'submit-indexnow': {
     const siteId = requireSiteId();
     const ctx = loadSiteContext(siteId, workspaceRoot);
     const result = await submitIndexNow(ctx);
     console.log(`${result.ok ? '✓' : '✗'} HTTP ${result.status}: ${result.message}`);
     if (!result.ok) process.exit(1);
+    break;
+  }
+  case 'ui-audit': {
+    const target = maybeSiteId ?? '--all';
+    run('pnpm', ['exec', 'tsx', 'scripts/ui-audit.ts', target, ...args]);
     break;
   }
   default:
@@ -169,6 +184,7 @@ function createSite(siteId: string, createArgs: string[]) {
   const category = argValue('--category', 'generator');
   const tool = argValue('--tool', siteId);
   const locale = argValue('--default-locale', 'en');
+  const accountAlias = argValue('--cloudflare-account', siteId);
   const siteDir = join(workspaceRoot, 'sites', siteId);
   if (existsSync(siteDir)) throw new Error(`Site already exists: ${siteDir}`);
   mkdirSync(join(siteDir, 'content', locale, 'guides'), { recursive: true });
@@ -176,7 +192,7 @@ function createSite(siteId: string, createArgs: string[]) {
   mkdirSync(join(siteDir, 'static'), { recursive: true });
   mkdirSync(join(siteDir, 'snippets', 'ads'), { recursive: true });
   writeFileSync(join(siteDir, 'brief.yaml'), `schemaVersion: 1\nprimaryKeyword: ${siteId.replaceAll('-', ' ')}\ncategory: ${category}\nintent:\n  userJob: \"Describe the user's job here.\"\nproductBoundary:\n  thisSiteIs: []\n  thisSiteIsNot: []\n`);
-  writeFileSync(join(siteDir, 'site.config.yaml'), `schemaVersion: 1\nid: ${siteId}\nbrandName: ${title(siteId)}\ncategory: ${category}\nprimaryKeyword: ${siteId.replaceAll('-', ' ')}\nlifecycle:\n  status: draft\nlaunch:\n  stage: pages-dev\ndomains:\n  production: example.com\n  canonicalHost: example.com\n  aliases: []\ndefaultLocale: ${locale}\nlocales:\n  ${locale}:\n    enabled: true\n    indexable: false\n    reviewed: false\nindexing:\n  allowIndex: false\n  mode: disallow\nprimaryTool: ${tool}\nseo:\n  defaultTitle: ${title(siteId)}\n  defaultDescription: ${title(siteId)} online tool.\n  xDefaultLocale: ${locale}\n  structuredData:\n    - WebSite\n    - WebPage\n  sitemap:\n    split: false\n  ogImage:\n    mode: generated\n    path: /og-image.svg\n  pagesDevRedirect:\n    status: unknown\ndeployment:\n  provider: cloudflare-pages\n  projectName: seo-tool-${siteId}\n  outputDir: dist/sites/${siteId}\n`);
+  writeFileSync(join(siteDir, 'site.config.yaml'), `schemaVersion: 1\nid: ${siteId}\nbrandName: ${title(siteId)}\ncategory: ${category}\nprimaryKeyword: ${siteId.replaceAll('-', ' ')}\nlifecycle:\n  status: draft\nlaunch:\n  stage: pages-dev\ndomains:\n  production: example.com\n  canonicalHost: example.com\n  aliases: []\ndefaultLocale: ${locale}\nlocales:\n  ${locale}:\n    enabled: true\n    indexable: false\n    reviewed: false\nindexing:\n  allowIndex: false\n  mode: disallow\nprimaryTool: ${tool}\nseo:\n  defaultTitle: ${title(siteId)}\n  defaultDescription: ${title(siteId)} online tool.\n  xDefaultLocale: ${locale}\n  structuredData:\n    - WebSite\n    - WebPage\n  sitemap:\n    split: false\n  ogImage:\n    mode: generated\n    path: /og-image.svg\n  pagesDevRedirect:\n    status: unknown\ndeployment:\n  provider: cloudflare-pages\n  accountAlias: ${accountAlias}\n  projectName: seo-tool-${siteId}\n  outputDir: dist/sites/${siteId}\n`);
   writeFileSync(join(siteDir, 'tool.config.yaml'), `schemaVersion: 1\ntoolId: ${tool}\nexecutionModel: client-only\nprivacy:\n  storesUserInput: false\nanalytics:\n  safeFields:\n    - locale\noptions: {}\n`);
   writeFileSync(join(siteDir, 'theme.config.yaml'), `schemaVersion: 1\nname: ${siteId}\ncolors:\n  primary: \"#2563eb\"\nradius: 18px\nlayout: tool-first\nadLayout:\n  avoidPrimaryActions: true\n  disableOnToolResultPanel: true\n`);
   writeFileSync(join(siteDir, 'integrations.config.yaml'), `schemaVersion: 1\nconsent:\n  enabled: false\n  googleConsentMode: false\n  clarityConsentMode: false\nads:\n  enabled: false\n  activeProvider: adsense\n  adsTxt:\n    enabled: false\n    entries: []\n  providers:\n    adsense:\n      enabled: false\n      publisherId: \"\"\n      slots: {}\n    adsterra:\n      enabled: false\n      placements: {}\nanalytics:\n  googleAnalytics:\n    enabled: false\n  microsoftClarity:\n    enabled: false\nwebmaster:\n  googleSearchConsole:\n    enabled: false\n  bingWebmaster:\n    enabled: false\nindexing:\n  indexNow:\n    enabled: false\n`);

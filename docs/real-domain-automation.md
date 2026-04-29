@@ -7,23 +7,23 @@ This repo uses Cloudflare Pages Direct Upload for each independent site. The pag
 You still need to:
 
 1. Buy the domain.
-2. Point the domain nameservers to the Cloudflare account.
+2. Point the domain nameservers to the site's Cloudflare account.
 3. Wait until the Cloudflare zone is active.
 4. Create GA4 / Clarity / GSC / Bing / AdSense / Adsterra accounts or properties when needed.
 5. Copy platform IDs and verification tokens into `domains.launch.yaml`.
 
 The scripts handle site config updates, Pages custom domain binding, optional DNS CNAME creation, build/deploy/verify, and go-live indexing changes.
 
-## Required environment
+## Required Cloudflare accounts
 
-Copy `.env.example` to your shell environment or local dotenv loader:
+Each site resolves its Cloudflare account through `deployment.accountAlias` and `cloudflare.accounts.yaml`. Copy `.env.example` to `.env.local`, then fill the account ID and API token env vars for the site accounts you manage locally:
 
 ```bash
-export CLOUDFLARE_ACCOUNT_ID=...
-export CLOUDFLARE_API_TOKEN=...
+CF_ACCOUNT_TYPING_SPEED_TEST=...
+CF_TOKEN_TYPING_SPEED_TEST=...
 ```
 
-The token should have access to manage Cloudflare Pages projects and read/write DNS records for the target zones.
+Use `pnpm cf accounts list` to see the aliases and env var names. Use `pnpm cf accounts check --all` after `.env.local` is populated. Tokens should have access to manage Cloudflare Pages projects and read/write DNS records for their target zones.
 
 ## Launch mapping
 
@@ -37,6 +37,7 @@ sites:
     aliases:
       - www.typing-example.com
     projectName: seo-tool-typing-speed-test
+    cloudflareAccount: typing-speed-test
     mode: noindex-first
 ```
 
