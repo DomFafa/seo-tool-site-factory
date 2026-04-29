@@ -1,25 +1,47 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 type Props = { locale: string; config: any };
+type AnagramIndex = Record<string, string[]>;
+type LoadState = 'loading' | 'ready' | 'error';
 
-const DEFAULT_WORDS = `
-about above abuse actor acute admit adopt adult after again agent agree ahead alarm album alert alien alike alive allow alone alter among angel anger angle apple apply arena argue arise armed arrow asset audit avoid baker basic beach began begin begun below bench birth black blame blank block blood board bored brain bread break brick bride brief bring broad brown build cable carry cause chain chair charm cheap check chest chief child china chose civil clean clear clerk clock close cloud coach coast color could count court cover crash cream crime cross crowd crown dance dealt death delay depth dream dress drink drive eager earth eight elbow enemy enjoy enter entry equal error event every exact exist extra faith false fault field final fired first flame flash floor fluid force frame fresh fried friend front fruit giant given glass glean glory grade grand grant graph great green group guard guest guide habit heart heavy honor house human ideal image index inner input issue joint judge known label large later laugh layer learn least legal light limit local logic lucky magic major maker march match maybe metal might minor model money month moral motor mount music named never night noise notes ocean offer often onset order other paint panel paper peace phase phone pilot pitch plain plant plate point power pride proof quick quiet reach ready relay rescue reset rival river robed rough round route royal scale score secure shape share sharp sheet shift shine short skill slate sleep slice smart smile solid solve sound spare speed spell spent split sport stack stage stale stand start state steal stone story study style table taken teach teals thing think third those tinsel tones trace train trial truth under union usage value video visit voice waste watch water wheel where white whole woman world write wrong young
-alert alter artel ratel later listen silent enlist inlets stone tones notes onset evil vile veil live angel glean angle brag grab rescue secure recuse finder friend fired fried below elbow dusty study night thing inch chin acres cares races scare rates tears stare taste state seats eats east teas team meat mate tame tone note open peon nope post pots spot stop tops opts parse spear pears reaps spare stone one two three four five six seven eight nine ten
-`.trim().split(/\s+/);
+const ANAGRAM_INDEX_URL = '/data/anagram/en-index.json';
 
 function track(eventName: string, params: Record<string, unknown>) {
   if (typeof window !== 'undefined') (window as any).__factoryTrack?.(eventName, params);
 }
 
 export default function AnagramSolverIsland({ locale, config }: Props) {
-  const words: string[] = config?.options?.wordList?.length ? config.options.wordList : DEFAULT_WORDS;
+  const [wordIndex, setWordIndex] = useState<AnagramIndex>({});
+  const [loadState, setLoadState] = useState<LoadState>('loading');
   const [letters, setLetters] = useState(config?.options?.sampleLetters ?? 'listen');
   const [minLength, setMinLength] = useState(config?.options?.defaultMinLength ?? 3);
   const [startsWith, setStartsWith] = useState('');
   const [contains, setContains] = useState('');
   const [endsWith, setEndsWith] = useState('');
+  const words = useMemo(() => Object.values(wordIndex).flat(), [wordIndex]);
   const results = useMemo(() => solve(words, { letters, minLength, startsWith, contains, endsWith }), [words, letters, minLength, startsWith, contains, endsWith]);
   const visibleResults = results.slice(0, 120);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(ANAGRAM_INDEX_URL)
+      .then((response) => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json() as Promise<AnagramIndex>;
+      })
+      .then((data) => {
+        if (cancelled) return;
+        setWordIndex(data);
+        setLoadState('ready');
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setLoadState('error');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   function updateLetters(value: string) {
     setLetters(value);
@@ -51,10 +73,12 @@ export default function AnagramSolverIsland({ locale, config }: Props) {
         </div>
       </div>
       <div className="result-panel">
+        {loadState === 'loading' && <p className="small">Loading word index...</p>}
+        {loadState === 'error' && <p className="small">Word index could not be loaded. Try refreshing the page.</p>}
         <p><strong>{results.length}</strong> possible word{results.length === 1 ? '' : 's'}</p>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {visibleResults.map((word) => <span className="metric" key={word}><strong>{word}</strong></span>)}
-          {results.length === 0 && <span>No words found. Try fewer letters, a lower minimum length, or remove filters.</span>}
+          {loadState === 'ready' && results.length === 0 && <span>No words found. Try fewer letters, a lower minimum length, or remove filters.</span>}
         </div>
         {results.length > visibleResults.length && <p className="small">Showing the first {visibleResults.length} results. Add a filter to narrow the list.</p>}
       </div>
