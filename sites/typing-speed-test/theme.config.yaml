@@ -1,8 +1,11 @@
 schemaVersion: 1
 name: speedtype
 colors:
-  primary: "#2563eb"
-radius: 18px
+  primary: "#111827"
+  background: "#f4f1ea"
+  surface: "#fffdf8"
+  accent: "#f97316"
+radius: 14px
 layout: tool-first
 adLayout:
   avoidPrimaryActions: true

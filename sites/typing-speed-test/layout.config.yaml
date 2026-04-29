@@ -9,7 +9,7 @@ home:
       variant: metric
       props:
         eyebrow: Typing metrics
-        badges: [WPM, Accuracy, Errors]
+        badges: [Live WPM, Accuracy, Error count]
     - type: tool
       variant: dashboard
     - type: howItWorks
@@ -23,7 +23,3 @@ home:
       variant: card
     - type: faq
       variant: accordion
-    - type: privacyNote
-      variant: inline
-      props:
-        text: The typing test runs in your browser and avoids sending full typed text to analytics.

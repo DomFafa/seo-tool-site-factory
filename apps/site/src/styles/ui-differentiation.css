@@ -3,7 +3,7 @@ body { background: var(--factory-bg); }
 body.recipe-glitch-playground { color: #f5f0ff; background: radial-gradient(circle at top left, rgba(124, 58, 237, .28), transparent 34rem), radial-gradient(circle at bottom right, rgba(236, 72, 153, .18), transparent 32rem), #0d0d14; }
 body.recipe-elegant-generator { background: linear-gradient(135deg, #fff7ed, #f8fafc 46%, #fdf2f8); }
 body.recipe-file-drop-studio { color: #10201f; background: linear-gradient(180deg, #eefbf6 0, #ffffff 34rem); font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif; }
-body.recipe-performance-dashboard { background: linear-gradient(180deg, #eef2ff, #f8fafc 28rem); }
+body.recipe-performance-dashboard { color: #181512; background: linear-gradient(180deg, #f4f1ea 0, #fffdf8 34rem); font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif; }
 body.recipe-word-solver { background: #f8fafc; }
 body.recipe-worksheet-learning { background: #fffdf7; }
 body.recipe-writing-assistant { background: linear-gradient(180deg, #f8fafc, #eef2f7); }
@@ -21,6 +21,12 @@ body.recipe-file-drop-studio .language-switcher a[aria-current="true"] { border-
 .site-header--formal { background: #fff; border-bottom: 1px solid #dbe3ef; }
 .site-header--editorial { background: #fffdf7; border-bottom: 1px solid #efe2c6; }
 .site-header--trust { background: #f8fafc; border-bottom: 1px solid #dbe3ef; }
+body.recipe-performance-dashboard .site-header--compact { border-bottom: 1px solid rgba(24, 21, 18, .08); background: rgba(244, 241, 234, .88); backdrop-filter: blur(12px); }
+body.recipe-performance-dashboard .brand { min-height: 44px; color: #181512; }
+body.recipe-performance-dashboard .brand-mark { border-radius: 8px; background: #181512; color: #fbbf24; }
+body.recipe-performance-dashboard .nav a { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; color: #374151; font-weight: 800; }
+body.recipe-performance-dashboard .language-switcher a { min-width: 44px; justify-content: center; }
+body.recipe-performance-dashboard .language-switcher a[aria-current="true"] { border-color: #181512; background: #181512; color: #fbbf24; }
 .page-recipe { overflow: clip; }
 .page-block { padding: 34px 0; }
 .page-block:first-child { padding-top: 54px; }
@@ -32,6 +38,17 @@ body.recipe-file-drop-studio .eyebrow { color: #0f766e; letter-spacing: .08em; }
 .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 7px 12px; background: color-mix(in srgb, var(--factory-primary) 12%, #fff); color: color-mix(in srgb, var(--factory-primary) 72%, #0f172a); font-size: .88rem; font-weight: 700; }
 .page-block--hero-metric .block-inner, .page-block--hero-test-setup .block-inner { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(260px, .7fr); gap: 26px; align-items: center; }
 .page-block--hero-metric .block-inner::after { content: "WPM\A Accuracy\A Errors"; white-space: pre-line; border-radius: var(--factory-radius); padding: 28px; background: #111827; color: #fff; font-size: 1.25rem; font-weight: 800; line-height: 2.05; box-shadow: 0 22px 54px rgba(17, 24, 39, .22); }
+body.recipe-performance-dashboard .page-block--hero-metric { padding: 56px 0 18px; }
+body.recipe-performance-dashboard .page-block--hero-metric .block-inner { grid-template-columns: minmax(0, 1fr) 290px; gap: clamp(26px, 5vw, 72px); }
+body.recipe-performance-dashboard .page-block--hero-metric .eyebrow,
+body.recipe-performance-dashboard .page-block--hero-metric h1,
+body.recipe-performance-dashboard .page-block--hero-metric .hero-lead,
+body.recipe-performance-dashboard .page-block--hero-metric .badge-row { grid-column: 1; }
+body.recipe-performance-dashboard .page-block--hero-metric h1 { max-width: 700px; color: #181512; font-size: clamp(3rem, 7vw, 6.4rem); line-height: .92; }
+body.recipe-performance-dashboard .page-block--hero-metric .hero-lead { max-width: 620px; color: #4b4138; }
+body.recipe-performance-dashboard .page-block--hero-metric .eyebrow { color: #c2410c; }
+body.recipe-performance-dashboard .page-block--hero-metric .badge { border: 1px solid rgba(24, 21, 18, .08); background: #fffdf8; color: #181512; box-shadow: 0 12px 28px rgba(24, 21, 18, .07); }
+body.recipe-performance-dashboard .page-block--hero-metric .block-inner::after { grid-column: 2; grid-row: 1 / span 4; align-self: center; content: "60s\A 0 WPM\A 100%"; border: 1px solid rgba(251, 191, 36, .22); border-radius: 22px; background: radial-gradient(circle at top right, rgba(249, 115, 22, .26), transparent 48%), #181512; color: #fff7ed; font-size: 1.45rem; letter-spacing: 0; box-shadow: 0 24px 60px rgba(24, 21, 18, .22); }
 .page-block--hero-upload .block-inner::after { content: "PNG"; display: grid; place-items: center; width: 140px; height: 140px; border: 2px dashed color-mix(in srgb, var(--factory-primary) 50%, #cbd5e1); border-radius: 32px; color: var(--factory-primary); font-size: 2rem; font-weight: 900; }
 .page-block--hero-upload .block-inner { display: flex; justify-content: space-between; gap: 28px; align-items: center; }
 body.recipe-file-drop-studio .page-block--hero-upload { padding: 40px 0 14px; }
@@ -50,6 +67,35 @@ body.recipe-file-drop-studio .page-block--hero-upload .block-inner::after { grid
 .page-block--hero-dramatic .hero-lead { color: #c4b5fd; margin-inline: auto; }
 .page-block--hero-dramatic .eyebrow { color: #f0abfc; }
 .page-block--tool-dashboard .tool-shell, .page-block--tool-certificate .tool-shell { border: 1px solid rgba(99, 102, 241, .18); box-shadow: 0 18px 44px rgba(79, 70, 229, .13); }
+body.recipe-performance-dashboard .page-block--tool-dashboard { padding-top: 14px; }
+body.recipe-performance-dashboard .page-block--tool-dashboard .tool-shell { max-width: 980px; margin: 0 auto; border: 1px solid rgba(24, 21, 18, .09); background: #fffdf8; box-shadow: 0 28px 80px rgba(24, 21, 18, .1); }
+body.recipe-performance-dashboard .typing-test { gap: 18px; }
+body.recipe-performance-dashboard .typing-test__topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid rgba(24, 21, 18, .08); }
+body.recipe-performance-dashboard .typing-test__topbar strong { display: block; color: #181512; font-size: clamp(1.25rem, 2vw, 1.7rem); line-height: 1.1; }
+body.recipe-performance-dashboard .typing-test__eyebrow { margin: 0 0 5px; color: #c2410c; font-size: .78rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+body.recipe-performance-dashboard .duration-toggle { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+body.recipe-performance-dashboard .duration-option { min-height: 40px; padding: 9px 12px; border: 1px solid rgba(24, 21, 18, .1); border-radius: 999px; background: #f5efe5; color: #181512; box-shadow: none; }
+body.recipe-performance-dashboard .duration-option.active { border-color: #181512; background: #181512; color: #fbbf24; }
+body.recipe-performance-dashboard .duration-option:disabled { cursor: not-allowed; opacity: .78; }
+body.recipe-performance-dashboard .typing-test__stage { display: grid; gap: 10px; }
+body.recipe-performance-dashboard .prompt-card { padding: clamp(18px, 3vw, 28px); border: 1px solid rgba(24, 21, 18, .08); border-radius: 18px; background: linear-gradient(135deg, #fbf6ec 0, #ffffff 100%); }
+body.recipe-performance-dashboard .prompt-card p { margin: 8px 0 0; color: #181512; font-size: clamp(1.18rem, 2vw, 1.65rem); line-height: 1.65; }
+body.recipe-performance-dashboard .typing-progress { height: 10px; overflow: hidden; border-radius: 999px; background: #ece2d3; }
+body.recipe-performance-dashboard .typing-progress span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #f97316, #fbbf24); transition: width .2s ease; }
+body.recipe-performance-dashboard .typing-input-panel { display: grid; gap: 10px; }
+body.recipe-performance-dashboard .typing-input-panel label { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; color: #181512; }
+body.recipe-performance-dashboard .typing-input-panel label span { color: #776b5e; font-size: .86rem; font-weight: 800; }
+body.recipe-performance-dashboard .typing-input-panel textarea { min-height: 170px; border-color: rgba(24, 21, 18, .14); border-radius: 18px; background: #fffaf1; color: #181512; font-size: 1.05rem; line-height: 1.65; box-shadow: inset 0 1px 0 rgba(255,255,255,.8); }
+body.recipe-performance-dashboard .typing-input-panel textarea:focus { outline: 3px solid rgba(249, 115, 22, .22); border-color: #f97316; }
+body.recipe-performance-dashboard .typing-metrics { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+body.recipe-performance-dashboard .typing-metrics .metric { border-color: rgba(24, 21, 18, .1); border-radius: 16px; background: #181512; color: #fff7ed; }
+body.recipe-performance-dashboard .typing-metrics .metric .small { color: #fbbf24; font-weight: 900; text-transform: uppercase; }
+body.recipe-performance-dashboard .typing-metrics .metric strong { margin-top: 8px; color: #fffdf8; font-size: clamp(1.75rem, 4vw, 2.75rem); }
+body.recipe-performance-dashboard .typing-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+body.recipe-performance-dashboard .typing-actions button { min-height: 46px; border-radius: 12px; }
+body.recipe-performance-dashboard .typing-actions button:not(.secondary) { background: #f97316; color: #181512; }
+body.recipe-performance-dashboard .typing-actions button.secondary { border: 1px solid rgba(24, 21, 18, .12); background: #f5efe5; color: #181512; }
+body.recipe-performance-dashboard .typing-privacy { margin: 0; color: #6f6256; }
 .page-block--tool-dropzone .tool-shell { border: 2px dashed rgba(37, 99, 235, .34); background: rgba(255,255,255,.86); }
 body.recipe-file-drop-studio .page-block--tool-dropzone { padding-top: 8px; }
 body.recipe-file-drop-studio .page-block--tool-dropzone .tool-shell { max-width: 900px; margin: 0 auto; padding: 0; border: 0; background: transparent; box-shadow: none; }
@@ -83,6 +129,8 @@ body.recipe-file-drop-studio .error { border-color: #fecaca; background: #fff1f2
 .step-card, .example-card, .guide-card, .privacy-panel { border: 1px solid rgba(148, 163, 184, .24); border-radius: var(--factory-radius); padding: 18px; background: var(--factory-surface); box-shadow: 0 12px 32px rgba(15, 23, 42, .06); }
 body.recipe-file-drop-studio .step-card, body.recipe-file-drop-studio .content-card { border-color: rgba(15, 118, 110, .12); box-shadow: 0 18px 46px rgba(16, 32, 31, .06); }
 body.recipe-file-drop-studio .step-number { background: #0f766e; }
+body.recipe-performance-dashboard .step-card, body.recipe-performance-dashboard .content-card, body.recipe-performance-dashboard .privacy-panel { border-color: rgba(24, 21, 18, .08); border-radius: 14px; background: #fffdf8; box-shadow: 0 18px 46px rgba(24, 21, 18, .06); }
+body.recipe-performance-dashboard .step-number { border-radius: 9px; background: #f97316; color: #181512; }
 .step-number { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--factory-primary); color: #fff; font-weight: 800; margin-bottom: 10px; }
 .guide-card { color: inherit; display: grid; gap: 8px; text-decoration: none; }
 .guide-card span { color: #64748b; font-size: .95rem; line-height: 1.5; }
@@ -114,4 +162,25 @@ body.recipe-glitch-playground .hero-lead, body.recipe-glitch-playground .guide-c
   body.recipe-file-drop-studio .step-card { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: center; padding: 14px; }
   body.recipe-file-drop-studio .step-card p { margin: 0; }
   body.recipe-file-drop-studio .step-number { width: 30px; height: 30px; margin: 0; }
+  body.recipe-performance-dashboard .site-header-inner { align-items: center; flex-direction: row; min-height: 56px; padding: 0; }
+  body.recipe-performance-dashboard .page-block--hero-metric { padding: 20px 0 10px; }
+  body.recipe-performance-dashboard .page-block--hero-metric .block-inner { display: block; }
+  body.recipe-performance-dashboard .page-block--hero-metric h1 { font-size: clamp(2.1rem, 11vw, 3.3rem); line-height: .98; }
+  body.recipe-performance-dashboard .page-block--hero-metric .hero-lead { font-size: 1rem; line-height: 1.5; }
+  body.recipe-performance-dashboard .page-block--hero-metric .badge-row { display: none; }
+  body.recipe-performance-dashboard .page-block--hero-metric .block-inner::after { display: none; }
+  body.recipe-performance-dashboard .page-block--tool-dashboard { padding-top: 2px; }
+  body.recipe-performance-dashboard .page-block--tool-dashboard .tool-shell { padding: 14px; border-radius: 18px; }
+  body.recipe-performance-dashboard .typing-test__topbar { display: grid; gap: 12px; }
+  body.recipe-performance-dashboard .duration-toggle { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; padding-bottom: 2px; }
+  body.recipe-performance-dashboard .duration-option { flex: 0 0 54px; min-height: 44px; padding-inline: 8px; }
+  body.recipe-performance-dashboard .prompt-card { padding: 13px; }
+  body.recipe-performance-dashboard .prompt-card p { font-size: .96rem; line-height: 1.45; }
+  body.recipe-performance-dashboard .typing-input-panel label { align-items: flex-start; flex-direction: column; gap: 2px; }
+  body.recipe-performance-dashboard .typing-input-panel textarea { min-height: 150px; font-size: 1rem; }
+  body.recipe-performance-dashboard .typing-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  body.recipe-performance-dashboard .typing-metrics .metric:first-child { grid-column: 1 / -1; }
+  body.recipe-performance-dashboard .typing-metrics .metric { padding: 12px; }
+  body.recipe-performance-dashboard .typing-metrics .metric strong { font-size: 2rem; }
+  body.recipe-performance-dashboard .typing-actions button { width: 100%; justify-content: center; }
 }

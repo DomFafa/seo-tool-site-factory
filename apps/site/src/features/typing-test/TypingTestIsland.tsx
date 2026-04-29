@@ -36,6 +36,8 @@ export default function TypingTestIsland({ locale, config }: Props) {
   const remainingSeconds = Math.max(0, duration - elapsedSeconds);
   const finished = Boolean(finishedAt) || remainingSeconds === 0;
   const result = calculateTypingResult({ prompt, typed, elapsedSeconds: Math.max(1, elapsedSeconds || (finished ? duration : 1)) });
+  const progressPercent = Math.min(100, Math.round((elapsedSeconds / duration) * 100));
+  const promptProgress = Math.min(100, Math.round((typed.length / prompt.length) * 100));
 
   function startTimerIfNeeded() {
     if (startedAt) return;
@@ -81,31 +83,54 @@ export default function TypingTestIsland({ locale, config }: Props) {
   }, [remainingSeconds, startedAt, finishedAt]);
 
   return (
-    <div className="tool-grid">
-      <div>
-        <label htmlFor="duration"><strong>{labels.durationLabel}</strong></label>
-        <select id="duration" value={duration} disabled={Boolean(startedAt)} onChange={(e) => setDuration(Number(e.target.value))}>
-          {durations.map((d: number) => <option value={d} key={d}>{formatDuration(d)}</option>)}
-        </select>
+    <div className="tool-grid typing-test">
+      <div className="typing-test__topbar">
+        <div>
+          <p className="typing-test__eyebrow">SpeedType console</p>
+          <strong>{startedAt ? (finished ? 'Result locked' : 'Test running') : 'Ready when you type'}</strong>
+        </div>
+        <div className="duration-toggle" aria-label={labels.durationLabel}>
+          {durations.map((d: number) => (
+            <button
+              type="button"
+              className={d === duration ? 'duration-option active' : 'duration-option'}
+              disabled={Boolean(startedAt)}
+              onClick={() => setDuration(d)}
+              key={d}
+            >
+              {formatDurationShort(d)}
+            </button>
+          ))}
+        </div>
       </div>
-      <div className="result-panel" aria-label="Text prompt">
-        <p>{prompt}</p>
+
+      <div className="typing-test__stage">
+        <div className="prompt-card" aria-label="Text prompt">
+          <span className="small">Prompt</span>
+          <p>{prompt}</p>
+        </div>
+        <div className="typing-progress" aria-label="Test progress">
+          <span style={{ width: `${progressPercent}%` }}></span>
+        </div>
       </div>
-      <div>
-        <label htmlFor="typing-input"><strong>{labels.inputLabel}</strong></label>
+
+      <div className="typing-input-panel">
+        <label htmlFor="typing-input"><strong>{labels.inputLabel}</strong><span>{promptProgress}% of prompt typed</span></label>
         <textarea id="typing-input" value={typed} disabled={finished} onChange={(e) => onChange(e.target.value)} placeholder={labels.placeholder} />
       </div>
-      <div className="metric-row" aria-live="polite">
+
+      <div className="metric-row typing-metrics" aria-live="polite">
         <div className="metric"><span className="small">Time left</span><strong>{remainingSeconds}s</strong></div>
         <div className="metric"><span className="small">WPM</span><strong>{result.wpm}</strong></div>
+        <div className="metric"><span className="small">CPM</span><strong>{result.cpm}</strong></div>
         <div className="metric"><span className="small">Accuracy</span><strong>{result.accuracy}%</strong></div>
         <div className="metric"><span className="small">Errors</span><strong>{result.errors}</strong></div>
       </div>
-      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+      <div className="typing-actions">
         <button type="button" className="secondary" onClick={reset}>Reset</button>
         {startedAt && !finished && <button type="button" onClick={finish}>Finish now</button>}
       </div>
-      <p className="small">Privacy: this typing tool runs in your browser. Typed text is not sent to the server by this tool.</p>
+      <p className="small typing-privacy">Privacy: this typing tool runs in your browser. Typed text is not sent to the server by this tool.</p>
     </div>
   );
 }
@@ -117,8 +142,8 @@ function getLabels(mode: string) {
   return { durationLabel: 'Test duration', inputLabel: 'Type the text above', placeholder: 'Start typing here...' };
 }
 
-function formatDuration(seconds: number) {
-  return seconds < 60 ? `${seconds} seconds` : `${seconds / 60} minute${seconds === 60 ? '' : 's'}`;
+function formatDurationShort(seconds: number) {
+  return seconds < 60 ? `${seconds}s` : `${seconds / 60}m`;
 }
 
 function bucket(value: number) {
