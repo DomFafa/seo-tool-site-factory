@@ -58,6 +58,8 @@ webmaster:
     enabled: false
     verification:
       method: import-from-gsc
+      metaName: msvalidate.01
+      content: ""
 indexing:
   indexNow:
     enabled: false
