@@ -12,7 +12,7 @@ You still need to:
 4. Create GA4 / Clarity / GSC / Bing / AdSense / Adsterra accounts or properties when needed.
 5. Copy platform IDs and verification tokens into `domains.launch.yaml`.
 
-The scripts handle site config updates, Pages custom domain binding, optional DNS CNAME creation, build/deploy/verify, and go-live indexing changes.
+The scripts handle site config updates, Pages project creation, Pages custom domain binding, optional DNS CNAME creation, build/deploy/verify, and go-live indexing changes.
 
 ## Required Cloudflare accounts
 
@@ -55,19 +55,28 @@ Check Cloudflare zone and Pages domain status:
 pnpm domain check typing-speed-test
 ```
 
+Create the Pages project without using Wrangler's interactive prompt:
+
+```bash
+pnpm domain create-project typing-speed-test
+```
+
 Bind a custom domain to the Pages project:
 
 ```bash
 pnpm domain bind typing-speed-test
 ```
 
-Optionally ask the script to create CNAME records when none exist:
+`bind` and `deploy` also create the Pages project automatically when it is missing.
+
+Optionally ask the script to ensure DNS points to the Pages project:
 
 ```bash
 pnpm domain bind typing-speed-test --ensure-dns
 ```
 
-The script will not overwrite existing DNS records. If records already exist, it prints a manual review message.
+When `--ensure-dns` finds old same-host `A`, `AAAA`, or `CNAME` records, it deletes them and creates the Pages CNAME. It leaves other record types, such as `TXT` and `MX`, untouched.
+The CNAME target is read from the Cloudflare Pages project `subdomain` field, not guessed from the project name.
 
 Update local YAML config to use the real domain while staying noindex:
 
@@ -81,6 +90,18 @@ Build, deploy, and verify the real domain:
 pnpm domain deploy typing-speed-test
 pnpm domain verify typing-speed-test
 ```
+
+`domain bind` and `domain verify` wait for Pages custom domains to become active by default. Use `--wait-seconds 0` to skip the wait during manual troubleshooting.
+
+Pages `_redirects` does not support domain-level redirects. Use Cloudflare Bulk Redirects for `pages.dev` or `www` canonical 301s:
+
+```bash
+pnpm domain redirects typing-speed-test --dry-run
+pnpm domain redirects typing-speed-test --ensure
+pnpm domain redirects typing-speed-test --verify --mark-configured
+```
+
+The redirect command creates an account-level Bulk Redirect List and enables it in the `http_request_redirect` ruleset. The site token needs account-level `Account Rule Lists` read/write and `Mass URL Redirects` read/write permissions. Cloudflare may show older labels as `Account Filter Lists` and `Bulk URL Redirects`; grant the read/write variants for both groups.
 
 ## Noindex-first flow
 
