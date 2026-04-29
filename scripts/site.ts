@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { prepareGeneratedPublicFiles, submitIndexNow, verifyOnlineIntegrations } from '@factory/integrations';
+import { runWranglerPagesDeploy } from './lib/wrangler';
 import {
   findWorkspaceRoot,
   getCloudflareAccountAliasForSite,
@@ -145,7 +146,11 @@ switch (command) {
     const branch = production ? 'main' : 'preview';
     const cfEnv = getCloudflareEnvForSite(ctx);
     console.log(`Deploying ${siteId} to Cloudflare account profile "${getCloudflareAccountAliasForSite(ctx)}".`);
-    run('pnpm', ['exec', 'wrangler', 'pages', 'deploy', outputDir, '--project-name', ctx.siteConfig.deployment.projectName, '--branch', branch], { SITE_ID: siteId, ...cfEnv });
+    runWranglerPagesDeploy(
+      workspaceRoot,
+      [outputDir, '--project-name', ctx.siteConfig.deployment.projectName, '--branch', branch],
+      { SITE_ID: siteId, ...cfEnv }
+    );
     break;
   }
   case 'verify':

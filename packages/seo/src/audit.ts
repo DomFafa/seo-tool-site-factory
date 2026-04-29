@@ -108,7 +108,7 @@ export async function auditSiteSeo(ctx: SiteContext): Promise<SeoIssue[]> {
     if (loc.hostname !== host) issues.push(issue('P0', 'SITEMAP_HOST_MISMATCH', `Sitemap URL host ${loc.hostname} does not match ${host}.`));
     if (!isTrailingSlashUrl(entry.loc)) issues.push(issue('P1', 'SITEMAP_TRAILING_SLASH', `Sitemap URL should have trailing slash: ${entry.loc}.`));
   }
-  if (isRealDomain(ctx) && ctx.siteConfig.seo.pagesDevRedirect.status !== 'configured') issues.push(issue('P2', 'PAGES_DEV_REDIRECT_RECOMMENDED', 'Real-domain launch should configure pages.dev -> canonical domain redirect in Cloudflare.'));
+  if (isRealDomain(ctx) && ctx.siteConfig.seo.pagesDevRedirect.status !== 'configured') issues.push(issue('P2', 'PAGES_DEV_REDIRECT_RECOMMENDED', 'Real-domain launch should configure pages.dev -> canonical domain redirect in Cloudflare and then set seo.pagesDevRedirect.status=configured.'));
   for (const locale of getIndexableLocales(ctx)) if (!ctx.siteConfig.locales[locale]?.reviewed) issues.push(issue('P0', 'INDEXABLE_LOCALE_NOT_REVIEWED', `${locale} is indexable but reviewed=false.`));
   const docs = await allDocs(ctx);
   const slugs = new Map<string, string>();

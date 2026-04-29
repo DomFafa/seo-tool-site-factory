@@ -2,28 +2,38 @@ import type { SiteContext } from '@factory/site-core';
 
 export type VerifyResult = { label: string; ok: boolean; message: string };
 
-async function fetchText(url: string): Promise<{ status: number; text: string }> {
-  const res = await fetch(url, { redirect: 'follow' });
-  return { status: res.status, text: await res.text() };
+async function fetchText(url: string): Promise<{ status: number; text: string; error?: string }> {
+  try {
+    const res = await fetch(url, { redirect: 'follow' });
+    return { status: res.status, text: await res.text() };
+  } catch (error) {
+    const cause = error instanceof Error && 'cause' in error ? (error as { cause?: unknown }).cause : undefined;
+    const causeMessage = cause instanceof Error ? ` (${cause.message})` : '';
+    return {
+      status: 0,
+      text: '',
+      error: `${error instanceof Error ? error.message : String(error)}${causeMessage}`
+    };
+  }
 }
 
 export async function verifyOnlineIntegrations(ctx: SiteContext): Promise<VerifyResult[]> {
   const base = `https://${ctx.siteConfig.domains.canonicalHost}`;
   const results: VerifyResult[] = [];
   const home = await fetchText(base);
-  results.push({ label: 'homepage', ok: home.status >= 200 && home.status < 400, message: `${base} -> HTTP ${home.status}` });
+  results.push({ label: 'homepage', ok: home.status >= 200 && home.status < 400, message: home.error ? `${base} -> ${home.error}` : `${base} -> HTTP ${home.status}` });
 
   const robots = await fetchText(`${base}/robots.txt`);
-  results.push({ label: 'robots.txt', ok: robots.status === 200 && robots.text.includes('Sitemap:'), message: `/robots.txt -> HTTP ${robots.status}` });
+  results.push({ label: 'robots.txt', ok: robots.status === 200 && robots.text.includes('Sitemap:'), message: robots.error ? `/robots.txt -> ${robots.error}` : `/robots.txt -> HTTP ${robots.status}` });
 
   const sitemap = await fetchText(`${base}/sitemap.xml`);
   const hasValidSitemapRoot = sitemap.text.includes('<urlset') || sitemap.text.includes('<sitemapindex');
-  results.push({ label: 'sitemap.xml', ok: sitemap.status === 200 && hasValidSitemapRoot, message: `/sitemap.xml -> HTTP ${sitemap.status}` });
+  results.push({ label: 'sitemap.xml', ok: sitemap.status === 200 && hasValidSitemapRoot, message: sitemap.error ? `/sitemap.xml -> ${sitemap.error}` : `/sitemap.xml -> HTTP ${sitemap.status}` });
 
   const ads = ctx.integrationsConfig.ads;
   if (ads.adsTxt.enabled) {
     const adsTxt = await fetchText(`${base}/ads.txt`);
-    results.push({ label: 'ads.txt', ok: adsTxt.status === 200, message: `/ads.txt -> HTTP ${adsTxt.status}` });
+    results.push({ label: 'ads.txt', ok: adsTxt.status === 200, message: adsTxt.error ? `/ads.txt -> ${adsTxt.error}` : `/ads.txt -> HTTP ${adsTxt.status}` });
   }
 
   const ga = ctx.integrationsConfig.analytics.googleAnalytics;
@@ -49,7 +59,7 @@ export async function verifyOnlineIntegrations(ctx: SiteContext): Promise<Verify
   const indexNow = ctx.integrationsConfig.indexing.indexNow;
   if (indexNow.enabled && indexNow.keyFile) {
     const key = await fetchText(`${base}/${indexNow.keyFile}`);
-    results.push({ label: 'IndexNow key file', ok: key.status === 200 && Boolean(indexNow.key && key.text.includes(indexNow.key)), message: `/${indexNow.keyFile} -> HTTP ${key.status}` });
+    results.push({ label: 'IndexNow key file', ok: key.status === 200 && Boolean(indexNow.key && key.text.includes(indexNow.key)), message: key.error ? `/${indexNow.keyFile} -> ${key.error}` : `/${indexNow.keyFile} -> HTTP ${key.status}` });
   }
   return results;
 }
