@@ -14,7 +14,8 @@
     "domain": "tsx scripts/domain.ts",
     "ui-audit": "tsx scripts/ui-audit.ts",
     "seo": "tsx scripts/seo.ts",
-    "perf": "tsx scripts/perf.ts"
+    "perf": "tsx scripts/perf.ts",
+    "cf": "tsx scripts/cf.ts"
   },
   "devDependencies": {
     "@astrojs/react": "^4.2.0",

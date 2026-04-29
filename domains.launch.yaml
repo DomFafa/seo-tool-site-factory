@@ -1,16 +1,10 @@
 schemaVersion: 1
-
 defaults:
   mode: noindex-first
   createDnsRecords: false
-
-# Fill the domain fields after buying domains and moving nameservers to Cloudflare.
-# Keep mode: noindex-first until the site is verified, reviewed, and ready for indexing.
 sites:
   typing-speed-test:
-    domain: ""
-    canonicalHost: ""
-    aliases: []
+    domain: "typing-speed-test.com"
     projectName: seo-tool-typing-speed-test
     mode: noindex-first
     integrations:
@@ -42,11 +36,9 @@ sites:
           publisherId: ""
           siteStatus: not_submitted
           verificationContent: ""
-
+    cloudflareAccount: typing-speed-test
   convertir-imagen-a-png:
-    domain: ""
-    canonicalHost: ""
-    aliases: []
+    domain: "convertirimagenapng.net"
     projectName: seo-tool-convertir-imagen-a-png
     mode: noindex-first
     integrations:
@@ -78,11 +70,9 @@ sites:
           publisherId: ""
           siteStatus: not_submitted
           verificationContent: ""
-
+    cloudflareAccount: convertir-imagen-a-png
   cursive-generator:
-    domain: ""
-    canonicalHost: ""
-    aliases: []
+    domain: "cursivegenerators.net"
     projectName: seo-tool-cursive-generator
     mode: noindex-first
     integrations:
@@ -114,3 +104,4 @@ sites:
           publisherId: ""
           siteStatus: not_submitted
           verificationContent: ""
+    cloudflareAccount: cursive-generator

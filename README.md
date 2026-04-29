@@ -36,12 +36,15 @@ dist/sites/<site-id>/
 V1 targets Cloudflare Pages Direct Upload per site.
 
 ```bash
+cp .env.example .env.local
+pnpm cf accounts list
+pnpm cf accounts check --all
 pnpm site deploy typing-speed-test --preview
 pnpm site deploy typing-speed-test --production
 pnpm site verify typing-speed-test
 ```
 
-Deploy commands wrap `wrangler pages deploy` using `deployment.projectName` from the selected site's YAML config.
+Deploy commands wrap `wrangler pages deploy` using `deployment.projectName` and `deployment.accountAlias` from the selected site's YAML config. The account alias resolves through `cloudflare.accounts.yaml`; real account IDs and API tokens stay in `.env.local` or your shell environment.
 
 ## Third-party integrations
 

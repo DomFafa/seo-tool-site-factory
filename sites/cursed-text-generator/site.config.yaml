@@ -30,3 +30,4 @@ deployment:
   provider: cloudflare-pages
   projectName: seo-tool-cursed-text-generator
   outputDir: dist/sites/cursed-text-generator
+  accountAlias: cursed-text-generator

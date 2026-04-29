@@ -7,23 +7,23 @@ This repo uses Cloudflare Pages Direct Upload for each independent site. The pag
 You still need to:
 
 1. Buy the domain.
-2. Point the domain nameservers to the Cloudflare account.
+2. Point the domain nameservers to the site's Cloudflare account.
 3. Wait until the Cloudflare zone is active.
 4. Create GA4 / Clarity / GSC / Bing / AdSense / Adsterra accounts or properties when needed.
 5. Copy platform IDs and verification tokens into `domains.launch.yaml`.
 
-The scripts handle site config updates, Pages custom domain binding, optional DNS CNAME creation, build/deploy/verify, and go-live indexing changes.
+The scripts handle site config updates, Pages project creation, Pages custom domain binding, optional DNS CNAME creation, build/deploy/verify, and go-live indexing changes.
 
-## Required environment
+## Required Cloudflare accounts
 
-Copy `.env.example` to your shell environment or local dotenv loader:
+Each site resolves its Cloudflare account through `deployment.accountAlias` and `cloudflare.accounts.yaml`. Copy `.env.example` to `.env.local`, then fill the account ID and API token env vars for the site accounts you manage locally:
 
 ```bash
-export CLOUDFLARE_ACCOUNT_ID=...
-export CLOUDFLARE_API_TOKEN=...
+CF_ACCOUNT_TYPING_SPEED_TEST=...
+CF_TOKEN_TYPING_SPEED_TEST=...
 ```
 
-The token should have access to manage Cloudflare Pages projects and read/write DNS records for the target zones.
+Use `pnpm cf accounts list` to see the aliases and env var names. Use `pnpm cf accounts check --all` after `.env.local` is populated. Tokens should have access to manage Cloudflare Pages projects and read/write DNS records for their target zones.
 
 ## Launch mapping
 
@@ -33,14 +33,12 @@ Edit `domains.launch.yaml` after buying domains:
 sites:
   typing-speed-test:
     domain: typing-example.com
-    canonicalHost: typing-example.com
-    aliases:
-      - www.typing-example.com
     projectName: seo-tool-typing-speed-test
+    cloudflareAccount: typing-speed-test
     mode: noindex-first
 ```
 
-Keep `mode: noindex-first` until the site is verified and reviewed. This deploys the real domain while retaining draft/noindex behavior.
+Fill `domain` with the primary host, without `www.`. The domain automation uses that as the canonical host and automatically binds `www.<domain>` as the alias. Keep `mode: noindex-first` until the site is verified and reviewed. This deploys the real domain while retaining draft/noindex behavior.
 
 ## Commands
 
@@ -57,19 +55,28 @@ Check Cloudflare zone and Pages domain status:
 pnpm domain check typing-speed-test
 ```
 
+Create the Pages project without using Wrangler's interactive prompt:
+
+```bash
+pnpm domain create-project typing-speed-test
+```
+
 Bind a custom domain to the Pages project:
 
 ```bash
 pnpm domain bind typing-speed-test
 ```
 
-Optionally ask the script to create CNAME records when none exist:
+`bind` and `deploy` also create the Pages project automatically when it is missing.
+
+Optionally ask the script to ensure DNS points to the Pages project:
 
 ```bash
 pnpm domain bind typing-speed-test --ensure-dns
 ```
 
-The script will not overwrite existing DNS records. If records already exist, it prints a manual review message.
+When `--ensure-dns` finds old same-host `A`, `AAAA`, or `CNAME` records, it deletes them and creates the Pages CNAME. It leaves other record types, such as `TXT` and `MX`, untouched.
+The CNAME target is read from the Cloudflare Pages project `subdomain` field, not guessed from the project name.
 
 Update local YAML config to use the real domain while staying noindex:
 
@@ -83,6 +90,20 @@ Build, deploy, and verify the real domain:
 pnpm domain deploy typing-speed-test
 pnpm domain verify typing-speed-test
 ```
+
+`domain bind` and `domain verify` wait for Pages custom domains to become active by default. Use `--wait-seconds 0` to skip the wait during manual troubleshooting.
+
+Pages `_redirects` does not support domain-level redirects. Use Cloudflare Bulk Redirects for `pages.dev` or `www` canonical 301s:
+
+```bash
+pnpm domain redirects typing-speed-test --dry-run
+pnpm domain redirects typing-speed-test --ensure
+pnpm domain redirects typing-speed-test --verify --mark-configured
+```
+
+`domain redirects --verify` also uses `--wait-seconds` and waits up to 10 seconds by default for Cloudflare Bulk Redirects to propagate after creation.
+
+The redirect command creates an account-level Bulk Redirect List and enables it in the `http_request_redirect` ruleset. The site token needs account-level `Account Rule Lists` read/write and `Mass URL Redirects` read/write permissions. Cloudflare may show older labels as `Account Filter Lists` and `Bulk URL Redirects`; grant the read/write variants for both groups.
 
 ## Noindex-first flow
 

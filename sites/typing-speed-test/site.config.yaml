@@ -4,19 +4,21 @@ brandName: SpeedType
 category: tester
 primaryKeyword: typing speed test
 lifecycle:
-  status: draft
+  status: live
 domains:
-  production: seo-tool-typing-speed-test.pages.dev
-  canonicalHost: seo-tool-typing-speed-test.pages.dev
-  aliases: []
+  production: typing-speed-test.com
+  canonicalHost: typing-speed-test.com
+  aliases:
+    - www.typing-speed-test.com
 defaultLocale: en
 locales:
   en:
     enabled: true
-    indexable: false
-    reviewed: false
+    indexable: true
+    reviewed: true
 indexing:
-  allowIndex: false
+  allowIndex: true
+  mode: index
 primaryTool: typing-speed-test
 seo:
   defaultTitle: Typing Speed Test
@@ -26,7 +28,13 @@ seo:
     - WebSite
     - WebPage
     - SoftwareApplication
+  pagesDevRedirect:
+    status: configured
+    notes: Cloudflare Bulk Redirects verified for pages.dev and alias canonical redirects.
 deployment:
   provider: cloudflare-pages
   projectName: seo-tool-typing-speed-test
   outputDir: dist/sites/typing-speed-test
+  accountAlias: typing-speed-test
+launch:
+  stage: real-domain-indexed

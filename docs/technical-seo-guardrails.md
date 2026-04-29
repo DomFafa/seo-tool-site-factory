@@ -42,7 +42,7 @@ A site should not use `mode: index` unless:
 - default locale is `reviewed: true` and `indexable: true`
 - content frontmatter is `index: true` and `contentStatus: approved`
 - canonical host is the real domain, not pages.dev
-- pages.dev redirect is configured or explicitly tracked
+- pages.dev redirect is configured in Cloudflare or explicitly tracked
 
 ## Content lint
 
@@ -59,8 +59,7 @@ Build preparation now generates:
 - webmaster verification files when configured
 
 Real-domain pages.dev redirect status is tracked by `pnpm seo audit <site-id>`.
-The audit emits `PAGES_DEV_REDIRECT_RECOMMENDED` until `seo.pagesDevRedirect.status`
-is marked `configured`.
+Cloudflare Pages `_redirects` does not support domain-level redirects, so use `pnpm domain redirects <site-id> --ensure` to create Cloudflare Bulk Redirects. After `pnpm domain redirects <site-id> --verify --mark-configured` passes, the audit accepts `seo.pagesDevRedirect.status: configured`.
 
 ## Sitemap splitting
 

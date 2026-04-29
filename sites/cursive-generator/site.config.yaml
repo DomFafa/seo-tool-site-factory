@@ -4,19 +4,21 @@ brandName: CursiveType
 category: generator
 primaryKeyword: cursive generator
 lifecycle:
-  status: draft
+  status: live
 domains:
-  production: seo-tool-cursive-generator.pages.dev
-  canonicalHost: seo-tool-cursive-generator.pages.dev
-  aliases: []
+  production: cursivegenerators.net
+  canonicalHost: cursivegenerators.net
+  aliases:
+    - www.cursivegenerators.net
 defaultLocale: en
 locales:
   en:
     enabled: true
-    indexable: false
-    reviewed: false
+    indexable: true
+    reviewed: true
 indexing:
-  allowIndex: false
+  allowIndex: true
+  mode: index
 primaryTool: cursive-generator
 seo:
   defaultTitle: Cursive Generator
@@ -26,7 +28,13 @@ seo:
     - WebSite
     - WebPage
     - SoftwareApplication
+  pagesDevRedirect:
+    status: configured
+    notes: Cloudflare Bulk Redirects verified for pages.dev and alias canonical redirects.
 deployment:
   provider: cloudflare-pages
   projectName: seo-tool-cursive-generator
   outputDir: dist/sites/cursive-generator
+  accountAlias: cursive-generator
+launch:
+  stage: real-domain-indexed
