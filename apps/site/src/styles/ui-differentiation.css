@@ -96,12 +96,16 @@ body.recipe-glitch-playground .hero-lead, body.recipe-glitch-playground .guide-c
 @media (max-width: 760px) {
   body.recipe-file-drop-studio .site-header-inner { align-items: center; flex-direction: row; min-height: 56px; padding: 0; }
   body.recipe-file-drop-studio .nav { gap: 10px; }
-  body.recipe-file-drop-studio .page-block--hero-upload { padding-top: 24px; }
+  body.recipe-file-drop-studio .page-block--hero-upload { padding: 18px 0 10px; }
   body.recipe-file-drop-studio .page-block--hero-upload .block-inner { display: block; }
   body.recipe-file-drop-studio .page-block--hero-upload h1 { font-size: clamp(2rem, 12vw, 3.25rem); }
-  body.recipe-file-drop-studio .page-block--hero-upload .block-inner::after { width: 86px; height: 104px; margin-top: 18px; border-radius: 18px; font-size: 1rem; }
-  body.recipe-file-drop-studio .image-dropzone { grid-template-columns: 1fr; min-height: 0; gap: 16px; text-align: center; }
-  body.recipe-file-drop-studio .dropzone-icon { width: 72px; height: 88px; margin: 0 auto; }
+  body.recipe-file-drop-studio .page-block--hero-upload .badge-row { gap: 6px; margin-top: 12px; }
+  body.recipe-file-drop-studio .page-block--hero-upload .block-inner::after { display: none; }
+  body.recipe-file-drop-studio .page-block--tool-dropzone { padding-top: 0; }
+  body.recipe-file-drop-studio .image-dropzone { grid-template-columns: 1fr; min-height: 0; gap: 12px; padding: 16px; text-align: center; }
+  body.recipe-file-drop-studio .dropzone-icon { width: 58px; height: 70px; margin: 0 auto; border-radius: 14px; }
+  body.recipe-file-drop-studio .dropzone-title { font-size: 1.2rem; }
+  body.recipe-file-drop-studio .format-row { margin-top: 10px; }
   body.recipe-file-drop-studio .format-row, body.recipe-file-drop-studio .converter-actions { justify-content: center; }
   body.recipe-file-drop-studio .choose-button, body.recipe-file-drop-studio .button, body.recipe-file-drop-studio button.secondary { width: 100%; justify-content: center; }
 }
