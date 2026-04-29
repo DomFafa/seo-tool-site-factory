@@ -74,7 +74,7 @@ body.recipe-performance-dashboard .typing-test__topbar { display: flex; align-it
 body.recipe-performance-dashboard .typing-test__topbar strong { display: block; color: #181512; font-size: clamp(1.25rem, 2vw, 1.7rem); line-height: 1.1; }
 body.recipe-performance-dashboard .typing-test__eyebrow { margin: 0 0 5px; color: #c2410c; font-size: .78rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
 body.recipe-performance-dashboard .duration-toggle { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
-body.recipe-performance-dashboard .duration-option { min-height: 40px; padding: 9px 12px; border: 1px solid rgba(24, 21, 18, .1); border-radius: 999px; background: #f5efe5; color: #181512; box-shadow: none; }
+body.recipe-performance-dashboard .duration-option { min-height: 44px; padding: 9px 12px; border: 1px solid rgba(24, 21, 18, .1); border-radius: 999px; background: #f5efe5; color: #181512; box-shadow: none; }
 body.recipe-performance-dashboard .duration-option.active { border-color: #181512; background: #181512; color: #fbbf24; }
 body.recipe-performance-dashboard .duration-option:disabled { cursor: not-allowed; opacity: .78; }
 body.recipe-performance-dashboard .typing-test__stage { display: grid; gap: 10px; }
