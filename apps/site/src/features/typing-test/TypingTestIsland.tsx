@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { calculateTypingResult } from '@factory/typing-engine';
 
 type Props = {
@@ -24,7 +24,7 @@ export default function TypingTestIsland({ locale, config }: Props) {
   const mode = config?.options?.mode ?? 'speed-test';
   const prompts: string[] = config?.options?.prompts?.length ? config.options.prompts : DEFAULT_PROMPTS;
   const labels = getLabels(mode);
-  const prompt = useMemo(() => prompts[Math.floor(Math.random() * prompts.length)], [prompts]);
+  const prompt = prompts[0] ?? DEFAULT_PROMPTS[0];
   const [duration, setDuration] = useState(defaultDuration);
   const [typed, setTyped] = useState('');
   const [startedAt, setStartedAt] = useState<number | null>(null);
