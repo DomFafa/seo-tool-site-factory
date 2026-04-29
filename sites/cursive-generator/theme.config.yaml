@@ -1,8 +1,11 @@
 schemaVersion: 1
 name: cursive-generator
 colors:
-  primary: "#9333ea"
-radius: 18px
+  primary: "#7c2d12"
+  background: "#fff7f1"
+  surface: "#fffdf9"
+  accent: "#0f766e"
+radius: 14px
 layout: tool-first
 adLayout:
   avoidPrimaryActions: true

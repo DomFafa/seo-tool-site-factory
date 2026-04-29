@@ -10,31 +10,39 @@ const sampleText = config?.options?.sampleText ?? (mode === 'cursive' ? 'Your be
 const toolId = config?.toolId ?? (mode === 'cursive' ? 'cursive-generator' : 'cursed-text-generator');
 const inputId = `text-generator-${mode}-input`;
 const intensityId = `text-generator-${mode}-intensity`;
+const title = mode === 'cursive' ? 'Write it once. Copy it styled.' : 'Enter text to curse';
+const inputLabel = mode === 'cursive' ? 'Plain text' : 'Enter text to curse';
+const placeholder = mode === 'cursive' ? 'Type a name, caption, or short phrase...' : 'Type text here...';
 ---
-<div class="tool-grid" data-text-generator data-mode={mode} data-locale={locale} data-tool-id={toolId}>
-  <div>
-    <label for={inputId}><strong>{mode === 'cursive' ? 'Enter text to convert to cursive' : 'Enter text to curse'}</strong></label>
-    <textarea id={inputId} data-text-input placeholder="Type text here...">{sampleText}</textarea>
+<div class={`tool-grid text-generator text-generator--${mode}`} data-text-generator data-mode={mode} data-locale={locale} data-tool-id={toolId}>
+  <div class="text-generator__header">
+    <p class="text-generator__eyebrow">{mode === 'cursive' ? 'Live cursive preview' : 'Live text effect'}</p>
+    <strong>{title}</strong>
+  </div>
+
+  <div class="text-generator__input-card">
+    <label for={inputId}><strong>{inputLabel}</strong><span>{mode === 'cursive' ? 'Short text works best' : 'Preview updates as you type'}</span></label>
+    <textarea id={inputId} data-text-input placeholder={placeholder}>{sampleText}</textarea>
   </div>
   {mode === 'cursed' && (
-    <div>
+    <div class="text-generator__control">
       <label for={intensityId}><strong>Intensity: <span data-intensity-value>3</span></strong></label>
       <input id={intensityId} data-intensity-input type="range" min="1" max="8" value="3" />
     </div>
   )}
-  <div class="tool-grid">
-    <div class="result-panel">
+  <div class="text-generator__results">
+    <div class="result-panel text-generator__result">
       <p class="small" data-output-label="0"></p>
-      <p data-output-value="0" style="font-size: 1.5rem; overflow-wrap: anywhere;"></p>
+      <p class="text-generator__output" data-output-value="0"></p>
       <button type="button" data-copy-output="0">Copy</button>
     </div>
-    <div class="result-panel">
+    <div class="result-panel text-generator__result">
       <p class="small" data-output-label="1"></p>
-      <p data-output-value="1" style="font-size: 1.5rem; overflow-wrap: anywhere;"></p>
+      <p class="text-generator__output text-generator__output--bold" data-output-value="1"></p>
       <button type="button" data-copy-output="1">Copy</button>
     </div>
   </div>
-  <p class="small">Privacy: text generation runs in your browser. The input text is not sent to a server by this tool.</p>
+  <p class="small text-generator__privacy">Privacy: text generation runs in your browser. The input text is not sent to a server by this tool.</p>
 </div>
 
 <script>
@@ -114,6 +122,9 @@ const intensityId = `text-generator-${mode}-intensity`;
         const output = root.__textGeneratorOutputs?.[index];
         if (!output) return;
         await navigator.clipboard?.writeText(output.value);
+        const previous = button.textContent;
+        button.textContent = 'Copied';
+        window.setTimeout(() => { button.textContent = previous || 'Copy'; }, 1200);
         track('copy_action', { toolId: root.dataset.toolId, locale: root.dataset.locale, variant: output.label });
       });
     });

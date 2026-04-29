@@ -9,7 +9,7 @@ home:
       variant: elegant
       props:
         eyebrow: Cursive text
-        badges: [Copy and paste, Unicode styles, Live preview]
+        badges: [Signature style, Unicode text, Copy ready]
     - type: tool
       variant: elegant-workbench
     - type: examples
