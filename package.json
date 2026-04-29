@@ -12,7 +12,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "echo \"lint placeholder: add eslint when code style is finalized\"",
     "domain": "tsx scripts/domain.ts",
-    "ui-audit": "tsx scripts/ui-audit.ts"
+    "ui-audit": "tsx scripts/ui-audit.ts",
+    "seo": "tsx scripts/seo.ts",
+    "perf": "tsx scripts/perf.ts"
   },
   "devDependencies": {
     "@astrojs/react": "^4.2.0",

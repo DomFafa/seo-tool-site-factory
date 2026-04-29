@@ -105,6 +105,9 @@ importers:
       '@factory/site-core':
         specifier: workspace:*
         version: link:../site-core
+      gray-matter:
+        specifier: ^4.0.3
+        version: 4.0.3
 
   packages/site-core:
     dependencies:

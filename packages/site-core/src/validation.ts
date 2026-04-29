@@ -3,7 +3,7 @@ import { join } from 'node:path';
 import matter from 'gray-matter';
 import type { SiteContext, ValidationIssue } from './types';
 import { contentExists, localeContentDirExists } from './content';
-import { listSiteIds, loadSiteContext } from './load';
+import { getIndexingMode, isIndexingEnabled, isPagesDevHost, listSiteIds, loadSiteContext } from './load';
 import { ContentFrontmatterSchema } from './schema';
 import { findWorkspaceRoot } from './workspace';
 
@@ -57,7 +57,7 @@ function validateContentFrontmatter(ctx: SiteContext, locale: string): Validatio
       slugs.set(result.data.slug, filePath);
     }
 
-    if (result.data.index && (ctx.siteConfig.lifecycle.status !== 'live' || !ctx.siteConfig.indexing.allowIndex)) {
+    if (result.data.index && !isIndexingEnabled(ctx)) {
       issues.push({
         level: 'P1',
         code: 'CONTENT_INDEX_TRUE_WHILE_SITE_NOINDEX',
@@ -178,6 +178,16 @@ export function validateSiteContext(ctx: SiteContext): ValidationIssue[] {
   }
   if (site.lifecycle.status !== 'live' && site.indexing.allowIndex) {
     issues.push({ level: 'P1', code: 'INDEXING_ENABLED_WHILE_NOT_LIVE', message: `allowIndex=true but lifecycle.status=${site.lifecycle.status}. Draft/preview sites should usually remain noindex.` });
+  }
+  const indexingMode = getIndexingMode(ctx);
+  if (indexingMode === 'index' && site.lifecycle.status !== 'live') {
+    issues.push({ level: 'P0', code: 'INDEX_MODE_NOT_LIVE', message: 'indexing.mode=index requires lifecycle.status=live.' });
+  }
+  if (indexingMode === 'index' && !site.indexing.allowIndex) {
+    issues.push({ level: 'P0', code: 'INDEX_MODE_ALLOWINDEX_FALSE', message: 'indexing.mode=index requires indexing.allowIndex=true.' });
+  }
+  if (indexingMode === 'index' && isPagesDevHost(site.domains.canonicalHost)) {
+    issues.push({ level: 'P0', code: 'PAGES_DEV_INDEX_MODE', message: 'pages.dev hosts must not use indexing.mode=index.' });
   }
   if (integrations.ads.enabled && site.lifecycle.status !== 'live') {
     issues.push({ level: 'P1', code: 'ADS_ENABLED_WHILE_NOT_LIVE', message: `ads.enabled=true but lifecycle.status=${site.lifecycle.status}.` });

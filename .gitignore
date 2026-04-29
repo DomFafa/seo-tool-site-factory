@@ -9,4 +9,6 @@ apps/site/public/.generated-public-manifest.json
 apps/site/public/ads.txt
 apps/site/public/*.txt
 apps/site/public/*.xml
+apps/site/public/_headers
+apps/site/public/og-image.svg
 apps/site/public/google*.html

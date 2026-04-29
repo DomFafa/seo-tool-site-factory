@@ -54,8 +54,35 @@ export function getEnabledNonDefaultLocales(ctx: SiteContext): string[] {
   return getEnabledLocales(ctx).filter((locale) => locale !== ctx.siteConfig.defaultLocale);
 }
 
+export type IndexingMode = 'disallow' | 'allow-noindex' | 'index';
+
+export function getIndexingMode(ctx: SiteContext): IndexingMode {
+  const explicit = ctx.siteConfig.indexing?.mode;
+  if (explicit === 'disallow' || explicit === 'allow-noindex' || explicit === 'index') return explicit;
+  if (ctx.siteConfig.lifecycle.status === 'live' && ctx.siteConfig.indexing.allowIndex) return 'index';
+  if (ctx.siteConfig.launch?.stage === 'real-domain-noindex') return 'allow-noindex';
+  if (ctx.siteConfig.launch?.stage === 'real-domain-indexed' || ctx.siteConfig.launch?.stage === 'ads-enabled') return 'index';
+  return 'disallow';
+}
+
+export function shouldAllowRobotsCrawl(ctx: SiteContext): boolean {
+  return getIndexingMode(ctx) !== 'disallow';
+}
+
+export function isIndexingEnabled(ctx: SiteContext): boolean {
+  return getIndexingMode(ctx) === 'index' && ctx.siteConfig.lifecycle.status === 'live' && ctx.siteConfig.indexing.allowIndex;
+}
+
+export function isPagesDevHost(host: string): boolean {
+  return host.endsWith('.pages.dev');
+}
+
+export function isRealDomain(ctx: SiteContext): boolean {
+  return !isPagesDevHost(ctx.siteConfig.domains.canonicalHost);
+}
+
 export function getIndexableLocales(ctx: SiteContext): string[] {
-  if (ctx.siteConfig.lifecycle.status !== 'live' || !ctx.siteConfig.indexing.allowIndex) return [];
+  if (!isIndexingEnabled(ctx)) return [];
   return Object.entries(ctx.siteConfig.locales)
     .filter(([, cfg]) => cfg.enabled && cfg.indexable && cfg.reviewed)
     .map(([locale]) => locale);

@@ -17,7 +17,8 @@ export async function verifyOnlineIntegrations(ctx: SiteContext): Promise<Verify
   results.push({ label: 'robots.txt', ok: robots.status === 200 && robots.text.includes('Sitemap:'), message: `/robots.txt -> HTTP ${robots.status}` });
 
   const sitemap = await fetchText(`${base}/sitemap.xml`);
-  results.push({ label: 'sitemap.xml', ok: sitemap.status === 200 && sitemap.text.includes('<urlset'), message: `/sitemap.xml -> HTTP ${sitemap.status}` });
+  const hasValidSitemapRoot = sitemap.text.includes('<urlset') || sitemap.text.includes('<sitemapindex');
+  results.push({ label: 'sitemap.xml', ok: sitemap.status === 200 && hasValidSitemapRoot, message: `/sitemap.xml -> HTTP ${sitemap.status}` });
 
   const ads = ctx.integrationsConfig.ads;
   if (ads.adsTxt.enabled) {

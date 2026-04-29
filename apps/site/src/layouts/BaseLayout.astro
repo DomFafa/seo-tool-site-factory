@@ -45,6 +45,8 @@ const surfaceStyle = theme?.surface ?? 'cards';
     <meta property="og:description" content={seo.description} />
     <meta property="og:url" content={seo.canonical} />
     <meta property="og:type" content={pageType === 'guide' ? 'article' : 'website'} />
+    {seo.ogImage && <meta property="og:image" content={seo.ogImage} />}
+    {seo.ogImage && <meta name="twitter:image" content={seo.ogImage} />}
     <meta name="twitter:card" content="summary_large_image" />
     <style is:inline define:vars={{ primary, bg, surface, accent, radius }}>
       :root {

@@ -1,10 +1,30 @@
 import { z } from 'zod';
 
+export const indexingModes = ['disallow', 'allow-noindex', 'index'] as const;
+export const launchStages = ['pages-dev', 'real-domain-noindex', 'real-domain-indexed', 'ads-enabled'] as const;
+
 const LocaleConfigSchema = z.object({
   enabled: z.boolean().default(true),
   indexable: z.boolean().default(false),
   reviewed: z.boolean().default(false)
 });
+
+const SeoSitemapSchema = z.object({
+  split: z.boolean().default(false),
+  includeHome: z.boolean().default(true),
+  includeGuides: z.boolean().default(true)
+}).default({ split: false, includeHome: true, includeGuides: true });
+
+const SeoOgImageSchema = z.object({
+  mode: z.enum(['generated', 'static', 'none']).default('generated'),
+  path: z.string().default('/og-image.svg'),
+  template: z.string().optional()
+}).default({ mode: 'generated', path: '/og-image.svg' });
+
+const SeoPagesDevRedirectSchema = z.object({
+  status: z.enum(['unknown', 'not-needed', 'pending', 'configured']).default('unknown'),
+  notes: z.string().optional()
+}).default({ status: 'unknown' });
 
 export const SiteConfigSchema = z.object({
   schemaVersion: z.number().int().default(1),
@@ -15,6 +35,9 @@ export const SiteConfigSchema = z.object({
   lifecycle: z.object({
     status: z.enum(['draft', 'preview', 'live', 'paused', 'archived']).default('draft')
   }).default({ status: 'draft' }),
+  launch: z.object({
+    stage: z.enum(launchStages).default('pages-dev')
+  }).default({ stage: 'pages-dev' }),
   domains: z.object({
     production: z.string().min(1),
     canonicalHost: z.string().min(1),
@@ -23,14 +46,18 @@ export const SiteConfigSchema = z.object({
   defaultLocale: z.string().min(2),
   locales: z.record(LocaleConfigSchema),
   indexing: z.object({
-    allowIndex: z.boolean().default(false)
+    allowIndex: z.boolean().default(false),
+    mode: z.enum(indexingModes).optional()
   }).default({ allowIndex: false }),
   primaryTool: z.string().min(1),
   seo: z.object({
     defaultTitle: z.string().min(1),
     defaultDescription: z.string().min(1),
     xDefaultLocale: z.string().min(2).optional(),
-    structuredData: z.array(z.string()).default(['WebSite', 'WebPage'])
+    structuredData: z.array(z.enum(['WebSite', 'WebPage', 'SoftwareApplication', 'Article', 'BreadcrumbList'])).default(['WebSite', 'WebPage']),
+    sitemap: SeoSitemapSchema,
+    ogImage: SeoOgImageSchema,
+    pagesDevRedirect: SeoPagesDevRedirectSchema
   }),
   deployment: z.object({
     provider: z.enum(['cloudflare-pages']).default('cloudflare-pages'),

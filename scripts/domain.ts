@@ -239,11 +239,13 @@ function updateSiteConfig(siteId: string, item: LaunchSite, mode: 'noindex-first
   };
   if (mode === 'noindex-first') {
     data.lifecycle = { ...(data.lifecycle ?? {}), status: 'draft' };
-    data.indexing = { ...(data.indexing ?? {}), allowIndex: false };
+    data.indexing = { ...(data.indexing ?? {}), allowIndex: false, mode: 'allow-noindex' };
+    data.launch = { ...(data.launch ?? {}), stage: 'real-domain-noindex' };
   }
   if (mode === 'live') {
     data.lifecycle = { ...(data.lifecycle ?? {}), status: 'live' };
-    data.indexing = { ...(data.indexing ?? {}), allowIndex: true };
+    data.indexing = { ...(data.indexing ?? {}), allowIndex: true, mode: 'index' };
+    data.launch = { ...(data.launch ?? {}), stage: 'real-domain-indexed' };
     const defaultLocale = data.defaultLocale;
     data.locales = data.locales ?? {};
     data.locales[defaultLocale] = { ...(data.locales[defaultLocale] ?? {}), enabled: true, indexable: true, reviewed: true };

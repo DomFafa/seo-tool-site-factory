@@ -1,0 +1,28 @@
+schemaVersion: 1
+forbiddenPublicTerms:
+  - technical launch
+  - ready for indexing
+  - noindex
+  - draft
+  - v1
+  - demo dictionary
+  - expand dictionary
+  - placeholder
+  - coming soon
+  - TODO
+  - test page
+localeLeakageTerms:
+  es:
+    - Drop an image
+    - Choose image
+    - Download PNG
+    - Your PNG is ready
+    - Supported:
+    - Start test
+  fr:
+    - Drop an image
+    - Choose image
+    - Download PNG
+    - Start test
+    - Check spelling
+allowedTerms: []
