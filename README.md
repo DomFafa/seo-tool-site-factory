@@ -64,6 +64,8 @@ Supported in V1:
 - AdSense base script, slots, and ads.txt entries
 - Adsterra snippet-based slots
 
+For Cloudflare-hosted live domains, enable Cloudflare Crawler Hints first and keep repository-managed IndexNow disabled unless you need explicit deploy-time URL submission. Crawler Hints complements Bing Webmaster verification and sitemap output; it does not replace either one.
+
 Useful commands:
 
 ```bash

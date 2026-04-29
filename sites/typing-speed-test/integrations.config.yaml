@@ -41,12 +41,12 @@ ads:
       placements: {}
 analytics:
   googleAnalytics:
-    enabled: false
-    measurementId: ""
+    enabled: true
+    measurementId: G-9BQZSQR0F1
     trackToolEvents: true
   microsoftClarity:
-    enabled: false
-    projectId: ""
+    enabled: true
+    projectId: wjbmoau6ee
     consentMode: false
 webmaster:
   googleSearchConsole:
@@ -55,11 +55,11 @@ webmaster:
     verification:
       method: none
   bingWebmaster:
-    enabled: false
+    enabled: true
     verification:
-      method: import-from-gsc
+      method: meta
       metaName: msvalidate.01
-      content: ""
+      content: 1468D9E2D27FF3CE4942398941CB3DA6
 indexing:
   indexNow:
     enabled: false

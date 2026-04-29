@@ -70,6 +70,7 @@ pnpm domain go-live typing-speed-test --yes
 - Do not rely on `wrangler login` account switching for production deploys.
 - Keep each site zone and Pages project in the same Cloudflare account.
 - Let `pnpm domain bind --ensure-dns` manage Pages CNAME targets; it reads the real Pages subdomain from Cloudflare.
+- Use the Cloudflare zone setting recommendations in `docs/technical-seo-guardrails.md` after a real domain is live. In particular, keep Crawler Hints on and Rocket Loader off.
 - Keep `.env.local` out of git.
 - Do not add GitHub Actions deployment until the local workflow has been stable for several real domains.
 - `pnpm domain go-live --all` is intentionally refused.

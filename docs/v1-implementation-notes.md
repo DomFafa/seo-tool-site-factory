@@ -45,9 +45,10 @@ For each live site:
 3. Add Google Search Console verification meta/file.
 4. Add Bing Webmaster import/meta/file.
 5. Add Clarity project ID if needed.
-6. Add IndexNow key/keyFile if needed.
-7. Add AdSense publisher ID and ads.txt entry.
-8. Add Adsterra snippets only if using Adsterra.
-9. Run `pnpm site check <site-id>`.
-10. Run `pnpm site build <site-id>`.
-11. Deploy and run `pnpm site verify-integrations <site-id>`.
+6. Enable Cloudflare Crawler Hints for Cloudflare-hosted live domains.
+7. Add IndexNow key/keyFile only if deploy-time URL submission is needed beyond Crawler Hints.
+8. Add AdSense publisher ID and ads.txt entry.
+9. Add Adsterra snippets only if using Adsterra.
+10. Run `pnpm site check <site-id>`.
+11. Run `pnpm site build <site-id>`.
+12. Deploy and run `pnpm site verify-integrations <site-id>`.
