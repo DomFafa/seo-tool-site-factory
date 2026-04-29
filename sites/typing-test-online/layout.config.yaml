@@ -1,0 +1,25 @@
+schemaVersion: 1
+recipe: formal-assessment
+chrome:
+  navVariant: formal
+  footerVariant: simple
+home:
+  blocks:
+    - type: hero
+      variant: test-setup
+      props:
+        eyebrow: Online typing test
+        badges: [Timed test, Results, Certificate-style summary]
+    - type: tool
+      variant: certificate
+    - type: howItWorks
+      variant: formal-steps
+      props:
+        steps:
+          - Set up the test duration.
+          - Complete the typing test without switching prompts.
+          - Review a clear result summary after finishing.
+    - type: content
+      variant: card
+    - type: faq
+      variant: simple

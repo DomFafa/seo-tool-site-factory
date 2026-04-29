@@ -1,0 +1,23 @@
+schemaVersion: 1
+recipe: writing-assistant
+chrome:
+  navVariant: trust
+  footerVariant: simple
+home:
+  blocks:
+    - type: hero
+      variant: editor
+      props:
+        eyebrow: Assistant d’écriture
+        badges: [Orthographe, Suggestions, Confidentialité]
+    - type: tool
+      variant: editor-panel
+    - type: privacyNote
+      variant: inline
+      props:
+        title: Note de confidentialité
+        text: Utilise cet outil avec des textes courts et évite les informations sensibles tant que la vérification complète n’est pas activée.
+    - type: content
+      variant: card
+    - type: faq
+      variant: split

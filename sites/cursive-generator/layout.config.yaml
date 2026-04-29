@@ -1,0 +1,26 @@
+schemaVersion: 1
+recipe: elegant-generator
+chrome:
+  navVariant: centered
+  footerVariant: simple
+home:
+  blocks:
+    - type: hero
+      variant: elegant
+      props:
+        eyebrow: Cursive text
+        badges: [Copy and paste, Unicode styles, Live preview]
+    - type: tool
+      variant: elegant-workbench
+    - type: examples
+      variant: typography-gallery
+      props:
+        title: Cursive text ideas
+        items:
+          - Use cursive text for a short name or signature-style phrase.
+          - Try decorative text for bios, captions, or messages.
+          - Compare variants before copying the one that reads best.
+    - type: content
+      variant: editorial
+    - type: faq
+      variant: cards

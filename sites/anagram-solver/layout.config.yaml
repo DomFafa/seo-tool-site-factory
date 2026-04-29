@@ -1,0 +1,26 @@
+schemaVersion: 1
+recipe: word-solver
+chrome:
+  navVariant: compact
+  footerVariant: simple
+home:
+  blocks:
+    - type: hero
+      variant: search
+      props:
+        eyebrow: Word puzzle helper
+        badges: [Anagrams, Filters, Word list]
+    - type: tool
+      variant: solver-panel
+    - type: examples
+      variant: result-list
+      props:
+        title: Ways to narrow results
+        items:
+          - Start with all letters, then filter by first or last letter.
+          - Use contains to find words with a specific pattern.
+          - Compare shorter and longer words when solving puzzles.
+    - type: content
+      variant: card
+    - type: faq
+      variant: simple

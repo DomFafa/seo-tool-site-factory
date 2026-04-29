@@ -1,0 +1,163 @@
+---
+import ToolRenderer from '../components/ToolRenderer.astro';
+import AdSlot from '../components/AdSlot.astro';
+import type { ContentDocument, LayoutBlock, SiteContext } from '@factory/site-core';
+import { listGuideContent } from '@factory/site-core';
+import { getGuidePath } from '@factory/seo';
+
+interface Props {
+  ctx: SiteContext;
+  locale: string;
+  home: ContentDocument;
+  faq: ContentDocument | null;
+}
+
+const { ctx, locale, home, faq } = Astro.props;
+const blocks = ctx.layoutConfig.home.blocks;
+const guides = await listGuideContent(ctx, locale);
+
+function blockClass(block: LayoutBlock): string {
+  return `page-block page-block--${block.type} page-block--${block.type}-${block.variant}`;
+}
+
+function propString(block: LayoutBlock, name: string, fallback = ''): string {
+  const value = block.props?.[name];
+  return typeof value === 'string' ? value : fallback;
+}
+
+function propList(block: LayoutBlock, name: string, fallback: string[] = []): string[] {
+  const value = block.props?.[name];
+  return Array.isArray(value) ? value.map((item) => String(item)) : fallback;
+}
+
+function stepsFor(block: LayoutBlock): string[] {
+  return propList(block, 'steps', [
+    'Open the tool and enter or upload your content.',
+    'Adjust the available options for your task.',
+    'Copy, download, or review the result when it is ready.'
+  ]);
+}
+
+function examplesFor(block: LayoutBlock): string[] {
+  return propList(block, 'items', [
+    'Try a short example first.',
+    'Compare the result with the original input.',
+    'Use the output in the app or document where you need it.'
+  ]);
+}
+---
+<div class={`page-recipe page-recipe--${ctx.layoutConfig.recipe}`} data-ui-recipe={ctx.layoutConfig.recipe}>
+  {blocks.map((block) => (
+    <div class="block-rendered" data-block={block.type}>
+      {block.type === 'hero' && (
+        <section class={blockClass(block)}>
+          <div class="container block-inner">
+            {propString(block, 'eyebrow') && <p class="eyebrow">{propString(block, 'eyebrow')}</p>}
+            <h1>{propString(block, 'title', home.frontmatter.title)}</h1>
+            <p class="hero-lead">{propString(block, 'description', home.frontmatter.description)}</p>
+            {propList(block, 'badges').length > 0 && (
+              <div class="badge-row">
+                {propList(block, 'badges').map((badge) => <span class="badge">{badge}</span>)}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {block.type === 'tool' && (
+        <section class={blockClass(block)}>
+          <div class="container block-inner">
+            <ToolRenderer ctx={ctx} locale={locale} />
+          </div>
+        </section>
+      )}
+
+      {block.type === 'content' && (
+        <section class={blockClass(block)}>
+          <div class="container block-inner">
+            <article class="content-card" set:html={home.html}></article>
+          </div>
+        </section>
+      )}
+
+      {block.type === 'howItWorks' && (
+        <section class={blockClass(block)}>
+          <div class="container block-inner">
+            <div class="section-heading">
+              <p class="eyebrow">{propString(block, 'eyebrow', 'How it works')}</p>
+              <h2>{propString(block, 'title', 'How to use this tool')}</h2>
+            </div>
+            <div class="step-grid">
+              {stepsFor(block).map((step, index) => (
+                <div class="step-card">
+                  <span class="step-number">{index + 1}</span>
+                  <p>{step}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {block.type === 'examples' && (
+        <section class={blockClass(block)}>
+          <div class="container block-inner">
+            <div class="section-heading">
+              <p class="eyebrow">{propString(block, 'eyebrow', 'Examples')}</p>
+              <h2>{propString(block, 'title', 'Examples you can try')}</h2>
+            </div>
+            <div class="example-grid">
+              {examplesFor(block).map((item) => <div class="example-card">{item}</div>)}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {block.type === 'guideLinks' && guides.length > 0 && (
+        <section class={blockClass(block)}>
+          <div class="container block-inner">
+            <div class="section-heading">
+              <p class="eyebrow">{propString(block, 'eyebrow', 'Guides')}</p>
+              <h2>{propString(block, 'title', 'Helpful guides')}</h2>
+            </div>
+            <div class="guide-grid">
+              {guides.map((guide) => (
+                <a class="guide-card" href={getGuidePath(ctx, locale, guide.frontmatter.slug)}>
+                  <strong>{guide.frontmatter.title}</strong>
+                  <span>{guide.frontmatter.description}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {block.type === 'faq' && faq && (
+        <section class={blockClass(block)}>
+          <div class="container block-inner">
+            <article class="content-card faq-card" set:html={faq.html}></article>
+          </div>
+        </section>
+      )}
+
+      {block.type === 'privacyNote' && (
+        <section class={blockClass(block)}>
+          <div class="container block-inner">
+            <div class="privacy-panel">
+              <strong>{propString(block, 'title', 'Privacy note')}</strong>
+              <p>{propString(block, 'text', 'This tool is designed to avoid collecting raw user input in analytics.')}</p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {block.type === 'adSlot' && (
+        <section class={blockClass(block)}>
+          <div class="container block-inner">
+            <AdSlot ctx={ctx} placement={propString(block, 'placement', 'afterTool')} />
+          </div>
+        </section>
+      )}
+    </div>
+  ))}
+</div>

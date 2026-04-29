@@ -1,0 +1,23 @@
+schemaVersion: 1
+recipe: file-drop-studio
+chrome:
+  navVariant: compact
+  footerVariant: simple
+home:
+  blocks:
+    - type: hero
+      variant: upload
+      props:
+        eyebrow: PNG converter
+        badges: [Browser-based, No install, Quick download]
+    - type: tool
+      variant: dropzone
+    - type: privacyNote
+      variant: inline
+      props:
+        title: Privacy
+        text: Conversion runs in your browser and avoids uploading the image in this version.
+    - type: content
+      variant: card
+    - type: faq
+      variant: split

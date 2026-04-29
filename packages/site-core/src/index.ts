@@ -4,3 +4,4 @@ export * from './workspace';
 export * from './load';
 export * from './content';
 export * from './validation';
+export * from './ui-audit';

@@ -1,0 +1,29 @@
+schemaVersion: 1
+recipe: performance-dashboard
+chrome:
+  navVariant: compact
+  footerVariant: simple
+home:
+  blocks:
+    - type: hero
+      variant: metric
+      props:
+        eyebrow: Typing metrics
+        badges: [WPM, Accuracy, Errors]
+    - type: tool
+      variant: dashboard
+    - type: howItWorks
+      variant: numbered-cards
+      props:
+        steps:
+          - Choose a test duration and start typing the prompt.
+          - Watch WPM, accuracy, and errors update while you type.
+          - Finish the test and use the result to practice more intentionally.
+    - type: content
+      variant: card
+    - type: faq
+      variant: accordion
+    - type: privacyNote
+      variant: inline
+      props:
+        text: The typing test runs in your browser and avoids sending full typed text to analytics.

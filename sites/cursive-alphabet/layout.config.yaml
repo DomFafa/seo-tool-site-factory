@@ -1,0 +1,26 @@
+schemaVersion: 1
+recipe: worksheet-learning
+chrome:
+  navVariant: editorial
+  footerVariant: simple
+home:
+  blocks:
+    - type: hero
+      variant: alphabet-chart
+      props:
+        eyebrow: Cursive alphabet
+        badges: [Uppercase, Lowercase, Practice]
+    - type: tool
+      variant: worksheet
+    - type: examples
+      variant: learning-cards
+      props:
+        title: Practice ideas
+        items:
+          - Start with lowercase letters that share similar strokes.
+          - Practice uppercase letters separately before joining words.
+          - Print or copy short drills for daily handwriting practice.
+    - type: content
+      variant: editorial
+    - type: faq
+      variant: cards

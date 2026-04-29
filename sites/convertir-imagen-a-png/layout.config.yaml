@@ -1,0 +1,31 @@
+schemaVersion: 1
+recipe: file-drop-studio
+chrome:
+  navVariant: minimal
+  footerVariant: simple
+home:
+  blocks:
+    - type: hero
+      variant: upload
+      props:
+        eyebrow: Convertidor PNG
+        badges: [Sin instalación, En el navegador, Descarga rápida]
+    - type: tool
+      variant: dropzone
+    - type: privacyNote
+      variant: badge-row
+      props:
+        title: Privacidad
+        text: La conversión se realiza en tu navegador; la imagen no se sube a un servidor en esta versión.
+    - type: howItWorks
+      variant: three-steps
+      props:
+        title: Cómo convertir una imagen a PNG
+        steps:
+          - Sube o arrastra una imagen compatible.
+          - Espera a que el navegador genere el archivo PNG.
+          - Descarga el resultado y úsalo donde lo necesites.
+    - type: content
+      variant: card
+    - type: faq
+      variant: split
