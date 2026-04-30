@@ -40,6 +40,28 @@ Operating mode:
 - If the user only asks for research, switch to `research-only` and do not edit implementation files.
 - If any gate is blocked, switch to `plan-only` or `audit` and report the blocker instead of pushing through.
 
+Phase protocol:
+
+```text
+Phase 1: research gate
+Phase 2: design gate
+Phase 3: implementation gate
+Phase 4: post-UI QA gate
+Phase 5: launch review gate
+```
+
+For the active phase, record:
+
+```text
+Current phase:
+Allowed writes:
+Required evidence:
+Exit criteria:
+Blockers/deferred:
+```
+
+Do not mix phases silently. Research and design records must guide implementation, not be written after implementation as justification.
+
 Before implementing product or UI, verify `competitor-research.md` has the Bing Webmaster top 5:
 
 - If missing, follow `/Users/bin/.codex/skills/seo-demand-validation/SKILL.md` for Bing Webmaster Keyword Research.
@@ -56,7 +78,15 @@ Bing capture gate:
 - Use `not-attempted` when no Bing Webmaster attempt was made. Do not call this blocked.
 - Use `user-approved-skip` only when the user explicitly approves skipping Bing Webmaster. Record the approval context.
 - Do not substitute a generic public SERP for the Bing Webmaster top 5. Public SERP results may be listed only as low-confidence fallback references.
-- If status is `not-attempted`, stop before implementation unless the user explicitly asks for code-only work or approves fallback implementation.
+- If status is `blocked-with-evidence`, stop before implementation unless the user explicitly approves fallback implementation or asks for code-only work.
+- If status is `not-attempted`, stop before implementation unless the user explicitly asks for code-only work.
+
+Bing readiness caps:
+
+- `captured`: no automatic research cap from Bing source.
+- `blocked-with-evidence`: `Research readiness <= 7`, `Research status: READY_WITH_FALLBACK` or `BLOCKED`, and implementation requires explicit fallback approval.
+- `not-attempted`: `Research readiness <= 3`, `Research status: NOT_ATTEMPTED`, and implementation is blocked.
+- `user-approved-skip`: record approval context and keep `Launch status: DRAFT_ONLY` until manual review.
 
 STOP: Claims without evidence do not satisfy this gate.
 
@@ -78,6 +108,14 @@ sites/{site_id}/research/codex-build-prompt.md
 ```
 
 Do not proceed from competitor research directly into implementation unless the user explicitly asked for competitor research only. If any file cannot be completed yet, add `Deferred:` inside that file with the reason, missing evidence, and next action.
+
+Research quality rules:
+
+- Do not count a file as complete just because it exists.
+- Do not count placeholders, empty tables, generic boilerplate, or copied template text as completed research.
+- Do not count `Deferred:` as valid unless it includes blocker, missing evidence, impact, and next action.
+- Do not use unsupported readiness scores.
+- Completed research must include evidence used, decisions made, implementation implications, and deferred items across the research set.
 
 Implementation edit gate:
 
@@ -105,7 +143,7 @@ sites/{site_id}/content/**
 sites/{site_id}/messages/**
 ```
 
-Pass this gate only when competitor source status is `captured`, `blocked-with-evidence`, or `user-approved-skip`; `not-attempted` does not pass. Also record deferred blockers if any, design-new decision, pre-implementation design review status, and approved implementation write scope.
+Pass this gate only when competitor source status is `captured` or `user-approved-skip`; `not-attempted` does not pass. `blocked-with-evidence` requires explicit user approval for fallback implementation or code-only work. Also record deferred blockers if any, design-new decision, pre-implementation design review status, and approved implementation write scope.
 
 Readiness scores:
 
@@ -121,6 +159,13 @@ Launch status: DRAFT_ONLY / READY_FOR_REVIEW / READY_TO_INDEX
 ```
 
 STOP: Do not start implementation with `Research readiness < 7` unless the user explicitly approves fallback/code-only implementation.
+
+Score caps:
+
+- Bing status `blocked-with-evidence`: `Research readiness <= 7`.
+- Bing status `not-attempted`: `Research readiness <= 3`.
+- Missing or deferred pre-implementation `plan-design-review` for meaningful UI work: `Design specificity <= 5`.
+- Missing browser/screenshot evidence after meaningful UI work: `Launch readiness <= 5`.
 
 Before implementing visual UI:
 
@@ -156,9 +201,13 @@ Post-UI optimization gate:
 - After meaningful UI changes, use `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-design-review/SKILL.md` to review and fix visual hierarchy, spacing, mobile layout, contrast, focus states, output overflow, and AI-template risk.
 - If interactions changed, use `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-qa/SKILL.md` when fixes are allowed, or `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-qa-only/SKILL.md` for report-only QA.
 - Before launch, after large CSS/JS changes, or after adding dependencies, use `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-benchmark/SKILL.md`.
+- Capture browser evidence after meaningful UI work: desktop screenshot, 390px mobile screenshot, local URL, viewport sizes, first-viewport tool visibility, main task path, visual hierarchy issues, fixes applied, and remaining issues.
+- If browser tooling or screenshots are unavailable, record `Deferred:` with the blocker and cap `Launch readiness <= 5`.
 - Record findings, fixes, or `Deferred:` reasons in `design-review.md` and `acceptance-tests.md`.
 
 STOP: Do not call UI implementation complete after rendering alone.
+
+STOP: Do not mark full visual review complete without post-implementation evidence. A placeholder, pre-implementation note, or deferred entry is not a completed post-UI design review.
 
 STOP: For a new UI-bearing site, do not score `Launch readiness > 4` unless post-UI `gstack-design-review` ran after implementation.
 

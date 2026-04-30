@@ -39,9 +39,34 @@ Use exactly one status: `captured`, `blocked-with-evidence`, `not-attempted`, or
 - Screenshot or artifact path:
 - User approval context if skipped:
 
+### Bing Status Interpretation
+
+Use this interpretation before moving to implementation:
+
+```text
+captured:
+  Bing Webmaster top rows were actually read and recorded.
+
+blocked-with-evidence:
+  An actual Bing Webmaster attempt happened and failed with evidence.
+  Research readiness must be <= 7.
+  Implementation requires explicit fallback approval.
+
+not-attempted:
+  No actual Bing Webmaster attempt happened.
+  Research readiness must be <= 3.
+  Implementation is blocked unless the user asks for code-only work.
+
+user-approved-skip:
+  User explicitly approved skipping Bing Webmaster.
+  Keep launch status DRAFT_ONLY until manual review.
+```
+
 ### Raw Captured Top 10 Rows
 
 Fill this table only from the Bing Webmaster `Top 10 url ranking on this keyword` table.
+
+If the status is not `captured`, leave rows empty or mark them as unavailable. Do not fill this table from a public SERP.
 
 | Bing rank | Title | URL | Topics | Captured? |
 |---:|---|---|---|---|
@@ -63,6 +88,22 @@ Use the `Top 10 url ranking on this keyword` table in Bing Webmaster Keyword Res
 Do not mark Bing Webmaster as blocked unless an actual web-access/manual/user-evidence attempt was made. If there is no attempted URL, timestamp, blocker text, screenshot, or artifact, use `not-attempted`.
 
 If Bing Webmaster is `blocked-with-evidence`, record the exact blocker and mark any replacement URLs as `fallback, not Bing Webmaster ranking`. Public SERP results are never a substitute for the Bing Webmaster top 5; they may be listed only as low-confidence fallback references.
+
+### Evidence Used
+
+- Bing Webmaster rows captured:
+- Artifact or screenshot path:
+- Fallback sources, if any:
+- Confidence level:
+- Evidence gaps:
+
+### Decisions Made From Evidence
+
+- Required competitor set:
+- Fallback competitor set, if approved:
+- Primary opportunity:
+- Implementation implications:
+- Deferred items:
 
 ## 3. Bing Webmaster Top 5 Ranking Competitors
 
@@ -231,6 +272,12 @@ Add adjacent-intent or best-in-class UX references only after the Bing Webmaster
 -
 -
 -
+
+### Research-to-build trace
+
+| Evidence | Decision | Implementation requirement |
+|---|---|---|
+|  |  |  |
 
 ## 13. Risks
 

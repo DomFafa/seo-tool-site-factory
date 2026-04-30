@@ -96,6 +96,30 @@ launch-review
 
 Default to `research-only` for keyword or competitor research. Default to `implement` only when building or finishing a site. In `research-only`, `plan-only`, and `audit`, do not edit implementation files unless the user explicitly changes the mode.
 
+## Phase protocol
+
+Use these phases whenever a task can move from research to implementation:
+
+```text
+Phase 1: research gate
+Phase 2: design gate
+Phase 3: implementation gate
+Phase 4: post-UI QA gate
+Phase 5: launch review gate
+```
+
+Each phase must record:
+
+```text
+Current phase:
+Allowed writes:
+Required evidence:
+Exit criteria:
+Blockers/deferred:
+```
+
+The important constraint is ordering: research and design records must guide implementation, not be written afterward to justify implementation choices.
+
 ## Research completion gate
 
 A keyword research pass is not complete when only `competitor-research.md` is filled. Before implementation, every generated research output must contain keyword-specific decisions, or it must include a `Deferred:` note with the blocker, reason, missing evidence, and next action.
@@ -116,6 +140,17 @@ sites/<site-id>/research/codex-build-prompt.md
 ```
 
 Do not move into site-pack or UI implementation unless this gate is satisfied, unless the user explicitly asked for competitor research only.
+
+Files are not complete just because they exist. Do not count placeholders, empty tables, copied template text, generic tool-site claims, or unsupported scores as completed research.
+
+Completed research must contain enough of this trail for a reviewer to understand the implementation:
+
+```text
+Evidence used:
+Decisions made:
+Implementation implications:
+Deferred items:
+```
 
 ## Implementation edit gate
 
@@ -158,6 +193,37 @@ Launch status: DRAFT_ONLY / READY_FOR_REVIEW / READY_TO_INDEX
 
 Do not start implementation with `Research readiness < 7` unless the user explicitly approves fallback or code-only implementation.
 
+Bing source caps:
+
+```text
+captured:
+  no automatic research cap
+
+blocked-with-evidence:
+  Research readiness <= 7
+  Research status: READY_WITH_FALLBACK or BLOCKED
+  implementation requires explicit fallback approval
+
+not-attempted:
+  Research readiness <= 3
+  Research status: NOT_ATTEMPTED
+  implementation blocked unless the user asks for code-only work
+
+user-approved-skip:
+  approval context must be recorded
+  Launch status remains DRAFT_ONLY until manual review
+```
+
+Design caps:
+
+```text
+missing/deferred pre-implementation plan-design-review:
+  Design specificity <= 5
+
+missing post-implementation browser/screenshot evidence:
+  Launch readiness <= 5
+```
+
 ## Post-UI optimization gate
 
 The UI is not complete immediately after code renders. For SEO tool sites, task speed and trust are part of the product.
@@ -168,10 +234,15 @@ Required behavior:
 - Run `gstack-qa` when interactions changed and direct fixes are allowed.
 - Run `gstack-qa-only` when the user wants a report before fixes.
 - Run `gstack-benchmark` before launch, after large CSS/JS changes, or after adding dependencies.
+- Record desktop and 390px mobile screenshot evidence after meaningful UI changes.
+- Record first-viewport tool visibility, main task path tested, visual hierarchy issues, fixes applied, and remaining issues.
+- If browser/screenshot evidence is unavailable, mark it `Deferred:` and keep `Launch readiness <= 5`.
 - For a new UI-bearing site, if post-UI `gstack-design-review` is deferred, `Launch readiness` must be `<= 4`.
 - If interactions changed and `gstack-qa` / `gstack-qa-only` is deferred, `Launch readiness` must be `<= 5`.
 - If both visual review and interaction QA are deferred, `Launch status` must remain `DRAFT_ONLY`.
 - Deferred visual/browser QA is acceptable for draft implementation only, never for `READY_TO_INDEX`.
+
+Do not mark full visual review complete when it is only a placeholder, a pre-implementation review, or a deferred note.
 
 Record results and fixes in:
 
@@ -197,7 +268,7 @@ user-approved-skip
 
 Do not mark Bing Webmaster as blocked unless an actual attempt was made and recorded with attempted URL, timestamp, blocker text or screenshot/artifact, and the missing permission/login state. If there was no actual attempt, the status is `not-attempted`.
 
-Public SERP results are not a replacement for Bing Webmaster top 5 competitors. They can only be low-confidence fallback references. `not-attempted` blocks implementation unless the user explicitly approves fallback implementation or asks for code-only work.
+Public SERP results are not a replacement for Bing Webmaster top 5 competitors. They can only be low-confidence fallback references. `not-attempted` blocks implementation unless the user explicitly asks for code-only work.
 
 ## Launch guard
 

@@ -52,7 +52,7 @@
 - Bing capture status is one of: `captured`, `blocked-with-evidence`, `not-attempted`, `user-approved-skip`.
 - If status is `captured`, the raw Bing Webmaster top 10 rows are recorded and the first 5 rows drive competitor requirements.
 - If status is `blocked-with-evidence`, attempted URL, timestamp, blocker text or screenshot/artifact, fallback source, and fallback confidence are recorded.
-- If status is `not-attempted`, implementation edit gate is marked blocked unless the user explicitly approved fallback implementation.
+- If status is `not-attempted`, implementation edit gate is marked blocked unless the user explicitly asked for code-only work.
 - Public SERP results are not labeled as Bing Webmaster ranking competitors.
 
 ## Accessibility Tests
@@ -69,6 +69,8 @@
 - `design-direction.md` exists and names a specific visual personality.
 - `design-review.md` records the pre-implementation design review or explains why it was skipped.
 - Post-UI `design-review` was run after meaningful UI changes, or `Deferred:` explains why it was not run.
+- Post-UI review records desktop and 390px mobile screenshot evidence, or `Deferred:` explains the browser/tooling blocker.
+- If browser/screenshot evidence is missing after meaningful UI work, `Launch readiness` is `<= 5`.
 - `qa` or `qa-only` was run when interactions changed, or `Deferred:` explains why it was not run.
 - For a new UI-bearing site, if post-UI `design-review` was deferred, `Launch readiness` is `<= 4`.
 - If interactions changed and `qa` / `qa-only` was deferred, `Launch readiness` is `<= 5`.
