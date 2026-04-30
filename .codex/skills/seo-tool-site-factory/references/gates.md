@@ -176,6 +176,36 @@ Remaining issues:
 
 If screenshots or browser tooling are unavailable, record the blocker as `Deferred:` and cap `Launch readiness <= 5`. A deferred browser review cannot support `READY_TO_INDEX`.
 
+## Research Consumption Trace
+
+After non-trivial implementation changes, update:
+
+```text
+sites/<site-id>/research/implementation-trace.md
+```
+
+Before implementation, this file may be `Trace status: pending-implementation`.
+
+After implementation, it must map:
+
+```text
+research source -> decision -> implementation file/behavior -> validation evidence -> status
+```
+
+Required coverage:
+
+- Keyword intent and standalone decision
+- Bing competitor opportunities
+- Product features
+- SEO metadata and content
+- UX states and mobile behavior
+- Design direction and design review decisions
+- Privacy and analytics
+- Performance and validation
+- Unconsumed or deferred research
+
+Do not call implementation complete if this file is missing, still pending, or only contains a generic summary.
+
 ## Hard Stops
 
 - STOP: In `research-only`, `plan-only`, and `audit`, do not edit implementation files unless the user changes the mode.
@@ -187,6 +217,7 @@ If screenshots or browser tooling are unavailable, record the blocker as `Deferr
 - STOP: Do not implement visual UI before `design-direction.md` and pre-implementation `design-review.md` exist, unless explicitly deferred with a reason and the task is code-only.
 - STOP: Do not call UI implementation complete after rendering alone. Record design-review/QA/benchmark results or explicit `Deferred:` reasons.
 - STOP: Do not call post-UI design review complete without post-implementation visual evidence.
+- STOP: Do not call implementation complete without an updated research consumption trace after non-trivial implementation changes.
 - STOP: Do not score `Launch readiness > 4` for a new UI-bearing site without a completed post-UI `gstack-design-review`.
 - STOP: Do not score `Launch readiness > 5` after interaction changes without completed `gstack-qa` or `gstack-qa-only`.
 - STOP: Do not enable indexing or call a site launch-ready until validation has no P0 issues and launch status is explicitly `READY_TO_INDEX`.

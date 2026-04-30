@@ -76,6 +76,9 @@
 - If interactions changed and `qa` / `qa-only` was deferred, `Launch readiness` is `<= 5`.
 - If both post-UI design review and interaction QA were deferred, `Launch status` remains `DRAFT_ONLY`.
 - Implementation files were not edited before the research completion gate, unless the user explicitly requested code-only work.
+- `implementation-trace.md` is updated after implementation and is no longer `pending-implementation`.
+- `implementation-trace.md` maps research decisions to implementation files, behavior, artifacts, or validation results.
+- Unconsumed research decisions are listed with reason, impact, and next action.
 - `layout.config.yaml` reflects the selected layout recipe and block order.
 - `theme.config.yaml` reflects the selected typography, color, density, and surface strategy.
 - The above-the-fold UI does not use a generic centered hero plus three feature cards.

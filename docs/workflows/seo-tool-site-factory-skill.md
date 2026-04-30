@@ -76,6 +76,7 @@ sites/<site-id>/research/ux-spec.md
 sites/<site-id>/research/design-direction.md
 sites/<site-id>/research/design-review.md
 sites/<site-id>/research/acceptance-tests.md
+sites/<site-id>/research/implementation-trace.md
 sites/<site-id>/research/codex-build-prompt.md
 sites/<site-id>/research/brief.v2.draft.yaml
 ```
@@ -138,6 +139,8 @@ sites/<site-id>/research/acceptance-tests.md
 sites/<site-id>/research/brief.v2.draft.yaml
 sites/<site-id>/research/codex-build-prompt.md
 ```
+
+`implementation-trace.md` may be generated at plan time with `Trace status: pending-implementation`. It is not a blocker for starting implementation. It becomes required after implementation changes.
 
 Do not move into site-pack or UI implementation unless this gate is satisfied, unless the user explicitly asked for competitor research only.
 
@@ -259,6 +262,35 @@ Record results and fixes in:
 ```text
 sites/<site-id>/research/design-review.md
 sites/<site-id>/research/acceptance-tests.md
+```
+
+## Research consumption trace gate
+
+After implementation and validation, update:
+
+```text
+sites/<site-id>/research/implementation-trace.md
+```
+
+This file proves that research was consumed during implementation.
+
+Required trace coverage:
+
+- Keyword intent and standalone-site decision.
+- Bing competitor opportunities and must-win gaps.
+- Product feature requirements.
+- SEO metadata, content, FAQ, schema, and internal-link requirements.
+- UX states, mobile behavior, accessibility, and privacy requirements.
+- Design direction and design review decisions reflected in layout, theme, content, and UI.
+- Acceptance tests and validation results.
+- Research decisions that were not implemented, with reason, impact, and next action.
+
+Do not call implementation complete while `implementation-trace.md` is missing, still `pending-implementation`, or only a generic summary.
+
+The trace should map:
+
+```text
+research source -> decision -> implementation file/behavior -> validation evidence -> status
 ```
 
 ## Competitor source

@@ -73,6 +73,7 @@ const templateToOutput: Record<string, string> = {
   'design-direction.md': 'design-direction.md',
   'design-review.md': 'design-review.md',
   'acceptance-tests.md': 'acceptance-tests.md',
+  'implementation-trace.md': 'implementation-trace.md',
   'codex-build-prompt.md': 'codex-build-prompt.md',
   'brief.v2.example.yaml': 'brief.v2.draft.yaml'
 };
@@ -99,7 +100,8 @@ Next steps:
   2. Capture the Bing Webmaster top 5 in sites/${siteId}/research/competitor-research.md
   3. Do not implement when Bing status is not-attempted; blocked-with-evidence requires explicit fallback approval
   4. After research is complete, tell Codex: 继续实现 ${siteId}
-  5. Keep the site draft and non-indexable until validation passes
+  5. After implementation, update sites/${siteId}/research/implementation-trace.md before calling the work complete
+  6. Keep the site draft and non-indexable until validation passes
 `);
 
 function findWorkspaceRoot(): string {

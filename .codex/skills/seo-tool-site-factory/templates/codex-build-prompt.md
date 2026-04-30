@@ -32,6 +32,7 @@ sites/{site_id}/research/ux-spec.md
 sites/{site_id}/research/design-direction.md
 sites/{site_id}/research/design-review.md
 sites/{site_id}/research/acceptance-tests.md
+sites/{site_id}/research/implementation-trace.md
 ```
 
 Operating mode:
@@ -106,6 +107,8 @@ sites/{site_id}/research/acceptance-tests.md
 sites/{site_id}/research/brief.v2.draft.yaml
 sites/{site_id}/research/codex-build-prompt.md
 ```
+
+`implementation-trace.md` may exist before implementation with `Trace status: pending-implementation`. It is not required to be complete before implementation starts, but it must be completed after implementation before the work is called implementation-complete.
 
 Do not proceed from competitor research directly into implementation unless the user explicitly asked for competitor research only. If any file cannot be completed yet, add `Deferred:` inside that file with the reason, missing evidence, and next action.
 
@@ -236,4 +239,25 @@ pnpm perf audit {site_id}
 pnpm site ui-audit {site_id}
 ```
 
-Fix P0 issues. Summarize files changed, mode, readiness scores, statuses, validation results, differentiators, known tradeoffs, and indexing status.
+Research consumption trace gate:
+
+After implementation and validation, update:
+
+```text
+sites/{site_id}/research/implementation-trace.md
+```
+
+The trace must map research source to implementation evidence:
+
+- Keyword intent and standalone decision.
+- Bing competitor opportunities and must-win gaps.
+- Product feature requirements.
+- SEO metadata/content/FAQ/schema/internal-link requirements.
+- UX states, mobile, accessibility, and privacy requirements.
+- Design direction and design review decisions reflected in layout, theme, content, and UI.
+- Acceptance tests and validation results.
+- Unconsumed or deferred research decisions with reason, impact, and next action.
+
+STOP: Do not call implementation complete while `implementation-trace.md` is missing, still `pending-implementation`, or only a generic summary.
+
+Fix P0 issues. Summarize files changed, mode, readiness scores, statuses, validation results, research consumption trace status, differentiators, known tradeoffs, and indexing status.
