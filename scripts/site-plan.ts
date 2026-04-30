@@ -97,8 +97,9 @@ console.log(`
 Next steps:
   1. Complete every file in sites/${siteId}/research/, or add a Deferred note with the reason and next action
   2. Capture the Bing Webmaster top 5 in sites/${siteId}/research/competitor-research.md
-  3. After research is complete, tell Codex: 继续实现 ${siteId}
-  4. Keep the site draft and non-indexable until validation passes
+  3. Do not implement when Bing status is not-attempted; blocked-with-evidence requires explicit fallback approval
+  4. After research is complete, tell Codex: 继续实现 ${siteId}
+  5. Keep the site draft and non-indexable until validation passes
 `);
 
 function findWorkspaceRoot(): string {

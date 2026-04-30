@@ -143,7 +143,17 @@ sites/{site_id}/content/**
 sites/{site_id}/messages/**
 ```
 
-Pass this gate only when competitor source status is `captured` or `user-approved-skip`; `not-attempted` does not pass. `blocked-with-evidence` requires explicit user approval for fallback implementation or code-only work. Also record deferred blockers if any, design-new decision, pre-implementation design review status, and approved implementation write scope.
+Competitor source status and implementation gate result:
+
+| Competitor source status | Implementation gate result |
+|---|---|
+| `captured` | Passes when Bing rows are recorded and the rest of the research gate is complete. |
+| `user-approved-skip` | Passes as approved fallback only; keep `Launch status: DRAFT_ONLY` until manual review. |
+| `blocked-with-evidence` + explicit fallback approval | Passes as fallback implementation only; keep `Research readiness <= 7`. |
+| `blocked-with-evidence` without explicit fallback approval | Blocked. |
+| `not-attempted` | Blocked unless the user explicitly asks for code-only work. |
+
+Also record deferred blockers if any, design-new decision, pre-implementation design review status, and approved implementation write scope.
 
 Readiness scores:
 

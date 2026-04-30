@@ -180,6 +180,16 @@ sites/<site-id>/messages/**
 
 If this gate is bypassed for an explicit code-only request, record that the site is not launch-ready from the skill workflow perspective.
 
+Competitor source status controls whether implementation can start:
+
+| Competitor source status | Implementation gate result |
+|---|---|
+| `captured` | Passes when Bing rows are recorded and the rest of the research gate is complete. |
+| `user-approved-skip` | Passes as approved fallback only; keep `Launch status: DRAFT_ONLY` until manual review. |
+| `blocked-with-evidence` + explicit fallback approval | Passes as fallback implementation only; keep `Research readiness <= 7`. |
+| `blocked-with-evidence` without explicit fallback approval | Blocked. |
+| `not-attempted` | Blocked unless the user explicitly asks for code-only work. |
+
 Before implementation, record:
 
 ```text

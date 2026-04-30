@@ -306,8 +306,16 @@ sites/<site-id>/messages/**
 
 To pass this gate, record in `sites/<site-id>/research/codex-build-prompt.md` or the final research summary:
 
-- Competitor source status: `captured` or `user-approved-skip`. `not-attempted` does not pass this gate.
-- `blocked-with-evidence` does not pass implementation automatically; it requires explicit user approval for fallback implementation or code-only work.
+- Competitor source status and implementation gate result:
+
+| Competitor source status | Implementation gate result |
+|---|---|
+| `captured` | Passes when Bing rows are recorded and the rest of the research gate is complete. |
+| `user-approved-skip` | Passes as approved fallback only; keep `Launch status: DRAFT_ONLY` until manual review. |
+| `blocked-with-evidence` + explicit fallback approval | Passes as fallback implementation only; keep `Research readiness <= 7`. |
+| `blocked-with-evidence` without explicit fallback approval | Blocked. |
+| `not-attempted` | Blocked unless the user explicitly asks for code-only work. |
+
 - For `blocked-with-evidence`, record attempted URL, timestamp, blocker evidence, fallback source, and fallback confidence.
 - Product, SEO, UX, design, and acceptance files completed or deferred.
 - Design-new decision made.
