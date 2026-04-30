@@ -13,6 +13,7 @@
     "@factory/seo": "workspace:*",
     "@factory/site-core": "workspace:*",
     "@factory/typing-engine": "workspace:*",
-    "@factory/image-converter": "workspace:*"
+    "@factory/image-converter": "workspace:*",
+    "@factory/cursed-text-generator": "workspace:*"
   }
 }

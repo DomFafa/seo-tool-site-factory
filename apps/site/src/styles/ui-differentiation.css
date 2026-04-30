@@ -1,6 +1,6 @@
 /* UI differentiation system: recipe, block, and variant styles. */
 body { background: var(--factory-bg); }
-body.recipe-glitch-playground { color: #f5f0ff; background: radial-gradient(circle at top left, rgba(124, 58, 237, .28), transparent 34rem), radial-gradient(circle at bottom right, rgba(236, 72, 153, .18), transparent 32rem), #0d0d14; }
+body.recipe-glitch-playground { color: #fff7ed; background: radial-gradient(circle at top left, rgba(127, 29, 29, .34), transparent 34rem), radial-gradient(circle at bottom right, rgba(20, 184, 166, .12), transparent 32rem), #080607; }
 body.recipe-elegant-generator { color: #241713; background: linear-gradient(180deg, #fff7f1 0, #ffffff 28rem, #fff1f2 100%); font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif; }
 body.recipe-file-drop-studio { color: #10201f; background: linear-gradient(180deg, #eefbf6 0, #ffffff 34rem); font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif; }
 body.recipe-performance-dashboard { color: #181512; background: linear-gradient(180deg, #f4f1ea 0, #fffdf8 34rem); font-family: "Avenir Next", "Trebuchet MS", "Segoe UI", sans-serif; }
@@ -74,9 +74,14 @@ body.recipe-elegant-generator .page-block--hero-elegant .hero-lead { max-width: 
 body.recipe-elegant-generator .page-block--hero-elegant .eyebrow { color: #7c2d12; }
 body.recipe-elegant-generator .page-block--hero-elegant .badge-row { justify-content: center; }
 body.recipe-elegant-generator .page-block--hero-elegant .badge { border: 1px solid rgba(124, 45, 18, .14); background: #fffdf9; color: #7c2d12; box-shadow: 0 12px 28px rgba(124, 45, 18, .07); }
-.page-block--hero-dramatic { color: #f8fafc; text-align: center; padding-top: 80px; }
-.page-block--hero-dramatic .hero-lead { color: #c4b5fd; margin-inline: auto; }
-.page-block--hero-dramatic .eyebrow { color: #f0abfc; }
+.page-block--hero-dramatic { color: #fff7ed; text-align: left; padding: 46px 0 12px; }
+.page-block--hero-dramatic .hero-lead { color: #fed7aa; max-width: 680px; }
+.page-block--hero-dramatic .eyebrow { color: #fca5a5; }
+body.recipe-glitch-playground .page-block--hero-dramatic h1 { max-width: 1040px; font-size: clamp(2.6rem, 6vw, 4.8rem); }
+body.recipe-glitch-playground .page-block--hero-dramatic h1 { margin: 0 0 16px; line-height: .95; }
+body.recipe-glitch-playground .page-block--hero-dramatic .eyebrow { margin-bottom: 10px; }
+body.recipe-glitch-playground .page-block--hero-dramatic .hero-lead { margin: 0; }
+body.recipe-glitch-playground .page-block--hero-dramatic .badge { border: 1px solid rgba(248, 113, 113, .2); background: rgba(69, 10, 10, .68); color: #fecaca; }
 .page-block--tool-dashboard .tool-shell, .page-block--tool-certificate .tool-shell { border: 1px solid rgba(99, 102, 241, .18); box-shadow: 0 18px 44px rgba(79, 70, 229, .13); }
 body.recipe-performance-dashboard .page-block--tool-dashboard { padding-top: 14px; }
 body.recipe-performance-dashboard .page-block--tool-dashboard .tool-shell { max-width: 980px; margin: 0 auto; border: 1px solid rgba(24, 21, 18, .09); background: #fffdf8; box-shadow: 0 28px 80px rgba(24, 21, 18, .1); }
@@ -148,9 +153,47 @@ body.recipe-elegant-generator .text-generator__output { min-height: 68px; margin
 body.recipe-elegant-generator .text-generator__output--bold { font-weight: 700; }
 body.recipe-elegant-generator .text-generator__result button { width: fit-content; min-height: 44px; border-radius: 999px; background: #7c2d12; color: #fff7f1; box-shadow: 0 12px 24px rgba(124, 45, 18, .2); }
 body.recipe-elegant-generator .text-generator__privacy { margin: 0; color: #6f5146; }
-.page-block--tool-neon-workbench .tool-shell { color: #f8fafc; background: linear-gradient(135deg, #13131f, #21123e); border-color: rgba(216, 180, 254, .24); box-shadow: 0 0 0 1px rgba(168,85,247,.22), 0 24px 70px rgba(124,58,237,.32); }
+.page-block--tool-neon-workbench { padding-top: 8px; }
+.page-block--tool-neon-workbench .tool-shell { color: #fff7ed; background: linear-gradient(135deg, #140708, #1f1110 56%, #08110f); border-color: rgba(248, 113, 113, .24); border-radius: 10px; box-shadow: 0 0 0 1px rgba(127, 29, 29, .34), 0 24px 70px rgba(69, 10, 10, .34); }
 .page-block--tool-neon-workbench input, .page-block--tool-neon-workbench textarea, .page-block--tool-neon-workbench select { color: #f8fafc; background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.18); }
 .page-block--tool-neon-workbench .result-panel, .page-block--tool-neon-workbench .metric, .page-block--tool-neon-workbench .dropzone { color: #f8fafc; background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.15); }
+.cursed-workbench { display: grid; gap: 16px; }
+.cursed-workbench__topbar { display: flex; align-items: end; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 1px solid rgba(248, 113, 113, .18); }
+.cursed-workbench__topbar strong { display: block; color: #fff7ed; font-size: clamp(1.35rem, 2.4vw, 2.25rem); line-height: 1.05; }
+.cursed-workbench__eyebrow { margin: 0 0 5px; color: #fca5a5; font-size: .78rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.cursed-workbench__main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
+.cursed-panel { display: grid; gap: 10px; min-width: 0; padding: 14px; border: 1px solid rgba(248, 113, 113, .16); border-radius: 10px; background: rgba(255, 247, 237, .055); }
+.cursed-label-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #fed7aa; font-size: .88rem; font-weight: 850; }
+.cursed-label-row span { color: #fdba74; font-variant-numeric: tabular-nums; }
+.cursed-panel textarea { min-height: 190px; border-radius: 8px; background: rgba(8, 6, 7, .78); color: #fff7ed; line-height: 1.55; caret-color: #2dd4bf; }
+.cursed-panel textarea:focus, .cursed-mode button:focus-visible, .cursed-chip:focus-visible, .cursed-presets button:focus-visible, .cursed-actions button:focus-visible, .cursed-fine-tune summary:focus-visible, .cursed-slider input:focus-visible { outline: 3px solid rgba(45, 212, 191, .42); outline-offset: 2px; }
+.cursed-output { min-height: 190px; max-height: 360px; overflow: auto; overflow-wrap: anywhere; white-space: pre-wrap; border: 1px solid rgba(248, 113, 113, .16); border-radius: 8px; padding: 12px; background: rgba(8, 6, 7, .78); color: #fff7ed; font-size: clamp(1.1rem, 2vw, 1.45rem); line-height: 1.65; }
+.cursed-mode, .cursed-presets, .cursed-actions, .cursed-examples { display: flex; flex-wrap: wrap; gap: 8px; }
+.cursed-mode button, .cursed-presets button, .cursed-chip, .cursed-actions button { min-height: 44px; border: 1px solid rgba(248, 113, 113, .16); border-radius: 8px; background: rgba(255, 247, 237, .08); color: #fff7ed; box-shadow: none; }
+.cursed-mode button.active, .cursed-presets button.active, .cursed-actions button:not(.secondary) { border-color: rgba(45, 212, 191, .45); background: #2dd4bf; color: #08110f; }
+.cursed-chip { padding: 9px 11px; color: #fed7aa; }
+.cursed-actions button.secondary { background: rgba(255, 247, 237, .08); color: #fed7aa; }
+.cursed-actions button:disabled { color: #9ca3af; background: rgba(255, 255, 255, .05); }
+.cursed-controls { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(260px, .9fr) minmax(220px, .7fr); gap: 12px; align-items: start; }
+.cursed-presets button { display: grid; justify-items: start; min-width: 118px; padding: 10px 12px; }
+.cursed-presets button span { color: inherit; font-size: .78rem; opacity: .78; }
+.cursed-fine-tune { border: 1px solid rgba(248, 113, 113, .16); border-radius: 10px; padding: 10px 12px; background: rgba(255, 247, 237, .055); }
+.cursed-fine-tune summary { min-height: 32px; cursor: pointer; color: #fed7aa; font-weight: 850; }
+.cursed-sliders { display: grid; gap: 10px; margin-top: 10px; }
+.cursed-slider { display: grid; gap: 6px; }
+.cursed-slider label { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: #fed7aa; font-size: .88rem; }
+.cursed-slider label span { color: #2dd4bf; font-variant-numeric: tabular-nums; }
+.cursed-slider input { min-height: 28px; padding: 0; accent-color: #2dd4bf; }
+.cursed-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.cursed-metrics div { min-width: 0; padding: 10px; border: 1px solid rgba(248, 113, 113, .16); border-radius: 8px; background: rgba(8, 6, 7, .5); }
+.cursed-metrics span { display: block; color: #fdba74; font-size: .75rem; font-weight: 900; text-transform: uppercase; }
+.cursed-metrics strong { display: block; overflow: hidden; color: #fff7ed; font-size: 1.05rem; font-variant-numeric: tabular-nums; text-overflow: ellipsis; text-transform: capitalize; }
+.cursed-status { min-height: 42px; display: grid; align-content: center; }
+.cursed-status .success, .cursed-status .error, .cursed-warning { margin: 0; border-radius: 8px; padding: 9px 10px; }
+.cursed-status .success { color: #052e16; background: #bbf7d0; border-color: #86efac; }
+.cursed-status .error { color: #450a0a; background: #fecaca; border-color: #fca5a5; }
+.cursed-warning { color: #431407; background: #fed7aa; border: 1px solid #fdba74; }
+.cursed-privacy { margin: 0; color: #fdba74; }
 .page-block--tool-solver-panel .tool-shell { border-left: 5px solid var(--factory-primary); }
 .page-block--tool-editor-panel .tool-shell { background: #fff; border: 1px solid #cbd5e1; box-shadow: 0 18px 54px rgba(15,23,42,.08); }
 .section-heading { margin-bottom: 18px; }
@@ -173,9 +216,9 @@ body.recipe-elegant-generator .footer { border-top-color: rgba(124, 45, 18, .12)
 .page-block--faq-compact-dark .content-card { color: #e9d5ff; background: rgba(255,255,255,.07); border-color: rgba(216,180,254,.2); }
 .page-block--privacyNote-badge-row .privacy-panel, .page-block--privacyNote-inline .privacy-panel { display: flex; gap: 18px; align-items: center; }
 .page-block--privacyNote-badge-row .privacy-panel strong, .page-block--privacyNote-inline .privacy-panel strong { white-space: nowrap; }
-body.recipe-glitch-playground .content-card, body.recipe-glitch-playground .step-card, body.recipe-glitch-playground .example-card, body.recipe-glitch-playground .guide-card, body.recipe-glitch-playground .privacy-panel { color: #f8fafc; background: rgba(255,255,255,.07); border-color: rgba(216,180,254,.18); }
+body.recipe-glitch-playground .content-card, body.recipe-glitch-playground .step-card, body.recipe-glitch-playground .example-card, body.recipe-glitch-playground .guide-card, body.recipe-glitch-playground .privacy-panel { color: #fff7ed; background: rgba(255, 247, 237, .07); border-color: rgba(248,113,113,.18); border-radius: 10px; }
 body.recipe-glitch-playground .content-card h2, body.recipe-glitch-playground .content-card h3, body.recipe-glitch-playground .content-card p, body.recipe-glitch-playground .content-card li { color: #f8fafc; }
-body.recipe-glitch-playground .hero-lead, body.recipe-glitch-playground .guide-card span { color: #c4b5fd; }
+body.recipe-glitch-playground .hero-lead, body.recipe-glitch-playground .guide-card span { color: #fed7aa; }
 @media (max-width: 760px) { .page-block { padding: 24px 0; } .page-block--hero-metric .block-inner, .page-block--hero-test-setup .block-inner, .page-block--hero-upload .block-inner { display: block; } .page-block--hero-metric .block-inner::after, .page-block--hero-upload .block-inner::after { margin-top: 18px; } .step-grid, .example-grid, .guide-grid { grid-template-columns: 1fr; } .page-block--faq-split .content-card, .page-block--faq-split-panel .content-card { column-count: 1; } .page-block--privacyNote-badge-row .privacy-panel, .page-block--privacyNote-inline .privacy-panel { display: block; } }
 @media (max-width: 760px) {
   body.recipe-file-drop-studio .site-header-inner { align-items: center; flex-direction: row; min-height: 56px; padding: 0; }
@@ -233,4 +276,26 @@ body.recipe-glitch-playground .hero-lead, body.recipe-glitch-playground .guide-c
   body.recipe-elegant-generator .text-generator__result { min-height: 132px; padding: 14px; }
   body.recipe-elegant-generator .text-generator__output { min-height: 38px; font-size: 1.38rem; }
   body.recipe-elegant-generator .text-generator__result button { width: 100%; justify-content: center; }
+  body.recipe-glitch-playground .site-header--dark-floating { top: 8px; width: min(100% - 16px, 1120px); }
+  body.recipe-glitch-playground .site-header-inner { align-items: center; flex-direction: row; min-height: 56px; padding: 0; }
+  body.recipe-glitch-playground .page-block--hero-dramatic { padding: 20px 0 6px; }
+  body.recipe-glitch-playground .page-block--hero-dramatic h1 { font-size: clamp(2.05rem, 10vw, 3.2rem); line-height: 1; }
+  body.recipe-glitch-playground .page-block--hero-dramatic .hero-lead { font-size: .98rem; line-height: 1.45; }
+  body.recipe-glitch-playground .page-block--hero-dramatic .badge-row { display: none; }
+  body.recipe-glitch-playground .page-block--tool-neon-workbench { padding-top: 0; }
+  body.recipe-glitch-playground .page-block--tool-neon-workbench .tool-shell { padding: 12px; }
+  .cursed-workbench { gap: 12px; }
+  .cursed-workbench__topbar { display: grid; gap: 10px; align-items: start; }
+  .cursed-workbench__topbar strong { font-size: 1.25rem; }
+  .cursed-mode { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cursed-workbench__main { grid-template-columns: 1fr; gap: 10px; }
+  .cursed-panel { padding: 12px; }
+  .cursed-panel textarea { min-height: 130px; }
+  .cursed-output { min-height: 130px; max-height: 260px; font-size: 1.08rem; }
+  .cursed-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cursed-actions button { width: 100%; }
+  .cursed-controls { grid-template-columns: 1fr; }
+  .cursed-presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cursed-presets button { min-width: 0; padding-inline: 8px; }
+  .cursed-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }

@@ -86,7 +86,7 @@ function selectedToolFor(toolId: string): { componentSource: string; rendererSou
     return vanillaTextGenerator(toolId, 'cursive');
   }
   if (toolId === 'cursed-text-generator') {
-    return vanillaTextGenerator(toolId, 'cursed');
+    return reactTool('../features/cursed-text-generator/CursedTextGeneratorIsland', { renderer: 'react', toolId, mode: '' });
   }
   if (toolId === 'anagram-solver') {
     return reactTool('../features/anagram-solver/AnagramSolverIsland', { renderer: 'react', toolId, mode: '' });
