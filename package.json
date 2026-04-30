@@ -6,6 +6,7 @@
   "packageManager": "pnpm@10.0.0",
   "scripts": {
     "site": "tsx scripts/site.ts",
+    "site:plan": "tsx scripts/site-plan.ts",
     "ops": "tsx scripts/ops.ts",
     "check": "pnpm site check --all",
     "ops:report": "pnpm ops report",

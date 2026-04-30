@@ -1,0 +1,58 @@
+schemaVersion: 2
+primaryKeyword: "{primary_keyword}"
+category: "{category}"
+
+keywordCluster:
+  - "{primary_keyword}"
+
+intent:
+  userJob: "{user_job}"
+  expectedAction: "{expected_action}"
+  primaryIntent: "tool-use"
+  secondaryIntents: []
+
+competitorInsights:
+  commonStrengths: []
+  commonWeaknesses: []
+  ourOpportunities: []
+
+productBoundary:
+  thisSiteIs: []
+  thisSiteIsNot: []
+
+requiredFeatures: []
+
+niceToHaveFeatures: []
+
+edgeCases:
+  - empty input
+  - invalid input
+  - mobile use
+
+design:
+  direction: ""
+  layoutRecipe: ""
+  visualPersonality: ""
+  typography: ""
+  colorSystem: ""
+  density: ""
+  motion: ""
+  antiTemplateConstraints:
+    - no generic centered hero plus three feature cards
+    - no decorative icon circles
+    - no default purple or blue gradient system
+  reviewedBeforeImplementation: false
+
+privacy:
+  storesUserInput: false
+  processing: client-only
+  analyticsRawInputAllowed: false
+
+qualityBar:
+  toolAboveFold: true
+  mobileFirst: true
+  noLoginForCoreTask: true
+  noAdsNearPrimaryActions: true
+  contentMustBeKeywordSpecific: true
+  designDirectionRequired: true
+  designReviewRequired: true

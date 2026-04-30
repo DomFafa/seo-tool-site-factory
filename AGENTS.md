@@ -2,6 +2,8 @@
 
 This repository is a static SEO tool-site factory.
 
+When creating, improving, or auditing a keyword-driven SEO utility site, use `.codex/skills/seo-tool-site-factory/SKILL.md` before editing implementation files. The skill turns keyword research into competitor-informed product requirements, SEO specs, UX specs, design direction, and acceptance tests.
+
 Follow these rules when editing code:
 
 1. Do not bypass YAML schema validation in `packages/site-core`.
@@ -15,5 +17,8 @@ Follow these rules when editing code:
 9. Site identity, content, integrations, and theme belong under `sites/<site-id>/`.
 10. Run `pnpm site check <site-id>` after changing a site pack.
 11. Run `pnpm ops report` after adding or changing multiple sites.
+12. Before implementing a new SEO keyword site, create or update `sites/<site-id>/research/*` using the SEO Tool Site Factory skill.
+13. Before implementing visual UI, define and review `sites/<site-id>/research/design-direction.md` and `sites/<site-id>/research/design-review.md`.
+14. Keep new sites as draft and non-indexable until research, content review, design review, tool behavior, SEO audit, performance audit, and UI similarity review are complete.
 
 V1 intentionally avoids complex admin, permissions, and approval workflows. Prefer CLI + YAML + generated reports.
