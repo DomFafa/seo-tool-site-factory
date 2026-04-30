@@ -8,6 +8,13 @@
 - Locale: {locale}
 - Market: {market}
 - Design source: new site direction / reused cluster system / existing DESIGN.md
+- Design status: approved / draft / deferred
+- Design-new decision: yes / no
+- Design-new reason:
+- Consultation used: yes / no / deferred
+- Shotgun used: yes / no / deferred
+- Reused cluster system:
+- Reuse justification:
 - Related cluster:
 - Reference research files:
   - `sites/{site_id}/research/competitor-research.md`
@@ -127,6 +134,27 @@ This site must avoid:
 |---|---|---|
 |  |  |  |
 |  |  |  |
+
+## 14. Design Skill Decisions
+
+### Design consultation
+
+- Used / deferred:
+- Reason:
+- Key constraints:
+
+### Design shotgun
+
+- Used / deferred:
+- Reason:
+- Variants considered:
+- Chosen variant:
+
+### Approved direction
+
+- Approved direction:
+- Why this direction is better for the keyword:
+- What must not change during frontend implementation:
 
 ## 14. Approved References
 

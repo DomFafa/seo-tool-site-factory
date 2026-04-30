@@ -26,7 +26,17 @@ sites/<site-id>/research/design-direction.md
 sites/<site-id>/research/design-review.md
 ```
 
-Use design consultation for the direction, plan design review for the pre-build critique, and frontend design when implementing the approved UI.
+Use the design pipeline with clear roles:
+
+```text
+design-consultation: define design goals, constraints, and success criteria
+design-shotgun: optional variants inside those constraints
+plan-design-review: choose and tighten the plan before implementation
+frontend-design: implement the approved plan
+design-review: audit the built page
+```
+
+An existing draft site still counts as design-new when it has no approved, keyword-specific `research/design-direction.md`. Scaffold-only sites and unreviewed draft sites should not skip design consultation just because their directories already exist.
 
 After UI implementation, run the post-UI optimization gate:
 

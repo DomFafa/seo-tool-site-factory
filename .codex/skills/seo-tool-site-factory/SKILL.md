@@ -180,7 +180,36 @@ Create or update:
 sites/<site-id>/research/design-direction.md
 ```
 
-Use `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-design-consultation/SKILL.md` when a new site, new cluster, or major visual direction needs to be designed before implementation. Use `/Users/bin/.codex/skills/frontend-design/SKILL.md` only when translating the approved direction into frontend code.
+In this skill, a site is treated as design-new when it does not have an approved, keyword-specific design direction. A site directory may already exist and still count as design-new.
+
+Run `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-design-consultation/SKILL.md` when any of these are true:
+
+- The site pack does not exist.
+- The site exists but is scaffold-only or draft without `research/design-direction.md`.
+- `design-direction.md` is generic, stale, placeholder-like, or not tied to competitor research.
+- `design-review.md` is missing for a UI-bearing site.
+- The site belongs to a cluster without a clear reusable design system.
+- Competitor research or UI audit shows a need for stronger visual differentiation.
+- The user asks for redesign or visual exploration.
+
+You may skip full design consultation only when all of these are true:
+
+- `design-direction.md` exists and is keyword-specific.
+- `design-review.md` exists.
+- The current task is a small copy, metadata, bug, or pure logic change.
+- There is no meaningful layout/UI change and no UI similarity risk.
+
+Design skill roles:
+
+- `design-consultation` decides what good means: product context, constraints, success criteria, and recommended direction.
+- `design-shotgun` explores multiple options inside the approved consultation constraints; it must not redefine the user job or design goals.
+- `plan-design-review` chooses and tightens the plan before implementation.
+- `frontend-design` builds the approved plan; it must not invent a new visual system.
+- `design-review` audits the built page after implementation.
+
+Use `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-design-shotgun/SKILL.md` only when multiple visual directions are useful: high-competition keyword, unclear direction, user asks for variants, cluster similarity risk, or a new visual cluster is being established.
+
+Use `/Users/bin/.codex/skills/frontend-design/SKILL.md` only when translating the approved direction into frontend code.
 
 The design direction must include:
 

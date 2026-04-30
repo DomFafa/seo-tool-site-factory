@@ -8,6 +8,13 @@
 - Locale: en
 - Market: US
 - Design source: site-specific direction based on Bing Webmaster top 5 competitor research
+- Design status: draft, implementation-tested, not visually final
+- Design-new decision: yes
+- Design-new reason: the existing site pack was draft/scaffold-like and did not have an approved post-implementation design review before this pass
+- Consultation used: deferred
+- Shotgun used: deferred
+- Reused cluster system: no; only broad text-generator conventions reused
+- Reuse justification: cursed text needs a darker and more controlled workbench than existing cursive/text generator sites
 - Related cluster: text generators / glitch and Unicode text tools
 - Reference research files:
   - `sites/cursed-text-generator/research/competitor-research.md`
@@ -147,3 +154,26 @@ This site must avoid:
 - Chosen variant: controlled horror workbench
 - Notes from design consultation: use the site-specific direction above; run full `design-consultation` only if changing the whole text-generator cluster design system
 - Notes from plan design review: see `design-review.md`
+
+## 15. Design Skill Decisions
+
+### Design consultation
+
+- Used / deferred: Deferred
+- Reason: this pass converted competitor research into a direct site-specific direction, but the dedicated GStack design-consultation skill was not run.
+- Next action: run design-consultation before treating the visual direction as final or before building a larger glitch/text-generator cluster system.
+- Key constraints: fast tool-first UX, dark controlled horror workbench, no broad font catalog, no visual chaos that hurts readability.
+
+### Design shotgun
+
+- Used / deferred: Deferred
+- Reason: no multi-variant exploration was requested during this implementation pass.
+- Next action: run design-shotgun if visual differentiation from other draft text sites remains weak, or if the user wants to compare variants.
+- Variants considered: controlled horror workbench only
+- Chosen variant: controlled horror workbench
+
+### Approved direction
+
+- Approved direction: controlled horror workbench
+- Why this direction is better for the keyword: it makes the cursed/Zalgo task feel specific while keeping the generator readable, fast, and copy-focused.
+- What must not change during frontend implementation: tool-first layout, dark red/near-black surfaces, restrained accent color, readable controls, cleaner mode, and mobile-safe output.

@@ -54,9 +54,12 @@ Do not proceed from competitor research directly into implementation unless the 
 
 Before implementing visual UI:
 
-- Use `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-design-consultation/SKILL.md` if the design direction is missing or weak.
+- Treat an existing draft/scaffold site without approved `design-direction.md` as design-new.
+- Use `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-design-consultation/SKILL.md` if the design direction is missing, weak, stale, generic, not competitor-informed, or if the site has no approved reusable cluster design.
+- Use `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-design-shotgun/SKILL.md` only when multiple variants are useful: unclear direction, high-competition keyword, user asks for variants, cluster similarity risk, or a new visual cluster is being established.
 - Use `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-plan-design-review/SKILL.md` to review the design plan before implementation when UI scope is meaningful.
 - Use `/Users/bin/.codex/skills/frontend-design/SKILL.md` when translating the approved design direction into frontend code.
+- Do not let design-shotgun or frontend-design redefine the user job, product goal, or SEO intent.
 
 Then implement the repository changes.
 
