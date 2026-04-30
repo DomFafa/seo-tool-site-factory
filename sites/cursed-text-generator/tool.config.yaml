@@ -9,3 +9,6 @@ analytics:
     - action
 options:
   mode: cursed-text-generator
+  sampleText: do not open
+  defaultPreset: medium
+  maxOutputLength: 6000

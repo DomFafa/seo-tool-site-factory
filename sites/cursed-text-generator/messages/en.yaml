@@ -1,4 +1,8 @@
 tool:
   start: Start
   copy: Copy
+  copied: Copied
+  clear: Clear
   reset: Reset
+  clean: Clean
+  regenerate: Regenerate

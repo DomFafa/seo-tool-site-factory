@@ -2,11 +2,14 @@ schemaVersion: 1
 primaryKeyword: cursed text generator
 category: generator
 intent:
-  userJob: "Create creepy or glitchy text for fun and copy it."
+  userJob: "Paste normal text and instantly create creepy, glitchy, cursed Unicode text that can be copied or cleaned back to normal."
+  expectedAction: "Enter text, tune intensity, preview the output, then copy or clean it."
 productBoundary:
   thisSiteIs:
     - a cursed text generator
     - a Unicode combining-mark playground
+    - a browser-only cleanup tool for cursed and Zalgo text
   thisSiteIsNot:
     - a harmful content tool
     - a text formatting standardizer
+    - a broad decorative font catalog

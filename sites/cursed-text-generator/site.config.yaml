@@ -17,10 +17,11 @@ locales:
     reviewed: false
 indexing:
   allowIndex: false
+  mode: disallow
 primaryTool: cursed-text-generator
 seo:
-  defaultTitle: Cursed Text Generator
-  defaultDescription: Generate cursed, glitchy, Zalgo-style text with adjustable intensity.
+  defaultTitle: Cursed Text Generator - Glitch, Zalgo & Creepy Text
+  defaultDescription: Create cursed, glitchy, Zalgo-style text instantly. Adjust intensity, copy the result, or clean cursed text back to normal in your browser.
   xDefaultLocale: en
   structuredData:
     - WebSite

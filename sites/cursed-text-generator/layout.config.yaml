@@ -9,6 +9,8 @@ home:
       variant: dramatic
       props:
         eyebrow: Glitch text playground
+        title: Cursed Text Generator
+        description: Turn normal text into creepy, glitchy Unicode text with live presets, advanced controls, and one-click copy.
         badges: [Cursed text, Clean text, Copy ready]
     - type: tool
       variant: neon-workbench
@@ -17,9 +19,24 @@ home:
       props:
         title: Cursed text examples
         items:
-          - Create a subtle glitch effect for a username.
-          - Turn a phrase into creepy text for a post or message.
-          - Clean the output if a platform displays it too aggressively.
+          - "haunted username -> h-a-u-n-t-e-d with light marks for a readable profile name"
+          - "do not open -> heavier Zalgo-style warning text for a horror post"
+          - "glitch in the signal -> distorted message text for an ARG clue"
+          - "happy halloween -> creepy seasonal caption text"
+          - "clean mode -> strip cursed marks from copied Zalgo text"
+    - type: howItWorks
+      variant: dark-steps
+      props:
+        title: How to make cursed text
+        steps:
+          - Type or paste normal text into the workbench.
+          - Choose light, medium, heavy, or fine-tune top, middle, and bottom marks.
+          - Copy the cursed result, or switch to clean mode to remove combining marks.
+    - type: privacyNote
+      variant: inline
+      props:
+        title: Local processing
+        text: Cursed text generation and cleanup run in your browser. Raw input and output are not collected in analytics.
     - type: content
       variant: dark-card
     - type: faq

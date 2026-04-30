@@ -1,0 +1,117 @@
+schemaVersion: 2
+primaryKeyword: "cursed text generator"
+category: "generator"
+
+keywordCluster:
+  - "cursed text generator"
+  - "cursed text"
+  - "cursed font"
+  - "glitch text generator"
+  - "glitch text"
+  - "glitched text generator"
+  - "glitchy text generator"
+  - "corrupted text generator"
+  - "hacked text generator"
+  - "cursed font generator"
+  - "cursed letters"
+  - "zalgo text generator"
+
+intent:
+  userJob: "Paste normal text and instantly create creepy, glitchy, cursed/Zalgo-style Unicode text that can be copied into social posts, chat, usernames, or horror-themed content."
+  expectedAction: "Enter text, choose or tune cursed intensity, preview the output, then copy it or clean cursed text back to normal."
+  primaryIntent: "tool-use"
+  secondaryIntents:
+    - "understand cursed vs Zalgo vs glitch vs hacked text"
+    - "create platform-safe cursed text for Discord, TikTok, Instagram, Reddit, games, and usernames"
+    - "control readability and intensity"
+    - "strip cursed text back to readable plain text"
+
+competitorInsights:
+  commonStrengths:
+    - "tool above the fold"
+    - "copy-ready generated text"
+    - "craziness or intensity control"
+    - "related style/tool internal links"
+  commonWeaknesses:
+    - "dated or cluttered UI"
+    - "weak copy success and accessibility states"
+    - "missing clean/strip cursed text mode in Bing top 5"
+    - "article or catalog content competing with the core task"
+    - "limited mobile overflow handling for heavy cursed output"
+  ourOpportunities:
+    - "fast live preview with light, medium, and heavy presets"
+    - "advanced top, middle, and bottom controls"
+    - "clean cursed text mode"
+    - "mobile-safe output container"
+    - "platform compatibility and accessibility guidance near the tool"
+
+productBoundary:
+  thisSiteIs:
+    - "a browser-based cursed text generator"
+    - "a Zalgo/glitch Unicode text tool"
+    - "a copy-ready social and chat text transformation tool"
+    - "a cleaner for stripping cursed/Zalgo combining marks"
+  thisSiteIsNot:
+    - "a harmful hacking tool"
+    - "a font file generator"
+    - "a broad decorative font catalog"
+    - "an image generator"
+    - "a social media automation tool"
+
+requiredFeatures:
+  - "live cursed text preview"
+  - "light, medium, and heavy presets"
+  - "advanced top, middle, and bottom controls"
+  - "copy output with visible and accessible success state"
+  - "clear input and reset settings"
+  - "clean/strip cursed text mode"
+  - "example chips"
+  - "character count and generated Unicode character count"
+  - "long-output warning"
+  - "local-processing privacy note"
+
+niceToHaveFeatures:
+  - "skip spaces option"
+  - "regenerate/randomize with current settings"
+  - "platform-safe preset"
+  - "before/after examples below the tool"
+
+edgeCases:
+  - "empty input"
+  - "very long input"
+  - "emoji and symbols"
+  - "multiple lines"
+  - "existing cursed/Zalgo input"
+  - "extreme intensity"
+  - "mobile paste"
+  - "RTL or non-Latin text limitation"
+
+design:
+  direction: "controlled horror workbench"
+  layoutRecipe: "glitch-playground"
+  visualPersonality: "eerie, precise, dark, copy-ready"
+  typography: "readable UI typography with sharp display contrast; avoid novelty fonts for controls"
+  colorSystem: "deep red and dark neutral surfaces with restrained success/warning accents"
+  density: "compact workbench, not cramped"
+  motion: "minimal-functional feedback only"
+  antiTemplateConstraints:
+    - "no generic centered hero plus three feature cards"
+    - "no decorative icon circles"
+    - "no default purple or blue gradient system"
+    - "no broad font catalog above the main task"
+    - "no horror decoration that hurts readability"
+  reviewedBeforeImplementation: true
+
+privacy:
+  storesUserInput: false
+  processing: client-only
+  analyticsRawInputAllowed: false
+
+qualityBar:
+  toolAboveFold: true
+  mobileFirst: true
+  noLoginForCoreTask: true
+  noAdsNearPrimaryActions: true
+  contentMustBeKeywordSpecific: true
+  designDirectionRequired: true
+  designReviewRequired: true

@@ -1,8 +1,14 @@
 schemaVersion: 1
 name: cursed-text-generator
+personality: controlled-horror-workbench
+density: compact
+surface: panels
 colors:
   primary: "#7f1d1d"
-radius: 18px
+  background: "#080607"
+  surface: "#140708"
+  accent: "#2dd4bf"
+radius: 10px
 layout: tool-first
 adLayout:
   avoidPrimaryActions: true
