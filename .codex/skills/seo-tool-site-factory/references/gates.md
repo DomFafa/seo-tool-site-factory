@@ -218,6 +218,14 @@ Required coverage:
 
 Do not call implementation complete if this file is missing, still pending, or only contains a generic summary.
 
+`pnpm site trace-audit <site-id>` requires:
+
+```text
+Trace status: complete
+```
+
+`Trace status: deferred` does not satisfy implementation completion or launch review.
+
 ## Scope Drift Detection
 
 A single-site implementation should normally be limited to:
@@ -230,6 +238,8 @@ renderer registry when needed
 ```
 
 If other dirty files exist, ignore them unless they block the requested site. If the implementation changes files outside the scope above, record them as `Scope drift` with the reason and validation impact.
+
+Workflow scripts, skill files, and factory docs are not part of the default single-site allowlist. They should appear as scope drift unless the task is explicitly a skill/gate/factory workflow change.
 
 Use:
 
@@ -267,6 +277,8 @@ Launch status:
 ```
 
 Do not infer `READY_TO_INDEX` from passing checks alone. It requires explicit user approval.
+
+If `site.config.yaml` has `indexing.allowIndex: true`, `launch-review.md` must record `Launch status: READY_TO_INDEX` and `Explicit indexing approval recorded: yes`.
 
 ## QA Mode Split
 

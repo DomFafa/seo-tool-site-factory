@@ -9,7 +9,7 @@
 - Market: {market}
 - Created: {date}
 - Updated:
-- Trace status: pending-implementation / in-progress / complete / deferred
+- Trace status: pending-implementation / in-progress / complete
 - Implementation mode:
 - Implementation commit or diff reference:
 
@@ -24,6 +24,12 @@ Trace status: pending-implementation
 ```
 
 After implementation changes, this file must be updated before the work is called implementation-complete.
+
+`pnpm site trace-audit {site_id}` only passes when this file has:
+
+```text
+Trace status: complete
+```
 
 Do not use this file as a post-hoc marketing summary. Each row must connect a research decision to concrete implementation files, visible behavior, or validation evidence.
 

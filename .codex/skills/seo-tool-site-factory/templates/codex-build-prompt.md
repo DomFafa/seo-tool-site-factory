@@ -298,4 +298,6 @@ The dashboard must include research evidence, design plan, UI implementation, br
 
 `READY_TO_INDEX` requires explicit user approval. Passing checks alone is not approval to enable indexing.
 
+If `site.config.yaml` has `indexing.allowIndex: true`, `launch-review.md` must record `Launch status: READY_TO_INDEX` and `Explicit indexing approval recorded: yes`.
+
 Fix P0 issues. Summarize files changed, mode, readiness scores, statuses, validation results, research consumption trace status, differentiators, known tradeoffs, and indexing status.

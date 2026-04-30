@@ -570,10 +570,11 @@ Required trace coverage:
 Trace rules:
 
 - Before implementation, `implementation-trace.md` may be `pending-implementation`.
-- After implementation, do not call implementation complete while the trace is still `pending-implementation`.
+- After implementation, do not call implementation complete until the trace status is `complete`.
 - Do not use a generic summary. Every meaningful row must map `research source -> decision -> implementation file or behavior -> validation evidence -> status`.
 - If implementation intentionally does not consume a research decision, record it under unconsumed/deferred research.
 - Reconcile stale research statuses after implementation, such as `research-only`, `future implementation`, or `blocked until implement request`, when they no longer describe the current state.
+- `pnpm site trace-audit <site-id>` must pass before an implementation-complete or launch-ready claim.
 
 STOP: Do not call a site implementation complete without an updated `implementation-trace.md` for non-trivial site pack, tool logic, UI, or content changes.
 
@@ -604,6 +605,8 @@ The dashboard must summarize:
 - Launch status
 
 `READY_TO_INDEX` requires explicit user approval. Without that approval, keep `Launch status: DRAFT_ONLY` or `READY_FOR_REVIEW` and keep indexing disabled.
+
+If `site.config.yaml` has `indexing.allowIndex: true`, `launch-review.md` must record both `Launch status: READY_TO_INDEX` and `Explicit indexing approval recorded: yes`.
 
 ## Required output format for implementation summaries
 

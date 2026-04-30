@@ -146,8 +146,8 @@ function auditTrace(): void {
   }
 
   const status = captureValue(trace, /Trace status:\s*([a-z-]+)/i);
-  if (!status || status === 'pending-implementation') {
-    add('P0', 'TRACE_PENDING', 'implementation-trace.md is still pending; implementation cannot be called complete.');
+  if (status !== 'complete') {
+    add('P0', 'TRACE_NOT_COMPLETE', `implementation-trace.md must have Trace status: complete; found ${status ?? 'missing'}.`);
   }
 
   for (const source of traceSources) {
@@ -182,7 +182,17 @@ function auditLaunch(): void {
 
   const siteConfig = readSiteFile('site.config.yaml');
   if (siteConfig && /allowIndex:\s*true/i.test(siteConfig)) {
-    add('P0', 'INDEXING_ENABLED_WITHOUT_APPROVAL', 'Indexing is enabled. Only enable indexing after explicit READY_TO_INDEX approval.');
+    const launchStatus = launch ? tableStatus(launch, 'Launch status') : undefined;
+    const launchDecision = launch ? fieldValue(launch, 'Decision') : undefined;
+    const hasIndexApproval = Boolean(
+      launch &&
+        launchStatus === 'READY_TO_INDEX' &&
+        launchDecision === 'READY_TO_INDEX' &&
+        /Explicit indexing approval recorded:\s*yes/i.test(launch)
+    );
+    if (!hasIndexApproval) {
+      add('P0', 'INDEXING_ENABLED_WITHOUT_APPROVAL', 'Indexing is enabled without launch-review.md evidence for READY_TO_INDEX and explicit approval.');
+    }
   }
 
   const designReview = readResearch('design-review.md');
@@ -205,8 +215,7 @@ function auditScope(): void {
     `sites/${siteId}/`,
     `apps/site/src/features/${toolId}/`,
     `packages/tools/${toolId}/`,
-    'apps/site/src/.generated/',
-    'scripts/site-workflow.ts'
+    'apps/site/src/.generated/'
   ];
 
   const result = spawnSync('git', ['status', '--short'], {
@@ -285,6 +294,16 @@ function findTableRow(content: string, label: string): string | undefined {
   return content
     .split('\n')
     .find((line) => line.toLowerCase().includes(`| ${label.toLowerCase()}`));
+}
+
+function tableStatus(content: string, label: string): string | undefined {
+  const row = findTableRow(content, label);
+  const cells = row?.split('|').map((cell) => cell.trim()) ?? [];
+  return cells[2] && !cells[2].includes('/') ? cells[2] : undefined;
+}
+
+function fieldValue(content: string, label: string): string | undefined {
+  return captureValue(content, new RegExp(`${escapeRegExp(label)}:\\s*([^\\n]+)`, 'i'))?.trim();
 }
 
 function escapeRegExp(value: string): string {

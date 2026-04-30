@@ -304,7 +304,7 @@ pnpm site launch-review <site-id>
 pnpm site launch-review <site-id> --check-scope
 ```
 
-`research-audit` checks required research files and Bing evidence. `trace-audit` checks that implementation consumed research. `launch-review` checks the readiness dashboard and key caps. `--check-scope` also reports dirty files outside the single-site write scope.
+`research-audit` checks required research files and Bing evidence. `trace-audit` checks that implementation consumed research and only passes when `Trace status: complete`. `launch-review` checks the readiness dashboard and key caps. `--check-scope` also reports dirty files outside the single-site write scope.
 
 ## Research consumption trace gate
 
@@ -339,7 +339,7 @@ sites/<site-id>/research/launch-review.md
 
 The dashboard must include research evidence, design plan, UI implementation, browser QA, interaction QA, SEO/content/perf/UI validation, research trace, scope drift, indexing status, and launch status.
 
-Passing validation does not mean indexing can be enabled. `READY_TO_INDEX` requires explicit user approval.
+Passing validation does not mean indexing can be enabled. `READY_TO_INDEX` requires explicit user approval. If `site.config.yaml` has `indexing.allowIndex: true`, `launch-review.md` must record `Launch status: READY_TO_INDEX` and `Explicit indexing approval recorded: yes`.
 
 The trace should map:
 
