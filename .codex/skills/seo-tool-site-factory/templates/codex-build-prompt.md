@@ -33,13 +33,18 @@ sites/{site_id}/research/design-direction.md
 sites/{site_id}/research/design-review.md
 sites/{site_id}/research/acceptance-tests.md
 sites/{site_id}/research/implementation-trace.md
+sites/{site_id}/research/status.md
+sites/{site_id}/research/launch-review.md
 ```
 
 Operating mode:
 
 - Default mode for this prompt is `implement`.
+- Use `post-ui-review` after meaningful UI changes when the next task is review-only.
+- Use `repair-gate` when a previous run failed a specific gate and needs targeted fixes.
+- Use `launch-review` for final readiness inspection without implementation edits.
 - If the user only asks for research, switch to `research-only` and do not edit implementation files.
-- If any gate is blocked, switch to `plan-only` or `audit` and report the blocker instead of pushing through.
+- If any gate is blocked, switch to `audit` or `repair-gate` and report the blocker instead of pushing through.
 
 Phase protocol:
 
@@ -104,6 +109,7 @@ sites/{site_id}/research/ux-spec.md
 sites/{site_id}/research/design-direction.md
 sites/{site_id}/research/design-review.md
 sites/{site_id}/research/acceptance-tests.md
+sites/{site_id}/research/status.md
 sites/{site_id}/research/brief.v2.draft.yaml
 sites/{site_id}/research/codex-build-prompt.md
 ```
@@ -119,6 +125,12 @@ Research quality rules:
 - Do not count `Deferred:` as valid unless it includes blocker, missing evidence, impact, and next action.
 - Do not use unsupported readiness scores.
 - Completed research must include evidence used, decisions made, implementation implications, and deferred items across the research set.
+
+Run before implementation when available:
+
+```bash
+pnpm site research-audit {site_id}
+```
 
 Implementation edit gate:
 
@@ -145,6 +157,17 @@ sites/{site_id}/layout.config.yaml
 sites/{site_id}/content/**
 sites/{site_id}/messages/**
 ```
+
+Default implementation write scope:
+
+```text
+sites/{site_id}/**
+apps/site/src/features/<tool-id>/**
+packages/tools/<tool-id>/**
+renderer registry only when needed
+```
+
+List any files outside this scope as `Scope drift`. Do not clean up unrelated dirty files unless they block this site.
 
 Competitor source status and implementation gate result:
 
@@ -231,12 +254,15 @@ STOP: If post-UI design review and interaction QA are both deferred, keep `Launc
 After implementation, run:
 
 ```bash
+pnpm site research-audit {site_id}
 pnpm site check {site_id}
 pnpm site build {site_id}
 pnpm seo audit {site_id}
 pnpm seo lint-content {site_id}
 pnpm perf audit {site_id}
 pnpm site ui-audit {site_id}
+pnpm site trace-audit {site_id}
+pnpm site launch-review {site_id}
 ```
 
 Research consumption trace gate:
@@ -259,5 +285,17 @@ The trace must map research source to implementation evidence:
 - Unconsumed or deferred research decisions with reason, impact, and next action.
 
 STOP: Do not call implementation complete while `implementation-trace.md` is missing, still `pending-implementation`, or only a generic summary.
+
+Launch readiness dashboard:
+
+Before claiming the site is review-ready or launch-ready, update:
+
+```text
+sites/{site_id}/research/launch-review.md
+```
+
+The dashboard must include research evidence, design plan, UI implementation, browser QA, interaction QA, SEO/content/perf/UI validation, research trace, scope drift, indexing status, and launch status.
+
+`READY_TO_INDEX` requires explicit user approval. Passing checks alone is not approval to enable indexing.
 
 Fix P0 issues. Summarize files changed, mode, readiness scores, statuses, validation results, research consumption trace status, differentiators, known tradeoffs, and indexing status.

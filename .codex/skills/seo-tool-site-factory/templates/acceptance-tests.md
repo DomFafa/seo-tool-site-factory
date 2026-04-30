@@ -2,7 +2,7 @@
 
 ## Workflow Gate Tests
 
-- Operating mode is recorded as `research-only`, `plan-only`, `implement`, `audit`, or `launch-review`.
+- Operating mode is recorded as `research-only`, `design-only`, `implement`, `post-ui-review`, `launch-review`, `repair-gate`, or `audit`.
 - Research status is recorded as `READY`, `READY_WITH_FALLBACK`, `BLOCKED`, or `NOT_ATTEMPTED`.
 - Implementation status is recorded as `READY`, `BLOCKED`, or `BYPASSED_BY_USER`.
 - Launch status is recorded as `DRAFT_ONLY`, `READY_FOR_REVIEW`, or `READY_TO_INDEX`.
@@ -78,6 +78,8 @@
 - Implementation files were not edited before the research completion gate, unless the user explicitly requested code-only work.
 - `implementation-trace.md` is updated after implementation and is no longer `pending-implementation`.
 - `implementation-trace.md` maps research decisions to implementation files, behavior, artifacts, or validation results.
+- `launch-review.md` records the readiness dashboard before any launch-ready claim.
+- Scope drift is recorded when implementation touches files outside the single-site write scope.
 - Unconsumed research decisions are listed with reason, impact, and next action.
 - `layout.config.yaml` reflects the selected layout recipe and block order.
 - `theme.config.yaml` reflects the selected typography, color, density, and surface strategy.
@@ -98,21 +100,27 @@
 Run:
 
 ```bash
+pnpm site research-audit {site_id}
 pnpm site check {site_id}
 pnpm site build {site_id}
 pnpm seo audit {site_id}
 pnpm seo lint-content {site_id}
 pnpm perf audit {site_id}
 pnpm site ui-audit {site_id}
+pnpm site trace-audit {site_id}
+pnpm site launch-review {site_id}
 ```
 
 Record results here:
 
 | Command | Result | Notes |
 |---|---|---|
+| `pnpm site research-audit {site_id}` |  |  |
 | `pnpm site check {site_id}` |  |  |
 | `pnpm site build {site_id}` |  |  |
 | `pnpm seo audit {site_id}` |  |  |
 | `pnpm seo lint-content {site_id}` |  |  |
 | `pnpm perf audit {site_id}` |  |  |
 | `pnpm site ui-audit {site_id}` |  |  |
+| `pnpm site trace-audit {site_id}` |  |  |
+| `pnpm site launch-review {site_id}` |  |  |

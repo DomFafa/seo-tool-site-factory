@@ -6,10 +6,13 @@ Use this reference when a task is close to crossing from research into implement
 
 ```text
 research-only: create/update research files only; do not edit implementation files.
-plan-only: create/update research plus build plan; do not edit implementation files.
+design-only: create/update design direction and plan review only; do not edit implementation files.
+plan-only: legacy alias for research-only plus build plan; do not edit implementation files.
 implement: complete gates, then edit site pack, tool logic, and UI.
+post-ui-review: review implemented UI with browser/design/QA evidence; fix only if explicitly allowed.
 audit: inspect existing site/research and report gaps; edit only if explicitly asked.
 launch-review: verify launch readiness; do not enable indexing unless explicitly approved.
+repair-gate: fix the smallest set of files needed to clear a failed gate.
 ```
 
 Default to `research-only` for keyword or competitor research. Default to `implement` only when the user asks to build, improve, or finish the site.
@@ -26,7 +29,7 @@ Phase 4: post-UI QA gate
 Phase 5: launch review gate
 ```
 
-Every phase must record:
+Every phase must update `sites/<site-id>/research/status.md` when it exists and record:
 
 ```text
 Current phase:
@@ -43,8 +46,17 @@ Phase rules:
 - Phase 3 may edit site pack, tool logic, UI, and routing only after Phase 1 and Phase 2 have passed or been explicitly bypassed by the user.
 - Phase 4 must happen after meaningful UI changes and before implementation is called complete.
 - Phase 5 is the only phase that can consider `READY_TO_INDEX`, and only with explicit user approval.
+- `repair-gate` mode edits only files needed to clear the named failed gate.
 
 Research written after implementation starts is supporting documentation, not evidence that the implementation gate was satisfied before editing.
+
+Workflow audit commands:
+
+```bash
+pnpm site research-audit <site-id>
+pnpm site trace-audit <site-id>
+pnpm site launch-review <site-id>
+```
 
 ## Completion Statuses
 
@@ -206,9 +218,65 @@ Required coverage:
 
 Do not call implementation complete if this file is missing, still pending, or only contains a generic summary.
 
+## Scope Drift Detection
+
+A single-site implementation should normally be limited to:
+
+```text
+sites/<site-id>/**
+apps/site/src/features/<tool-id>/**
+packages/tools/<tool-id>/**
+renderer registry when needed
+```
+
+If other dirty files exist, ignore them unless they block the requested site. If the implementation changes files outside the scope above, record them as `Scope drift` with the reason and validation impact.
+
+Use:
+
+```bash
+pnpm site launch-review <site-id> --check-scope
+```
+
+to report out-of-scope dirty files.
+
+## Launch Readiness Dashboard
+
+Before claiming a site is review-ready or launch-ready, update:
+
+```text
+sites/<site-id>/research/launch-review.md
+```
+
+The dashboard must include:
+
+```text
+Research evidence:
+Research completion:
+Design plan:
+UI implementation:
+Browser QA:
+Interaction QA:
+Performance:
+SEO audit:
+Content lint:
+UI similarity audit:
+Research trace:
+Scope drift:
+Indexing:
+Launch status:
+```
+
+Do not infer `READY_TO_INDEX` from passing checks alone. It requires explicit user approval.
+
+## QA Mode Split
+
+- `post-ui-review`: report visual/interaction issues after implementation. Use `gstack-design-review`, `gstack-qa-only`, browser screenshots, and benchmark evidence. Do not make fixes unless the user approves fix mode or the invoked skill explicitly includes a fix loop.
+- `repair-gate`: make targeted fixes for failed gates. Keep changes scoped to the failing gate and re-run the matching audit command.
+- `implement`: may include direct fixes while building, but still must pass post-UI review before completion.
+
 ## Hard Stops
 
-- STOP: In `research-only`, `plan-only`, and `audit`, do not edit implementation files unless the user changes the mode.
+- STOP: In `research-only`, `design-only`, `plan-only`, `audit`, and `launch-review`, do not edit implementation files unless the user changes the mode.
 - STOP: Do not mark Bing Webmaster as blocked without evidence.
 - STOP: Do not continue to implementation when Bing status is `not-attempted`, unless the user explicitly asks for code-only work.
 - STOP: Do not continue to implementation when Bing status is `blocked-with-evidence`, unless the user explicitly approves fallback implementation or code-only work.
@@ -218,6 +286,7 @@ Do not call implementation complete if this file is missing, still pending, or o
 - STOP: Do not call UI implementation complete after rendering alone. Record design-review/QA/benchmark results or explicit `Deferred:` reasons.
 - STOP: Do not call post-UI design review complete without post-implementation visual evidence.
 - STOP: Do not call implementation complete without an updated research consumption trace after non-trivial implementation changes.
+- STOP: Do not claim review-ready or launch-ready without `launch-review.md` and `pnpm site launch-review <site-id>` evidence.
 - STOP: Do not score `Launch readiness > 4` for a new UI-bearing site without a completed post-UI `gstack-design-review`.
 - STOP: Do not score `Launch readiness > 5` after interaction changes without completed `gstack-qa` or `gstack-qa-only`.
 - STOP: Do not enable indexing or call a site launch-ready until validation has no P0 issues and launch status is explicitly `READY_TO_INDEX`.

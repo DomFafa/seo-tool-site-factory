@@ -78,6 +78,9 @@ Every meaningful implementation must include rows for keyword intent, competitor
 | UI audit |  |  |  |
 | Browser desktop |  |  |  |
 | Browser mobile 390px |  |  |  |
+| Research audit | `pnpm site research-audit {site_id}` |  |  |
+| Trace audit | `pnpm site trace-audit {site_id}` |  |  |
+| Launch review | `pnpm site launch-review {site_id}` |  |  |
 
 ## 7. Unconsumed Or Deferred Research
 
@@ -94,6 +97,8 @@ After implementation, reconcile status across research files.
 - `codex-build-prompt.md` status updated: yes/no
 - `acceptance-tests.md` validation status updated: yes/no
 - `design-review.md` post-UI status updated: yes/no
+- `launch-review.md` dashboard updated: yes/no
+- Scope drift checked or recorded: yes/no
 - Launch status remains draft/noindex unless explicitly approved: yes/no
 - Any stale `research-only`, `future implementation`, or `blocked until implement request` wording left after implementation: yes/no
 

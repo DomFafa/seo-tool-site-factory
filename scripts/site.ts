@@ -32,6 +32,9 @@ function usage() {
   pnpm site verify-integrations <site-id>
   pnpm site submit-indexnow <site-id>
   pnpm site ui-audit <site-id>|--all
+  pnpm site research-audit <site-id>
+  pnpm site trace-audit <site-id>
+  pnpm site launch-review <site-id> [--check-scope]
 
 Deployment uses the site's deployment.accountAlias and cloudflare.accounts.yaml.
 Do not rely on a globally logged-in Wrangler account for production deploys.
@@ -230,6 +233,13 @@ switch (command) {
   case 'ui-audit': {
     const target = maybeSiteId ?? '--all';
     run('pnpm', ['exec', 'tsx', 'scripts/ui-audit.ts', target, ...args]);
+    break;
+  }
+  case 'research-audit':
+  case 'trace-audit':
+  case 'launch-review': {
+    const siteId = requireSiteId();
+    run('pnpm', ['exec', 'tsx', 'scripts/site-workflow.ts', command, siteId, ...args]);
     break;
   }
   default:

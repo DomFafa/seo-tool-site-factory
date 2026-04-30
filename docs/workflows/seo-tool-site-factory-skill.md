@@ -77,6 +77,8 @@ sites/<site-id>/research/design-direction.md
 sites/<site-id>/research/design-review.md
 sites/<site-id>/research/acceptance-tests.md
 sites/<site-id>/research/implementation-trace.md
+sites/<site-id>/research/status.md
+sites/<site-id>/research/launch-review.md
 sites/<site-id>/research/codex-build-prompt.md
 sites/<site-id>/research/brief.v2.draft.yaml
 ```
@@ -89,13 +91,15 @@ Record one mode before starting:
 
 ```text
 research-only
-plan-only
+design-only
 implement
+post-ui-review
 audit
 launch-review
+repair-gate
 ```
 
-Default to `research-only` for keyword or competitor research. Default to `implement` only when building or finishing a site. In `research-only`, `plan-only`, and `audit`, do not edit implementation files unless the user explicitly changes the mode.
+Default to `research-only` for keyword or competitor research. Use `design-only` for visual planning without code, `implement` for build work, `post-ui-review` for review-only UI QA, `repair-gate` for targeted gate fixes, and `launch-review` for final readiness inspection. In `research-only`, `design-only`, `audit`, and `launch-review`, do not edit implementation files unless the user explicitly changes the mode.
 
 ## Phase protocol
 
@@ -119,6 +123,12 @@ Exit criteria:
 Blockers/deferred:
 ```
 
+The canonical phase state lives in:
+
+```text
+sites/<site-id>/research/status.md
+```
+
 The important constraint is ordering: research and design records must guide implementation, not be written afterward to justify implementation choices.
 
 ## Research completion gate
@@ -136,6 +146,7 @@ sites/<site-id>/research/ux-spec.md
 sites/<site-id>/research/design-direction.md
 sites/<site-id>/research/design-review.md
 sites/<site-id>/research/acceptance-tests.md
+sites/<site-id>/research/status.md
 sites/<site-id>/research/brief.v2.draft.yaml
 sites/<site-id>/research/codex-build-prompt.md
 ```
@@ -153,6 +164,12 @@ Evidence used:
 Decisions made:
 Implementation implications:
 Deferred items:
+```
+
+Run before implementation:
+
+```bash
+pnpm site research-audit <site-id>
 ```
 
 ## Implementation edit gate
@@ -180,6 +197,17 @@ sites/<site-id>/layout.config.yaml
 sites/<site-id>/content/**
 sites/<site-id>/messages/**
 ```
+
+Single-site implementation should normally stay inside:
+
+```text
+sites/<site-id>/**
+apps/site/src/features/<tool-id>/**
+packages/tools/<tool-id>/**
+renderer registry only when needed
+```
+
+Dirty files outside this scope must be listed as `Scope drift` and left untouched unless they block the current site.
 
 If this gate is bypassed for an explicit code-only request, record that the site is not launch-ready from the skill workflow perspective.
 
@@ -244,8 +272,9 @@ The UI is not complete immediately after code renders. For SEO tool sites, task 
 Required behavior:
 
 - Run `gstack-design-review` after meaningful UI changes, or mark it `Deferred:` with a reason.
-- Run `gstack-qa` when interactions changed and direct fixes are allowed.
-- Run `gstack-qa-only` when the user wants a report before fixes.
+- Use `post-ui-review` mode when the task is review-only.
+- Run `gstack-qa-only` when interaction QA should report findings without fixes.
+- Run `gstack-qa` or `repair-gate` only when fixes are approved.
 - Run `gstack-benchmark` before launch, after large CSS/JS changes, or after adding dependencies.
 - Record desktop and 390px mobile screenshot evidence after meaningful UI changes.
 - Record first-viewport tool visibility, main task path tested, visual hierarchy issues, fixes applied, and remaining issues.
@@ -263,6 +292,19 @@ Record results and fixes in:
 sites/<site-id>/research/design-review.md
 sites/<site-id>/research/acceptance-tests.md
 ```
+
+## Workflow audit commands
+
+The skill has lightweight local checks for the gates that were easy to fake in prose:
+
+```bash
+pnpm site research-audit <site-id>
+pnpm site trace-audit <site-id>
+pnpm site launch-review <site-id>
+pnpm site launch-review <site-id> --check-scope
+```
+
+`research-audit` checks required research files and Bing evidence. `trace-audit` checks that implementation consumed research. `launch-review` checks the readiness dashboard and key caps. `--check-scope` also reports dirty files outside the single-site write scope.
 
 ## Research consumption trace gate
 
@@ -286,6 +328,18 @@ Required trace coverage:
 - Research decisions that were not implemented, with reason, impact, and next action.
 
 Do not call implementation complete while `implementation-trace.md` is missing, still `pending-implementation`, or only a generic summary.
+
+## Launch readiness dashboard
+
+Before saying a site is review-ready or launch-ready, update:
+
+```text
+sites/<site-id>/research/launch-review.md
+```
+
+The dashboard must include research evidence, design plan, UI implementation, browser QA, interaction QA, SEO/content/perf/UI validation, research trace, scope drift, indexing status, and launch status.
+
+Passing validation does not mean indexing can be enabled. `READY_TO_INDEX` requires explicit user approval.
 
 The trace should map:
 
@@ -323,6 +377,9 @@ A site should remain draft and non-indexable until:
 - Acceptance tests pass.
 - `pnpm site check <site-id>` passes.
 - `pnpm site build <site-id>` passes.
+- `pnpm site research-audit <site-id>` passes.
+- `pnpm site trace-audit <site-id>` passes.
+- `pnpm site launch-review <site-id>` passes.
 - `pnpm seo audit <site-id>` has no P0 issue.
 - `pnpm perf audit <site-id>` has no severe regression.
 - `pnpm site ui-audit <site-id>` does not show unacceptable similarity.

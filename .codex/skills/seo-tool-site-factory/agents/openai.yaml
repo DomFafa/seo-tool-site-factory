@@ -1,4 +1,4 @@
 interface:
   display_name: "SEO Tool Site Factory"
-  short_description: "Plan differentiated SEO utility sites"
-  default_prompt: "Use $seo-tool-site-factory to plan and implement a keyword-driven SEO utility site."
+  short_description: "Plan, build, and audit SEO utility sites"
+  default_prompt: "Use $seo-tool-site-factory to research, design, implement, and audit a keyword-driven SEO utility site."

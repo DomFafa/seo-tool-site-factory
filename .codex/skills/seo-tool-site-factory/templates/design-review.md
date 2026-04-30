@@ -41,6 +41,9 @@ Not in scope:
 | plan-design-review | yes/no |  |
 | frontend-design | yes/no |  |
 | design-review | yes/no |  |
+| qa-only | yes/no/not-needed |  |
+| qa | yes/no/not-needed |  |
+| benchmark | yes/no/deferred |  |
 
 ### Browser Evidence
 
@@ -61,6 +64,7 @@ Post-UI visual review is not complete without evidence from the built page.
 - Pre-implementation plan review completed: yes/no
 - Post-UI design review completed: yes/no
 - Browser/screenshot evidence captured: yes/no
+- Interaction QA mode: qa / qa-only / not-needed / deferred
 - If deferred, blocker:
 - Launch readiness cap from this review:
 
