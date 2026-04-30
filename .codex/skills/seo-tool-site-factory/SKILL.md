@@ -39,6 +39,36 @@ notes: <known constraints or monetization notes>
 
 If a value is missing, infer a reasonable default from the keyword and document the assumption in the research files. Do not stop only to ask for clarification unless the missing value blocks safe implementation.
 
+## Modes and gates
+
+Pick one mode at the start: `research-only`, `plan-only`, `implement`, `audit`, or `launch-review`. Record it in `sites/<site-id>/research/codex-build-prompt.md` or the final summary.
+
+Default to `research-only` for keyword or competitor research. Default to `implement` only when the user asks to build, improve, or finish the site.
+
+For exact mode definitions, completion statuses, readiness scores, and hard stop rules, read `references/gates.md` when the task may cross from research into implementation.
+
+STOP: In `research-only`, `plan-only`, and `audit`, do not edit implementation files unless the user explicitly changes the mode.
+
+## Continuation commands
+
+After a research pass is complete, the user should not need to paste a long build prompt. Treat these short requests as approval to switch to `implement` mode for the named site:
+
+```text
+继续实现 <site-id>
+开始实现 <site-id>
+build <site-id>
+implement <site-id>
+continue <site-id>
+```
+
+When triggered, read `sites/<site-id>/research/codex-build-prompt.md` plus the research files it lists, then follow the gates there. If the build prompt is missing or stale, update it first from the research files instead of asking the user for a long prompt.
+
+At the end of every `research-only` pass, include one short next command in the final response:
+
+```text
+下一步发送：继续实现 <site-id>
+```
+
 ## Workflow
 
 ### 1. Decide whether the keyword deserves a standalone site
@@ -85,22 +115,26 @@ Required data source:
 - Use the `Top 10 url ranking on this keyword` table as the source of ranking competitors.
 - Select the first 5 rows from that Bing Webmaster ranking table as the required competitor set.
 
-The research must include:
+#### Bing Webmaster capture gate
 
-- Bing Webmaster ranking intent summary
-- Bing Webmaster source metadata: site URL, keyword, date range, capture date, and data-quality notes
-- Top 5 Bing Webmaster ranking competitors
-- Feature matrix
-- UX teardown
-- SEO teardown
-- Performance observations
-- Accessibility observations
-- Differentiation opportunities
-- Things to avoid
+`competitor-research.md` must include a `Bing Webmaster Capture Attempt` record before implementation. Use exactly one status:
+
+```text
+captured
+blocked-with-evidence
+not-attempted
+user-approved-skip
+```
+
+Use `references/gates.md` and the competitor template for required evidence fields. Public SERP results are never a substitute for Bing Webmaster top 5. They may be listed only as low-confidence fallback references.
+
+STOP: Do not mark Bing Webmaster as blocked without attempted URL, timestamp, blocker text or screenshot/artifact, and missing permission/login state.
+
+STOP: Do not continue to implementation when Bing status is `not-attempted`, unless the user explicitly approves fallback implementation or code-only work.
 
 Do not only list competitors. Convert findings into concrete build requirements.
 
-If Bing Webmaster access is blocked, do not silently replace it with a generic public SERP. Record the blocker as `bing webmaster capture blocked`, then use user-supplied competitor URLs or existing repository examples only as a fallback and clearly mark them as `fallback, not Bing Webmaster ranking`.
+If Bing Webmaster access is blocked, do not silently replace it with a generic public SERP. Record `blocked-with-evidence`, then use user-supplied competitor URLs or existing repository examples only as fallback inputs and clearly mark them as `fallback, not Bing Webmaster ranking`.
 
 Additional adjacent-intent competitors are optional. They may be added only after the required Bing Webmaster top 5 are recorded, and they must be labeled as `reference competitor`, not part of the primary ranking set.
 
@@ -112,20 +146,7 @@ Create or update:
 sites/<site-id>/research/product-requirements.md
 ```
 
-Include:
-
-- User job
-- Core flow
-- Required features
-- Nice-to-have features
-- Non-goals
-- Input behavior
-- Output behavior
-- Empty states
-- Error states
-- Edge cases
-- Privacy requirements
-- Performance requirements
+Use the product requirements template. Cover user job, core flow, features, non-goals, input/output behavior, states, edge cases, privacy, and performance.
 
 ### 4. Define SEO spec
 
@@ -135,18 +156,7 @@ Create or update:
 sites/<site-id>/research/seo-spec.md
 ```
 
-Include:
-
-- URL
-- Title
-- Meta description
-- H1
-- Hero subtitle
-- Content structure
-- FAQ
-- Internal links
-- Structured data recommendation
-- Indexing requirements
+Use the SEO spec template. Cover metadata, H1, hero subtitle, content structure, FAQ, internal links, schema, canonical, and indexing.
 
 SEO-critical content must be statically rendered or server-rendered. Tool interactivity can hydrate on the client.
 
@@ -160,17 +170,7 @@ sites/<site-id>/research/ux-spec.md
 
 The UX spec must explain how this site will feel different from other sites in the factory.
 
-Include:
-
-- Above-the-fold layout
-- Primary task path
-- Mobile layout
-- Empty state
-- Result state
-- Error state
-- Accessibility requirements
-- Ad-placement restrictions
-- UI differentiation from similar existing sites
+Use the UX spec template. Cover first viewport, task path, mobile, empty/result/error states, accessibility, ad restrictions, and UI differentiation.
 
 ### 6. Define the design direction
 
@@ -211,21 +211,7 @@ Use `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-design-shotgun/SKILL.
 
 Use `/Users/bin/.codex/skills/frontend-design/SKILL.md` only when translating the approved direction into frontend code.
 
-The design direction must include:
-
-- Design source: new site direction, reused cluster system, or existing `DESIGN.md`.
-- Product context and target user.
-- Visual personality.
-- Typography direction.
-- Color direction.
-- Density and spacing.
-- Layout recipe and block order.
-- Motion rules.
-- Tool workbench pattern.
-- Mobile design approach.
-- Accessibility requirements.
-- Anti-template constraints.
-- Explicit UI differentiation from similar factory sites.
+Use the design direction template. It must be keyword-specific and include explicit UI differentiation from similar factory sites.
 
 For this repository, do not blindly overwrite root `DESIGN.md` for every single site. Prefer site-specific or cluster-specific design records unless the whole factory design system is changing.
 
@@ -239,16 +225,7 @@ sites/<site-id>/research/design-review.md
 
 Use `/Users/bin/.gstack/repos/gstack/.agents/skills/gstack-plan-design-review/SKILL.md` when the site has UI scope and a design plan exists. The review should happen after product/SEO/UX/design direction are drafted and before implementation.
 
-The design review must check:
-
-- Information hierarchy.
-- Interaction states.
-- User journey.
-- AI slop / template risk.
-- Design-system alignment.
-- Responsive behavior.
-- Accessibility.
-- Unresolved visual decisions.
+Use the design review template. Check hierarchy, states, journey, AI-template risk, design-system alignment, responsive behavior, accessibility, and unresolved visual choices.
 
 Any approved mockup paths or design-board decisions must be recorded in `design-review.md` and reflected in `design-direction.md`, `layout.config.yaml`, and `theme.config.yaml` during implementation.
 
@@ -256,20 +233,7 @@ Any approved mockup paths or design-board decisions must be recorded in `design-
 
 A keyword research pass is not complete if it only updates `competitor-research.md`. Before implementation, update every file below with keyword-specific decisions, or add a `Deferred:` note in that file explaining the blocker, reason, and next action.
 
-Required research outputs:
-
-```text
-sites/<site-id>/research/keyword-intent.md
-sites/<site-id>/research/competitor-research.md
-sites/<site-id>/research/product-requirements.md
-sites/<site-id>/research/seo-spec.md
-sites/<site-id>/research/ux-spec.md
-sites/<site-id>/research/design-direction.md
-sites/<site-id>/research/design-review.md
-sites/<site-id>/research/acceptance-tests.md
-sites/<site-id>/research/brief.v2.draft.yaml
-sites/<site-id>/research/codex-build-prompt.md
-```
+Required research outputs are all files generated by `pnpm site:plan`, including keyword intent, competitor research, product requirements, SEO spec, UX spec, design direction, design review, acceptance tests, `brief.v2.draft.yaml`, and `codex-build-prompt.md`.
 
 Completion rules:
 
@@ -278,7 +242,66 @@ Completion rules:
 - If a file cannot be completed yet, add `Deferred:` with the reason, what evidence is missing, and the next action.
 - The final research summary must list completed files and deferred files with reasons.
 
-### 9. Create or update the site pack
+STOP: Do not treat research as complete when only `competitor-research.md` changed.
+
+### 9. Pass the implementation edit gate
+
+Do not edit implementation files before the research completion gate is satisfied, unless the user explicitly asks for a code-only change or an emergency bug fix.
+
+Before this gate is satisfied, allowed writes are limited to:
+
+```text
+sites/<site-id>/research/*
+sites/<site-id>/research/brief.v2.draft.yaml
+```
+
+Implementation writes are blocked until the research files are completed or explicitly marked `Deferred:`:
+
+```text
+apps/**
+packages/**
+scripts/**
+sites/<site-id>/brief.yaml
+sites/<site-id>/site.config.yaml
+sites/<site-id>/tool.config.yaml
+sites/<site-id>/theme.config.yaml
+sites/<site-id>/layout.config.yaml
+sites/<site-id>/content/**
+sites/<site-id>/messages/**
+```
+
+To pass this gate, record in `sites/<site-id>/research/codex-build-prompt.md` or the final research summary:
+
+- Competitor source status: `captured`, `blocked-with-evidence`, or `user-approved-skip`. `not-attempted` does not pass this gate.
+- For `blocked-with-evidence`, record attempted URL, timestamp, blocker evidence, fallback source, and fallback confidence.
+- Product, SEO, UX, design, and acceptance files completed or deferred.
+- Design-new decision made.
+- Pre-implementation design review completed or deferred.
+- Implementation write scope approved.
+
+If the user explicitly asks for code-only work, state that the research gate is being bypassed for that request and do not pretend the site is launch-ready.
+
+STOP: Do not edit implementation files before this gate passes. If bypassed by explicit user request, set `Implementation status: BYPASSED_BY_USER`.
+
+### 10. Score readiness before implementation
+
+Record these 0-10 scores in `sites/<site-id>/research/codex-build-prompt.md` or the final research summary:
+
+```text
+Research readiness:
+Design specificity:
+Launch readiness:
+```
+
+Scoring guide:
+
+- `Research readiness`: 10 means Bing top 5 captured, all research files keyword-specific, and no deferred blocker; 7 means usable fallback with evidence; 0-3 means not attempted or mostly placeholders.
+- `Design specificity`: 10 means the visual direction, states, mobile behavior, and differentiation are explicit enough to implement; 7 means usable but some polish deferred; 0-3 means generic or missing.
+- `Launch readiness`: 10 means validation, SEO, performance, UI audit, and post-UI review pass and indexing can be considered; 7 means draft is reviewable; 0-3 means draft-only or blocked.
+
+STOP: Do not start implementation with `Research readiness < 7` unless the user explicitly approves fallback/code-only implementation.
+
+### 11. Create or update the site pack
 
 Use the repository factory structure.
 
@@ -308,7 +331,7 @@ indexing:
 
 Do not enable indexing until content is reviewed, tool behavior is tested, and audits pass.
 
-### 10. Implement pure tool logic
+### 12. Implement pure tool logic
 
 Pure transformation, solving, formatting, or generation logic belongs under:
 
@@ -324,7 +347,7 @@ Requirements:
 - Avoid unnecessary dependencies.
 - Do not send raw user input to analytics or servers unless the brief explicitly requires server-side processing and privacy notes are updated.
 
-### 11. Implement interactive UI
+### 13. Implement interactive UI
 
 Interactive UI belongs under:
 
@@ -341,6 +364,8 @@ sites/<site-id>/research/design-review.md
 
 Use `/Users/bin/.codex/skills/frontend-design/SKILL.md` for production-grade frontend implementation. Treat the approved design direction as the source of truth; do not invent a new visual system during implementation.
 
+STOP: Do not implement visual UI before `design-direction.md` and pre-implementation `design-review.md` exist, unless they are explicitly deferred with a reason and the task is code-only.
+
 UX requirements:
 
 - No login required for the core task.
@@ -355,7 +380,7 @@ UX requirements:
 - No ads near primary actions.
 - No raw user input in analytics events.
 
-### 12. Pass the post-UI optimization gate
+### 14. Pass the post-UI optimization gate
 
 After UI implementation, the site is not implementation-complete until UI quality has been reviewed or explicitly deferred with a reason.
 
@@ -375,13 +400,21 @@ Gate rules:
 - Run `benchmark` before launch, after large CSS/JS changes, or after adding dependencies that could affect page weight.
 - Record findings, fixes, or `Deferred:` reasons in `sites/<site-id>/research/design-review.md` and `sites/<site-id>/research/acceptance-tests.md`.
 
-### 13. Register the tool renderer
+STOP: Do not call UI implementation complete after rendering alone. Record design-review/QA/benchmark results or explicit `Deferred:` reasons.
+
+STOP: For a new UI-bearing site, do not score `Launch readiness > 4` unless post-UI `gstack-design-review` ran after implementation.
+
+STOP: If UI interactions changed, do not score `Launch readiness > 5` unless `gstack-qa` or `gstack-qa-only` ran.
+
+STOP: If post-UI design review and interaction QA are both deferred, keep `Launch status: DRAFT_ONLY`.
+
+### 15. Register the tool renderer
 
 Update the selected tool routing so that `primaryTool: <tool-id>` can render the correct island.
 
 Do not hard-code site IDs, domains, analytics IDs, ad IDs, verification tokens, or canonical URLs inside page components.
 
-### 14. Add tests and acceptance checks
+### 16. Add tests and acceptance checks
 
 Create or update:
 
@@ -401,7 +434,7 @@ The acceptance tests must include:
 - Performance checks
 - Edge cases
 
-### 15. Run validation
+### 17. Run validation
 
 After changes, run:
 
@@ -422,6 +455,8 @@ pnpm ops report
 
 Fix P0 issues before considering the work complete. Note any P1/P2 tradeoffs in the final summary.
 
+STOP: Do not enable indexing or call the site launch-ready until validation has no P0 issues and launch status is explicitly `READY_TO_INDEX`.
+
 ## Required output format for implementation summaries
 
 When finishing a site implementation, summarize:
@@ -429,7 +464,11 @@ When finishing a site implementation, summarize:
 ```text
 Site ID:
 Primary keyword:
+Mode:
 Decision score:
+Research readiness:
+Design specificity:
+Launch readiness:
 Files changed:
 Tool logic:
 UI implementation:
@@ -438,10 +477,20 @@ Design direction:
 Design review:
 Post-UI optimization:
 Research completion:
+Implementation edit gate:
+Research status:
+Implementation status:
+Launch status:
 Differentiators:
 Validation commands run:
 Known tradeoffs:
 Indexing status:
+```
+
+When finishing a `research-only` pass, summarize the research status and include:
+
+```text
+Next command: 继续实现 <site-id>
 ```
 
 ## Quality bar

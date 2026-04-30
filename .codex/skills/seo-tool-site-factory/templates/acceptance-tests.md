@@ -1,5 +1,14 @@
 # Acceptance Tests: {tool_name}
 
+## Workflow Gate Tests
+
+- Operating mode is recorded as `research-only`, `plan-only`, `implement`, `audit`, or `launch-review`.
+- Research status is recorded as `READY`, `READY_WITH_FALLBACK`, `BLOCKED`, or `NOT_ATTEMPTED`.
+- Implementation status is recorded as `READY`, `BLOCKED`, or `BYPASSED_BY_USER`.
+- Launch status is recorded as `DRAFT_ONLY`, `READY_FOR_REVIEW`, or `READY_TO_INDEX`.
+- Research readiness, design specificity, and launch readiness are scored 0-10.
+- Claims used to pass a gate have evidence: captured rows, attempted URLs, screenshots/artifacts, command output summaries, or report paths.
+
 ## Functional Tests
 
 | Test | Input / Action | Expected output / behavior |
@@ -37,6 +46,15 @@
 - Structured data is valid and matches visible content.
 - Draft site keeps indexing disabled.
 
+## Research Gate Tests
+
+- `competitor-research.md` includes a `Bing Webmaster Capture Attempt` record.
+- Bing capture status is one of: `captured`, `blocked-with-evidence`, `not-attempted`, `user-approved-skip`.
+- If status is `captured`, the raw Bing Webmaster top 10 rows are recorded and the first 5 rows drive competitor requirements.
+- If status is `blocked-with-evidence`, attempted URL, timestamp, blocker text or screenshot/artifact, fallback source, and fallback confidence are recorded.
+- If status is `not-attempted`, implementation edit gate is marked blocked unless the user explicitly approved fallback implementation.
+- Public SERP results are not labeled as Bing Webmaster ranking competitors.
+
 ## Accessibility Tests
 
 - Inputs have visible labels.
@@ -52,6 +70,10 @@
 - `design-review.md` records the pre-implementation design review or explains why it was skipped.
 - Post-UI `design-review` was run after meaningful UI changes, or `Deferred:` explains why it was not run.
 - `qa` or `qa-only` was run when interactions changed, or `Deferred:` explains why it was not run.
+- For a new UI-bearing site, if post-UI `design-review` was deferred, `Launch readiness` is `<= 4`.
+- If interactions changed and `qa` / `qa-only` was deferred, `Launch readiness` is `<= 5`.
+- If both post-UI design review and interaction QA were deferred, `Launch status` remains `DRAFT_ONLY`.
+- Implementation files were not edited before the research completion gate, unless the user explicitly requested code-only work.
 - `layout.config.yaml` reflects the selected layout recipe and block order.
 - `theme.config.yaml` reflects the selected typography, color, density, and surface strategy.
 - The above-the-fold UI does not use a generic centered hero plus three feature cards.

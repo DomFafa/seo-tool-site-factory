@@ -20,15 +20,49 @@ Primary competitor selection must come from Bing Webmaster Tools Keyword Researc
 - Bing site URL:
 - Bing date range: 3M
 - Bing keyword searched: {primary_keyword}
-- Capture method: web-access CDP / manual logged-in browser / fallback
-- Capture status: captured / blocked / fallback
 - Data quality notes:
+
+### Bing Webmaster Capture Attempt
+
+Use exactly one status: `captured`, `blocked-with-evidence`, `not-attempted`, or `user-approved-skip`.
+
+- Status:
+- Attempted at:
+- Attempted by: web-access CDP / manual logged-in browser / user-provided screenshot / not attempted
+- Bing siteUrl:
+- Exact keyword: {primary_keyword}
+- Date range: 3M
+- Attempted URL:
+- Browser/session:
+- Result:
+- Blocker text:
+- Screenshot or artifact path:
+- User approval context if skipped:
+
+### Raw Captured Top 10 Rows
+
+Fill this table only from the Bing Webmaster `Top 10 url ranking on this keyword` table.
+
+| Bing rank | Title | URL | Topics | Captured? |
+|---:|---|---|---|---|
+| 1 |  |  |  | yes/no |
+| 2 |  |  |  | yes/no |
+| 3 |  |  |  | yes/no |
+| 4 |  |  |  | yes/no |
+| 5 |  |  |  | yes/no |
+| 6 |  |  |  | yes/no |
+| 7 |  |  |  | yes/no |
+| 8 |  |  |  | yes/no |
+| 9 |  |  |  | yes/no |
+| 10 |  |  |  | yes/no |
 
 ### Required competitor selection rule
 
 Use the `Top 10 url ranking on this keyword` table in Bing Webmaster Keyword Research. Select the first 5 rows as the required competitor set.
 
-If Bing Webmaster is blocked, record the exact blocker and mark any replacement URLs as `fallback, not Bing Webmaster ranking`.
+Do not mark Bing Webmaster as blocked unless an actual web-access/manual/user-evidence attempt was made. If there is no attempted URL, timestamp, blocker text, screenshot, or artifact, use `not-attempted`.
+
+If Bing Webmaster is `blocked-with-evidence`, record the exact blocker and mark any replacement URLs as `fallback, not Bing Webmaster ranking`. Public SERP results are never a substitute for the Bing Webmaster top 5; they may be listed only as low-confidence fallback references.
 
 ## 3. Bing Webmaster Top 5 Ranking Competitors
 
