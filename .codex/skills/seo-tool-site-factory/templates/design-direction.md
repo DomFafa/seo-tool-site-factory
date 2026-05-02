@@ -138,6 +138,7 @@ This site must avoid:
 ## 14. Template Family And Anti-Clone Plan
 
 If using the `Playful Utility Tool` family, read `references/playful-utility-template.md`.
+If using the `Tiny Tool Workbench` family, read `references/tiny-tool-workbench-template.md`.
 
 - Template family:
 - Sub-template:

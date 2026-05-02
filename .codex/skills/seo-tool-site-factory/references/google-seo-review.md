@@ -56,6 +56,7 @@ Handle these in research, SEO spec, UX spec, and templates before implementation
 - Keep draft pages noindex until launch review passes.
 - Before indexing, define canonical host, aliases, sitemap policy, and redirect plan.
 - Avoid launching on pages.dev as canonical.
+- After the user confirms DNS/custom domain setup, update `sites/<site-id>/site.config.yaml` so `domains.production` and `domains.canonicalHost` point to the real domain, `domains.aliases` includes the non-canonical host, and `seo.pagesDevRedirect.status` reflects the redirect state.
 - Plan `www` to apex or apex to `www` 301 before indexing.
 - Plan pages.dev to canonical 301 or record why it is deferred.
 
@@ -93,6 +94,7 @@ Inspect the built HTML, not only source files:
 - structured data parses and matches visible content.
 - OG URL/image point to canonical host.
 - header/footer links resolve.
+- Brand/Home links point to the canonical real domain, not the `pages.dev` deployment URL, after DNS/custom domain setup is confirmed.
 
 ### Sitemap and Robots
 
@@ -135,6 +137,7 @@ Expected:
 - Canonical host returns 200.
 - Alias host returns 301 to canonical.
 - pages.dev redirects to canonical or is recorded as deferred.
+- Deployed HTML on the latest Pages deployment contains the real-domain canonical, OG URL, JSON-LD URL, and Home link.
 
 ### Search Console / Bing Webmaster
 

@@ -9,6 +9,7 @@ body.recipe-worksheet-learning { background: #fffdf7; }
 body.recipe-writing-assistant { background: linear-gradient(180deg, #f8fafc, #eef2f7); }
 body.recipe-apple-minimal { color: #1d1d1f; background: #f5f5f7; }
 body.recipe-playful-tool { color: #101828; background: #fff8f1; }
+body.recipe-tiny-tool-workbench { color: #1d2340; background: radial-gradient(circle at 12% 0%, rgba(255, 179, 205, .36), transparent 30rem), radial-gradient(circle at 88% 8%, rgba(159, 217, 255, .38), transparent 28rem), #f7fbff; }
 .site-header--floating, .site-header--dark-floating { position: sticky; top: 12px; z-index: 20; width: min(1120px, calc(100% - 24px)); margin: 12px auto 0; border-radius: 999px; border: 1px solid rgba(148, 163, 184, .32); background: rgba(255, 255, 255, .82); backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(15, 23, 42, .08); }
 .site-header--dark-floating { color: #f8fafc; background: rgba(16, 16, 28, .82); border-color: rgba(255,255,255,.16); }
 .site-header--dark-floating a { color: inherit; }
@@ -283,6 +284,48 @@ body.recipe-playful-tool .content-card p,
 body.recipe-playful-tool .content-card li,
 body.recipe-playful-tool .example-card { color: #475467; }
 body.recipe-playful-tool .footer { border-top-color: #f0e1d3; color: #667085; }
+body.recipe-tiny-tool-workbench .site-header--compact { border-bottom: 1px solid rgba(105, 153, 255, .18); background: rgba(255, 255, 255, .9); box-shadow: 0 1px 0 rgba(29, 35, 64, .04); backdrop-filter: blur(10px); }
+body.recipe-tiny-tool-workbench .site-header-inner { min-height: 70px; max-width: 1200px; }
+body.recipe-tiny-tool-workbench .brand { color: #1d2340; font-size: 18px; font-weight: 900; letter-spacing: 0; }
+body.recipe-tiny-tool-workbench .brand-mark { border-radius: 9px; background: #7aa7ff; color: #ffffff; box-shadow: 0 10px 22px rgba(122, 167, 255, .24); }
+body.recipe-tiny-tool-workbench .nav > a { min-height: 38px; padding: 7px 12px; border-radius: 999px; color: #354263; font-weight: 800; transition: background .18s ease, color .18s ease, transform .18s ease; }
+body.recipe-tiny-tool-workbench .nav > a:hover { background: #eef5ff; color: #456ee7; text-decoration: none; transform: translateY(-1px); }
+body.recipe-tiny-tool-workbench .language-switcher a[aria-current="true"] { border-color: #ff9bc2; background: #ff9bc2; color: #1d2340; }
+body.recipe-tiny-tool-workbench .page-block { padding: clamp(24px, 4vw, 44px) 0; }
+body.recipe-tiny-tool-workbench .page-block:first-child { padding-top: clamp(20px, 3vw, 34px); padding-bottom: 8px; }
+body.recipe-tiny-tool-workbench .page-block--hero-search-first-tool { text-align: center; }
+body.recipe-tiny-tool-workbench .page-block--hero-search-first-tool .eyebrow { margin-bottom: 8px; color: #456ee7; letter-spacing: 0; text-transform: none; }
+body.recipe-tiny-tool-workbench .page-block--hero-search-first-tool h1 { max-width: min(1040px, calc(100vw - 40px)); margin: 0 auto 12px; color: #1d2340; font-size: clamp(2rem, 4vw, 3.35rem); line-height: 1.04; letter-spacing: 0; }
+body.recipe-tiny-tool-workbench .page-block--hero-search-first-tool .hero-lead { max-width: 660px; margin: 0 auto; color: #4c5a7d; font-size: clamp(1rem, 1.6vw, 1.18rem); line-height: 1.55; }
+body.recipe-tiny-tool-workbench .page-block--hero-search-first-tool .badge-row { display: none; }
+body.recipe-tiny-tool-workbench .hero-rotator { display: flex; align-items: baseline; justify-content: center; flex-wrap: nowrap; gap: .22em; white-space: nowrap; }
+body.recipe-tiny-tool-workbench .hero-rotator__words { position: relative; display: inline-grid; min-width: 4.6em; min-height: 1.08em; overflow: hidden; color: #ff8fbd; vertical-align: baseline; }
+body.recipe-tiny-tool-workbench .hero-rotator__words span { grid-area: 1 / 1; opacity: 0; transform: translateY(80%); animation: rdgHeroWord 12.5s infinite; white-space: nowrap; }
+body.recipe-tiny-tool-workbench .hero-rotator__words span:nth-child(2) { animation-delay: 2.5s; }
+body.recipe-tiny-tool-workbench .hero-rotator__words span:nth-child(3) { animation-delay: 5s; }
+body.recipe-tiny-tool-workbench .hero-rotator__words span:nth-child(4) { animation-delay: 7.5s; }
+body.recipe-tiny-tool-workbench .hero-rotator__words span:nth-child(5) { animation-delay: 10s; }
+@keyframes rdgHeroWord { 0%, 8% { opacity: 0; transform: translateY(80%); } 12%, 20% { opacity: 1; transform: translateY(0); } 24%, 100% { opacity: 0; transform: translateY(-80%); } }
+@media (prefers-reduced-motion: reduce) {
+  body.recipe-tiny-tool-workbench .hero-rotator__words span { animation: none; opacity: 0; transform: none; }
+  body.recipe-tiny-tool-workbench .hero-rotator__words span:first-child { opacity: 1; }
+}
+body.recipe-tiny-tool-workbench .page-block--tool-central-panel { padding-top: 0; }
+body.recipe-tiny-tool-workbench .page-block--tool-central-panel .tool-shell { max-width: 1160px; margin: 0 auto; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+body.recipe-tiny-tool-workbench .section-heading { text-align: center; }
+body.recipe-tiny-tool-workbench .section-heading .eyebrow { color: #456ee7; letter-spacing: 0; text-transform: none; }
+body.recipe-tiny-tool-workbench .section-heading h2 { color: #1d2340; font-size: clamp(1.7rem, 3vw, 2.65rem); line-height: 1.08; }
+body.recipe-tiny-tool-workbench .step-card,
+body.recipe-tiny-tool-workbench .example-card,
+body.recipe-tiny-tool-workbench .content-card,
+body.recipe-tiny-tool-workbench .faq-card,
+body.recipe-tiny-tool-workbench .privacy-panel { border: 1px solid rgba(122, 167, 255, .22); border-radius: 14px; background: #ffffff; box-shadow: 0 12px 30px rgba(29, 35, 64, .07); }
+body.recipe-tiny-tool-workbench .step-number { border-radius: 8px; background: #7aa7ff; color: #1d2340; }
+body.recipe-tiny-tool-workbench .content-card { max-width: 940px; margin-inline: auto; }
+body.recipe-tiny-tool-workbench .content-card p,
+body.recipe-tiny-tool-workbench .content-card li,
+body.recipe-tiny-tool-workbench .example-card { color: #4c5a7d; }
+body.recipe-tiny-tool-workbench .footer { border-top-color: rgba(122, 167, 255, .18); color: #4c5a7d; }
 @media (max-width: 760px) { .page-block { padding: 24px 0; } .page-block--hero-metric .block-inner, .page-block--hero-test-setup .block-inner, .page-block--hero-upload .block-inner { display: block; } .page-block--hero-metric .block-inner::after, .page-block--hero-upload .block-inner::after { margin-top: 18px; } .step-grid, .example-grid, .guide-grid { grid-template-columns: 1fr; } .page-block--faq-split .content-card, .page-block--faq-split-panel .content-card { column-count: 1; } .page-block--privacyNote-badge-row .privacy-panel, .page-block--privacyNote-inline .privacy-panel { display: block; } }
 @media (max-width: 760px) {
   body.recipe-playful-tool .site-header-inner { align-items: center; flex-direction: row; min-height: 64px; padding: 0 16px; }
@@ -299,6 +342,17 @@ body.recipe-playful-tool .footer { border-top-color: #f0e1d3; color: #667085; }
   body.recipe-playful-tool .page-block--hero-friendly-tool h1 { max-width: calc(100vw - 32px); font-size: clamp(1.75rem, 8.8vw, 2.25rem); line-height: 1.08; overflow-wrap: anywhere; }
   body.recipe-playful-tool .page-block--hero-friendly-tool .hero-lead { font-size: 1rem; line-height: 1.45; }
   body.recipe-playful-tool .section-heading h2 { font-size: clamp(1.55rem, 8vw, 2.15rem); }
+  body.recipe-tiny-tool-workbench .site-header-inner { align-items: center; flex-direction: row; min-height: 58px; padding-inline: 14px; }
+  body.recipe-tiny-tool-workbench .brand { min-width: 0; max-width: calc(100vw - 78px); font-size: 16px; }
+  body.recipe-tiny-tool-workbench .brand span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  body.recipe-tiny-tool-workbench .nav > a { display: none; }
+  body.recipe-tiny-tool-workbench .page-block--hero-search-first-tool { padding: 18px 0 8px; }
+  body.recipe-tiny-tool-workbench .page-block--hero-search-first-tool h1 { max-width: calc(100vw - 32px); font-size: clamp(1.35rem, 6vw, 2.25rem); line-height: 1.08; overflow-wrap: normal; }
+  body.recipe-tiny-tool-workbench .hero-rotator { gap: .16em; }
+  body.recipe-tiny-tool-workbench .hero-rotator__words { min-width: 4.6em; }
+  body.recipe-tiny-tool-workbench .page-block--hero-search-first-tool .hero-lead { font-size: 1rem; line-height: 1.45; }
+  body.recipe-tiny-tool-workbench .page-block--tool-central-panel { padding-top: 0; }
+  body.recipe-tiny-tool-workbench .section-heading h2 { font-size: clamp(1.55rem, 8vw, 2.15rem); }
   body.recipe-file-drop-studio .site-header-inner { align-items: center; flex-direction: row; min-height: 56px; padding: 0; }
   body.recipe-file-drop-studio .nav { gap: 10px; }
   body.recipe-file-drop-studio .page-block--hero-upload { padding: 18px 0 10px; }

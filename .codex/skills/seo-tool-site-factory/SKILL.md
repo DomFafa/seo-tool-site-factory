@@ -302,7 +302,12 @@ Use the design direction template. It must be keyword-specific and include expli
 
 For this repository, do not blindly overwrite root `DESIGN.md` for every single site. Prefer site-specific or cluster-specific design records unless the whole factory design system is changing.
 
-When the keyword fits a friendly utility experience, read `references/playful-utility-template.md`. The `weighted-grade-calculator` final UI is available as a template family, not a cloneable page. If reused, record the borrowed elements, differentiated elements, sub-template, and anti-clone decision in `design-direction.md`.
+Reusable UI template families:
+
+- When the keyword fits a friendly calculator/checker/planner utility experience, read `references/playful-utility-template.md`. The `weighted-grade-calculator` final UI is available as a template family, not a cloneable page.
+- When the keyword fits a clean generator/picker/randomizer/formatter experience, read `references/tiny-tool-workbench-template.md`. The `random-date-generator` final UI is available as the second template family, not a cloneable page.
+
+If either family is reused, record the template family, sub-template, borrowed elements, differentiated elements, similarity risk, and anti-clone decision in `design-direction.md`.
 
 ### 7. Review the design plan before implementation
 
@@ -604,7 +609,40 @@ For SEO reviews, launch preparation, or indexing changes, apply `references/goog
 
 STOP: Do not enable indexing or call the site launch-ready until validation has no P0 issues and launch status is explicitly `READY_TO_INDEX`.
 
-### 18. Pass the research consumption trace gate
+### 18. Real-domain canonical handoff
+
+When the user confirms that DNS is configured for a real domain, automatically update the site pack before the next production deploy. Do not leave `pages.dev` as the canonical host after the user has confirmed DNS and custom domain binding.
+
+Required update in `sites/<site-id>/site.config.yaml`:
+
+```yaml
+domains:
+  production: <apex-domain>
+  canonicalHost: <apex-domain>
+  aliases:
+    - www.<apex-domain>
+seo:
+  pagesDevRedirect:
+    status: configured
+```
+
+If the user chooses `www` as canonical, invert the canonical and alias values and record that decision in `research/seo-spec.md` or `research/launch-review.md`.
+
+After the update:
+
+- Run `pnpm site check <site-id>`.
+- Run `pnpm seo audit <site-id>`.
+- Run `pnpm site build <site-id>`.
+- Deploy with `pnpm site deploy <site-id> --production` when deployment is requested or already in progress.
+- Verify generated or deployed HTML so the canonical link, Open Graph URL, brand/Home links, JSON-LD URL, sitemap, and robots output use the real domain.
+- Verify `https://www.<apex-domain>/` redirects to `https://<apex-domain>/` when apex is canonical, or the reverse when `www` is canonical.
+- Keep `indexing.allowIndex: false` and `indexing.mode: disallow` unless the user separately approves indexing.
+
+Record the handoff in `research/seo-spec.md`, `research/implementation-trace.md`, or `research/launch-review.md` when those files exist.
+
+STOP: Do not ask the user to manually edit canonical URLs after they have confirmed DNS/custom domain setup. Update the YAML and redeploy.
+
+### 19. Pass the research consumption trace gate
 
 After implementation and validation, create or update:
 
@@ -636,7 +674,7 @@ Trace rules:
 
 STOP: Do not call a site implementation complete without an updated `implementation-trace.md` for non-trivial site pack, tool logic, UI, or content changes.
 
-### 19. Pass the launch readiness dashboard
+### 20. Pass the launch readiness dashboard
 
 Before claiming a site is launch-ready or review-ready, create or update:
 

@@ -74,7 +74,17 @@ function examplesFor(block: LayoutBlock): string[] {
         <section class={blockClass(block)}>
           <div class="container block-inner">
             {propString(block, 'eyebrow') && <p class="eyebrow">{propString(block, 'eyebrow')}</p>}
-            <h1>{propString(block, 'title', home.frontmatter.title)}</h1>
+            {propList(block, 'rotatingWords').length > 0 ? (
+              <h1 class="hero-rotator">
+                <span>{propString(block, 'title', home.frontmatter.title)}</span>
+                <span class="hero-rotator__words" aria-label={propList(block, 'rotatingWords').join(', ')}>
+                  {propList(block, 'rotatingWords').map((word) => <span>{word}</span>)}
+                </span>
+                {propString(block, 'titleSuffix') && <span>{propString(block, 'titleSuffix')}</span>}
+              </h1>
+            ) : (
+              <h1>{propString(block, 'title', home.frontmatter.title)}</h1>
+            )}
             <p class="hero-lead">{propString(block, 'description', home.frontmatter.description)}</p>
             {propList(block, 'badges').length > 0 && (
               <div class="badge-row">
