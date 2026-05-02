@@ -6,11 +6,12 @@ primaryKeyword: weighted grade calculator
 lifecycle:
   status: draft
 launch:
-  stage: pages-dev
+  stage: real-domain-noindex
 domains:
-  production: seo-tool-weighted-grade-calculator.pages.dev
-  canonicalHost: seo-tool-weighted-grade-calculator.pages.dev
-  aliases: []
+  production: weighted-gradecalculator.com
+  canonicalHost: weighted-gradecalculator.com
+  aliases:
+    - www.weighted-gradecalculator.com
 defaultLocale: en
 locales:
   en:
@@ -19,7 +20,7 @@ locales:
     reviewed: false
 indexing:
   allowIndex: false
-  mode: disallow
+  mode: allow-noindex
 primaryTool: weighted-grade-calculator
 seo:
   defaultTitle: Weighted Grade Calculator - Category Weights & Final Grade Planner
