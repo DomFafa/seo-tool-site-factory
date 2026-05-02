@@ -44,6 +44,11 @@ Hero subtitle:
 
 ```html
 <header>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/faq/">FAQ</a>
+    <a href="/contact/">Contact</a>
+  </nav>
 <main>
   <section id="hero">...</section>
   <section id="tool">...</section>
@@ -54,9 +59,16 @@ Hero subtitle:
   <section id="faq">...</section>
 </main>
 <footer>
+  <a href="/about/">About</a>
+  <a href="/contact/">Contact</a>
+  <a href="/privacy/">Privacy</a>
+  <a href="/faq/">FAQ</a>
+  <a href="/calculation-method/">Calculation method</a>
 ```
 
 The exact block order can vary by layout recipe, but the tool must be visible early and the page must not bury the core task under long SEO copy.
+
+For indexable real-domain sites, use `references/trust-navigation-template.md`. Header/footer links should point to real pages, not only same-page anchors, unless the user explicitly approves a single-page microsite.
 
 ## 4. Content Blocks
 
@@ -80,7 +92,28 @@ Provide 4-6 practical use cases.
 
 Include 5-8 concise FAQ items based on real user intent.
 
+Also create a standalone `/faq/` page when the site is live/indexable. The homepage may include a compact FAQ block, but avoid duplicate content slug conflicts.
+
+### Trust pages
+
+For live/indexable sites, create `/about/`, `/contact/`, `/privacy/`, `/faq/`, and `/calculation-method/`.
+
+Each page needs unique metadata, H1, visible content, canonical URL, and sitemap inclusion.
+
 ## 5. Internal Links
+
+Header links:
+
+- `/faq/`
+- `/contact/`
+
+Footer trust links:
+
+- `/about/`
+- `/contact/`
+- `/privacy/`
+- `/faq/`
+- `/calculation-method/`
 
 Related tools:
 
@@ -126,3 +159,30 @@ Launch requirement:
 - Performance audit has no severe regression.
 - UI similarity risk reviewed.
 - Canonical domain is configured.
+- Sitemap includes all approved indexable pages.
+- Header/footer trust links resolve to 200 pages.
+- Google SEO review is complete using `references/google-seo-review.md`.
+
+## 8. Google SEO Review Planning
+
+Before build, prevent:
+
+- unclear keyword intent
+- thin content
+- missing trust pages
+- header/footer links that are only anchors when real pages are expected
+- decorative/dynamic values used as headings
+- unsupported structured data
+- pages.dev canonical
+- accidental indexing before launch approval
+
+After build, inspect:
+
+- generated HTML metadata
+- H1/H2/H3 hierarchy
+- robots and noindex state
+- sitemap URLs
+- structured data output
+- 200/301 status codes
+- mobile rendering
+- Core Web Vitals risk

@@ -240,6 +240,13 @@ Use the SEO spec template. Cover metadata, H1, hero subtitle, content structure,
 
 SEO-critical content must be statically rendered or server-rendered. Tool interactivity can hydrate on the client.
 
+Read `references/google-seo-review.md` before finalizing the SEO spec. Split SEO decisions into:
+
+- avoidable before-build requirements that should be designed into metadata, content, semantics, navigation, structured data, canonical, indexing, and trust pages
+- after-build checks that require generated HTML, sitemap, robots, browser, or deployed-domain evidence
+
+For sites moving toward indexing, read `references/trust-navigation-template.md` and plan real support pages plus header/footer links instead of relying only on same-page anchors.
+
 ### 5. Define UX spec
 
 Create or update:
@@ -434,6 +441,18 @@ sites/<site-id>/content/<locale>/faq.mdx
 sites/<site-id>/messages/<locale>.yaml
 ```
 
+For real-domain or indexable utility sites, also create the trust/navigation pages from `references/trust-navigation-template.md` unless explicitly deferred:
+
+```text
+sites/<site-id>/content/<locale>/pages/about.mdx
+sites/<site-id>/content/<locale>/pages/contact.mdx
+sites/<site-id>/content/<locale>/pages/privacy.mdx
+sites/<site-id>/content/<locale>/pages/faq.mdx
+sites/<site-id>/content/<locale>/pages/calculation-method.mdx
+```
+
+Header and footer navigation should be configured in `layout.config.yaml`, not hard-coded in global layout files. Recommended live-site header links are FAQ and Contact. Recommended live-site footer links are About, Contact, Privacy, FAQ, and Calculation method.
+
 The site must start as draft unless explicitly approved:
 
 ```yaml
@@ -580,6 +599,8 @@ pnpm ops report
 ```
 
 Fix P0 issues before considering the work complete. Note any P1/P2 tradeoffs in the final summary.
+
+For SEO reviews, launch preparation, or indexing changes, apply `references/google-seo-review.md` after build and record which issues were preventable before build versus detectable only after build/deploy.
 
 STOP: Do not enable indexing or call the site launch-ready until validation has no P0 issues and launch status is explicitly `READY_TO_INDEX`.
 

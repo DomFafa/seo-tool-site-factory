@@ -10,6 +10,7 @@ Required elements:
 
 - H1
 - Short value proposition
+- Header links for FAQ and Contact when the site is live/indexable
 - Primary input
 - Result/output area
 - Primary action or instant preview
@@ -116,4 +117,7 @@ Differentiation choices for this site:
 - Copy/export is disabled when the result is invalid or misleading.
 - Mobile layout is usable.
 - Privacy note is close to the tool.
+- Live/indexable site has real About, Contact, Privacy, FAQ, and Calculation method pages.
+- Header FAQ and Contact links are visible without crowding the first viewport.
+- Footer trust links resolve to pages, not dead links or accidental anchors.
 - Page does not feel like a thin template.
