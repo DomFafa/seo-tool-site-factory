@@ -30,4 +30,4 @@ deployment:
   provider: cloudflare-pages
   projectName: seo-tool-typing-test-online
   outputDir: dist/sites/typing-test-online
-  accountAlias: typing-test-online
+  accountAlias: shared

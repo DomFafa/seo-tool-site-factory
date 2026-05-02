@@ -30,4 +30,4 @@ deployment:
   provider: cloudflare-pages
   projectName: seo-tool-correcteur-orthographe
   outputDir: dist/sites/correcteur-orthographe
-  accountAlias: correcteur-orthographe
+  accountAlias: shared

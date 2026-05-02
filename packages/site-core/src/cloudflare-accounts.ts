@@ -17,6 +17,8 @@ const CloudflareAccountsConfigSchema = z.object({
   accounts: z.record(CloudflareAccountProfileSchema)
 });
 
+const DEFAULT_SHARED_ACCOUNT_ALIAS = 'shared';
+
 function loadLocalEnvIfPresent(workspaceRoot: string): void {
   const envPath = join(workspaceRoot, '.env.local');
   if (!existsSync(envPath)) return;
@@ -24,10 +26,11 @@ function loadLocalEnvIfPresent(workspaceRoot: string): void {
   for (const line of lines) {
     const trimmed = line.trim();
     if (!trimmed || trimmed.startsWith('#')) continue;
-    const index = trimmed.indexOf('=');
+    const normalized = trimmed.startsWith('export ') ? trimmed.slice(7).trim() : trimmed;
+    const index = normalized.indexOf('=');
     if (index <= 0) continue;
-    const key = trimmed.slice(0, index).trim();
-    let value = trimmed.slice(index + 1).trim();
+    const key = normalized.slice(0, index).trim();
+    let value = normalized.slice(index + 1).trim();
     if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
       value = value.slice(1, -1);
     }
@@ -59,18 +62,18 @@ export function loadCloudflareAccountsConfig(workspaceRoot = findWorkspaceRoot()
 }
 
 export function getCloudflareAccountAliasForSite(ctx: SiteContext, overrideAlias?: string): string {
-  return overrideAlias || ctx.siteConfig.deployment.accountAlias || ctx.siteId;
+  return overrideAlias || ctx.siteConfig.deployment.accountAlias || DEFAULT_SHARED_ACCOUNT_ALIAS;
 }
 
 export function resolveCloudflareAccountForSite(
   ctx: SiteContext,
   options: { accountAlias?: string; workspaceRoot?: string } = {}
 ): ResolvedCloudflareAccount {
-  const alias = getCloudflareAccountAliasForSite(ctx, options.accountAlias);
   const config = loadCloudflareAccountsConfig(options.workspaceRoot ?? ctx.workspaceRoot);
-  const profile = config.accounts[alias];
+  const alias = options.accountAlias && config.accounts[options.accountAlias] ? options.accountAlias : DEFAULT_SHARED_ACCOUNT_ALIAS;
+  const profile = config.accounts[alias] ?? config.accounts[DEFAULT_SHARED_ACCOUNT_ALIAS];
   if (!profile) {
-    throw new Error(`Cloudflare account profile "${alias}" is not defined in cloudflare.accounts.yaml.`);
+    throw new Error(`Cloudflare account profile "${DEFAULT_SHARED_ACCOUNT_ALIAS}" is not defined in cloudflare.accounts.yaml.`);
   }
 
   const accountId = process.env[profile.accountIdEnv];

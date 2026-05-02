@@ -147,9 +147,9 @@ function validateHomeLayout(ctx: SiteContext): ValidationIssue[] {
 
 function validateDeploymentAccount(ctx: SiteContext): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
-  const alias = ctx.siteConfig.deployment.accountAlias ?? ctx.siteId;
+  const alias = 'shared';
   if (!ctx.siteConfig.deployment.accountAlias) {
-    issues.push({ level: 'P1', code: 'CLOUDFLARE_ACCOUNT_ALIAS_MISSING', message: 'deployment.accountAlias is missing; local deploy will fall back to site id.' });
+    issues.push({ level: 'P2', code: 'CLOUDFLARE_ACCOUNT_ALIAS_MISSING', message: 'deployment.accountAlias is missing; local deploy will fall back to the shared Cloudflare account.' });
   }
 
   try {

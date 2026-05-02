@@ -16,11 +16,11 @@ The scripts handle site config updates, Pages project creation, Pages custom dom
 
 ## Required Cloudflare accounts
 
-Each site resolves its Cloudflare account through `deployment.accountAlias` and `cloudflare.accounts.yaml`. Copy `.env.example` to `.env.local`, then fill the account ID and API token env vars for the site accounts you manage locally:
+Each site resolves its Cloudflare account through `deployment.accountAlias` and `cloudflare.accounts.yaml`. Copy `.env.example` to `.env.local`, then fill the shared account ID and API token env vars:
 
 ```bash
-CF_ACCOUNT_TYPING_SPEED_TEST=...
-CF_TOKEN_TYPING_SPEED_TEST=...
+CF_ACCOUNT=...
+CF_TOKEN=...
 ```
 
 Use `pnpm cf accounts list` to see the aliases and env var names. Use `pnpm cf accounts check --all` after `.env.local` is populated. Tokens should have access to manage Cloudflare Pages projects and read/write DNS records for their target zones.

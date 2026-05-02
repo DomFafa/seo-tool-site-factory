@@ -39,6 +39,6 @@ seo:
     status: unknown
 deployment:
   provider: cloudflare-pages
-  accountAlias: weighted-grade-calculator
+  accountAlias: shared
   projectName: seo-tool-weighted-grade-calculator
   outputDir: dist/sites/weighted-grade-calculator

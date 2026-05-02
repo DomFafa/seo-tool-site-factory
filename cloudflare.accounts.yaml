@@ -1,64 +1,6 @@
 schemaVersion: 1
-
-# One site = one Cloudflare account profile.
-# This file is safe to commit: it contains only env var names, not secrets.
 accounts:
-  typing-speed-test:
-    label: Typing Speed Test Cloudflare Account
-    accountIdEnv: CF_ACCOUNT_TYPING_SPEED_TEST
-    apiTokenEnv: CF_TOKEN_TYPING_SPEED_TEST
-
-  convertir-imagen-a-png:
-    label: Convertir Imagen a PNG Cloudflare Account
-    accountIdEnv: CF_ACCOUNT_CONVERTIR_IMAGEN_A_PNG
-    apiTokenEnv: CF_TOKEN_CONVERTIR_IMAGEN_A_PNG
-
-  cursive-generator:
-    label: Cursive Generator Cloudflare Account
-    accountIdEnv: CF_ACCOUNT_CURSIVE_GENERATOR
-    apiTokenEnv: CF_TOKEN_CURSIVE_GENERATOR
-
-  cursed-text-generator:
-    label: Cursed Text Generator Cloudflare Account
-    accountIdEnv: CF_ACCOUNT_CURSED_TEXT_GENERATOR
-    apiTokenEnv: CF_TOKEN_CURSED_TEXT_GENERATOR
-
-  anagram-solver:
-    label: Anagram Solver Cloudflare Account
-    accountIdEnv: CF_ACCOUNT_ANAGRAM_SOLVER
-    apiTokenEnv: CF_TOKEN_ANAGRAM_SOLVER
-
-  cursive-alphabet:
-    label: Cursive Alphabet Cloudflare Account
-    accountIdEnv: CF_ACCOUNT_CURSIVE_ALPHABET
-    apiTokenEnv: CF_TOKEN_CURSIVE_ALPHABET
-
-  typing-practice:
-    label: Typing Practice Cloudflare Account
-    accountIdEnv: CF_ACCOUNT_TYPING_PRACTICE
-    apiTokenEnv: CF_TOKEN_TYPING_PRACTICE
-
-  typing-practice-paragraph:
-    label: Typing Practice Paragraph Cloudflare Account
-    accountIdEnv: CF_ACCOUNT_TYPING_PRACTICE_PARAGRAPH
-    apiTokenEnv: CF_TOKEN_TYPING_PRACTICE_PARAGRAPH
-
-  typing-test-online:
-    label: Typing Test Online Cloudflare Account
-    accountIdEnv: CF_ACCOUNT_TYPING_TEST_ONLINE
-    apiTokenEnv: CF_TOKEN_TYPING_TEST_ONLINE
-
-  correcteur-orthographe:
-    label: Correcteur Orthographe Cloudflare Account
-    accountIdEnv: CF_ACCOUNT_CORRECTEUR_ORTHOGRAPHE
-    apiTokenEnv: CF_TOKEN_CORRECTEUR_ORTHOGRAPHE
-
-  convert-image-to-png:
-    label: Convert Image to PNG Demo Cloudflare Account
-    accountIdEnv: CF_ACCOUNT_CONVERT_IMAGE_TO_PNG
-    apiTokenEnv: CF_TOKEN_CONVERT_IMAGE_TO_PNG
-
-  weighted-grade-calculator:
-    label: Weighted Grade Calculator Cloudflare Account
-    accountIdEnv: CF_ACCOUNT_WEIGHTED_GRADE_CALCULATOR
-    apiTokenEnv: CF_TOKEN_WEIGHTED_GRADE_CALCULATOR
+  shared:
+    label: Shared Cloudflare Account
+    accountIdEnv: CF_ACCOUNT
+    apiTokenEnv: CF_TOKEN

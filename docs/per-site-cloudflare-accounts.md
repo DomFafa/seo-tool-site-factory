@@ -1,26 +1,23 @@
-# Per-site Cloudflare account deployment
+# Shared Cloudflare account deployment
 
 Status: v1 local deployment model
 
 ## Decision
 
-Each public site can use its own Cloudflare account. Deployment remains local-only. GitHub Actions should run checks/builds only and must not deploy.
+All public sites can share one Cloudflare account and one API token. Deployment remains local-only. GitHub Actions should run checks/builds only and must not deploy.
 
-The system resolves Cloudflare credentials per site from:
+The system resolves Cloudflare credentials from:
 
-1. `domains.launch.yaml` `sites.<site-id>.cloudflareAccount`, if present
-2. `sites/<site-id>/site.config.yaml` `deployment.accountAlias`
-3. fallback: `<site-id>`
+1. `cloudflare.accounts.yaml`
+2. `.env.local` or your shell environment
 
-The account alias is looked up in `cloudflare.accounts.yaml`. That file only contains env var names and is safe to commit. Secrets stay in `.env.local` or your shell environment.
+The config file only contains the shared env var names and is safe to commit. Secrets stay in `.env.local` or your shell environment.
 
 ## Files
 
 ```txt
-cloudflare.accounts.yaml       # account aliases -> env var names; safe to commit
-.env.local                     # real account IDs and tokens; do not commit
-domains.launch.yaml            # site -> domain + optional cloudflareAccount override
-sites/<site-id>/site.config.yaml # deployment.accountAlias default
+cloudflare.accounts.yaml   # shared env var names; safe to commit
+.env.local                 # real account ID and token; do not commit
 ```
 
 ## Example
@@ -29,24 +26,15 @@ sites/<site-id>/site.config.yaml # deployment.accountAlias default
 # cloudflare.accounts.yaml
 schemaVersion: 1
 accounts:
-  typing-speed-test:
-    accountIdEnv: CF_ACCOUNT_TYPING_SPEED_TEST
-    apiTokenEnv: CF_TOKEN_TYPING_SPEED_TEST
-```
-
-```yaml
-# sites/typing-speed-test/site.config.yaml
-deployment:
-  provider: cloudflare-pages
-  accountAlias: typing-speed-test
-  projectName: seo-tool-typing-speed-test
-  outputDir: dist/sites/typing-speed-test
+  shared:
+    accountIdEnv: CF_ACCOUNT
+    apiTokenEnv: CF_TOKEN
 ```
 
 ```bash
 # .env.local
-CF_ACCOUNT_TYPING_SPEED_TEST=...
-CF_TOKEN_TYPING_SPEED_TEST=...
+export CF_ACCOUNT=...
+export CF_TOKEN=...
 ```
 
 ## Local-only workflow
@@ -54,36 +42,24 @@ CF_TOKEN_TYPING_SPEED_TEST=...
 ```bash
 pnpm cf accounts list
 pnpm cf accounts check --all
-pnpm domain create-project typing-speed-test
-pnpm domain check typing-speed-test
-pnpm domain bind typing-speed-test
-pnpm domain redirects typing-speed-test --dry-run
-pnpm domain configure typing-speed-test
-pnpm domain deploy typing-speed-test
-pnpm domain verify typing-speed-test
-pnpm domain go-live typing-speed-test --yes
+pnpm site deploy random-date-generator --production
 ```
 
 ## Rules
 
-- Do not use a shared global Cloudflare token for all sites.
 - Do not rely on `wrangler login` account switching for production deploys.
-- Keep each site zone and Pages project in the same Cloudflare account.
-- Let `pnpm domain bind --ensure-dns` manage Pages CNAME targets; it reads the real Pages subdomain from Cloudflare.
-- Use the Cloudflare zone setting recommendations in `docs/technical-seo-guardrails.md` after a real domain is live. In particular, keep Crawler Hints on and Rocket Loader off.
+- Keep every site project in the same Cloudflare account unless you intentionally split accounts later.
 - Keep `.env.local` out of git.
-- Do not add GitHub Actions deployment until the local workflow has been stable for several real domains.
-- `pnpm domain go-live --all` is intentionally refused.
 
 ## Token permissions
 
-For each site account token, start with:
+For the shared account token, start with:
 
 - Cloudflare Pages edit permission
 - Zone read permission
-- DNS edit permission, only if you use `--ensure-dns` to replace same-host `A`, `AAAA`, or `CNAME` records
-- Account `Account Rule Lists` read/write permissions, only if you use `pnpm domain redirects --ensure`
-- Account `Mass URL Redirects` read/write permissions, only if you use `pnpm domain redirects --ensure`
+- DNS edit permission, only if you later use `--ensure-dns`
+- Account `Account Rule Lists` read/write permissions, only if you later use `pnpm domain redirects --ensure`
+- Account `Mass URL Redirects` read/write permissions, only if you later use `pnpm domain redirects --ensure`
 
 Bulk Redirects need both permission groups. `Account Rule Lists` manages the redirect list and list items. `Mass URL Redirects` reads and updates the account `http_request_redirect` ruleset that enables the list. Cloudflare may show older labels as `Account Filter Lists` and `Bulk URL Redirects`; use the read/write variants for both.
 

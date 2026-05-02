@@ -30,4 +30,4 @@ deployment:
   provider: cloudflare-pages
   projectName: seo-tool-typing-practice-paragraph
   outputDir: dist/sites/typing-practice-paragraph
-  accountAlias: typing-practice-paragraph
+  accountAlias: shared

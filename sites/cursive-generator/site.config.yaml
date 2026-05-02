@@ -35,6 +35,6 @@ deployment:
   provider: cloudflare-pages
   projectName: seo-tool-cursive-generator
   outputDir: dist/sites/cursive-generator
-  accountAlias: cursive-generator
+  accountAlias: shared
 launch:
   stage: real-domain-indexed

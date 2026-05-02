@@ -30,4 +30,4 @@ deployment:
   provider: cloudflare-pages
   projectName: seo-tool-anagram-solver
   outputDir: dist/sites/anagram-solver
-  accountAlias: anagram-solver
+  accountAlias: shared

@@ -30,4 +30,4 @@ deployment:
   provider: cloudflare-pages
   projectName: seo-tool-cursive-alphabet
   outputDir: dist/sites/cursive-alphabet
-  accountAlias: cursive-alphabet
+  accountAlias: shared
