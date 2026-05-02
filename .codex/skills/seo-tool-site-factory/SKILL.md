@@ -117,11 +117,12 @@ Before writing code, score the opportunity using this model:
 ```text
 Total: 100
 
-1. User task clarity: 25
-2. Competitor weakness: 20
+1. User task clarity: 20
+2. Competitor weakness: 15
 3. Differentiation potential: 20
 4. SEO feasibility: 20
-5. Maintenance simplicity: 15
+5. Root-domain availability: 15
+6. Maintenance simplicity: 10
 ```
 
 Decision:
@@ -134,6 +135,14 @@ Decision:
 ```
 
 Write the decision into `sites/<site-id>/research/keyword-intent.md`.
+
+Root-domain availability is mandatory when Bing Webmaster Top 5 is captured. Read `references/root-domain-occupancy.md` and apply the rule:
+
+- Prefer and recommend keywords with `0` strongly keyword-matching root domains in Bing Top 5.
+- Treat `1` strong root-domain match as caution.
+- Treat `2` strong root-domain matches as occupied and avoid as first choice.
+- Treat `3+` strong root-domain matches as heavily occupied and do not recommend by default.
+- When the user asks which keywords to do next, list zero-occupancy keywords first and omit occupied keywords unless the user asks for fallback options.
 
 ### 2. Research competitors
 
@@ -185,6 +194,29 @@ Do not only list competitors. Convert findings into concrete build requirements.
 If Bing Webmaster access is blocked, do not silently replace it with a generic public SERP. Record `blocked-with-evidence`, then use user-supplied competitor URLs or existing repository examples only as fallback inputs and clearly mark them as `fallback, not Bing Webmaster ranking`.
 
 Additional adjacent-intent competitors are optional. They may be added only after the required Bing Webmaster top 5 are recorded, and they must be labeled as `reference competitor`, not part of the primary ranking set.
+
+#### Root-domain occupancy gate
+
+After the Bing Webmaster Top 5 rows are captured, apply `references/root-domain-occupancy.md`.
+
+`competitor-research.md` must record:
+
+```text
+Root-domain occupancy:
+- Strong keyword-matching root domains in Bing Top 5:
+- Matching domains:
+- Occupancy decision: open / partially occupied / occupied / heavily occupied
+- Recommendation impact: recommended / caution / avoid
+```
+
+`keyword-intent.md` must record:
+
+```text
+Root-domain availability score:
+Root-domain rule decision: pass / caution / fail
+```
+
+Do not recommend occupied keywords as priority opportunities when zero-occupancy alternatives exist.
 
 ### 3. Define the product
 
@@ -262,6 +294,8 @@ Use `/Users/bin/.codex/skills/frontend-design/SKILL.md` only when translating th
 Use the design direction template. It must be keyword-specific and include explicit UI differentiation from similar factory sites.
 
 For this repository, do not blindly overwrite root `DESIGN.md` for every single site. Prefer site-specific or cluster-specific design records unless the whole factory design system is changing.
+
+When the keyword fits a friendly utility experience, read `references/playful-utility-template.md`. The `weighted-grade-calculator` final UI is available as a template family, not a cloneable page. If reused, record the borrowed elements, differentiated elements, sub-template, and anti-clone decision in `design-direction.md`.
 
 ### 7. Review the design plan before implementation
 
@@ -462,6 +496,8 @@ UX requirements:
 - No ads near primary actions.
 - No raw user input in analytics events.
 
+Apply `references/customer-experience-testing.md` during implementation and review. If the first viewport shows a calculated result, the inputs that determine that result must not be hidden by default. Preserve input-result causality on desktop and mobile.
+
 ### 14. Pass the post-UI optimization gate
 
 After UI implementation, the site is not implementation-complete until UI quality has been reviewed or explicitly deferred with a reason.
@@ -481,6 +517,7 @@ Gate rules:
 - Run `qa` when UI interactions changed and direct fixes are allowed. Use `qa-only` instead when the user asks for report-only QA or when fixes need approval first.
 - Run `benchmark` before launch, after large CSS/JS changes, or after adding dependencies that could affect page weight.
 - Capture browser evidence after meaningful UI work: desktop screenshot, 390px mobile screenshot, first-viewport tool visibility, main task path, visual hierarchy issues, fixes applied, and remaining issues.
+- Run the customer-experience causality checks from `references/customer-experience-testing.md`: users must understand what the result means, where it came from, how to change it, and why it changed or did not change.
 - If browser tooling or screenshots are unavailable, record `Deferred:` with the blocker and cap `Launch readiness <= 5`.
 - Record findings, fixes, or `Deferred:` reasons in `sites/<site-id>/research/design-review.md` and `sites/<site-id>/research/acceptance-tests.md`.
 

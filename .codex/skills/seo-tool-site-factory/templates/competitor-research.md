@@ -139,7 +139,18 @@ If Bing Webmaster is `blocked-with-evidence`, record the exact blocker and mark 
 - Ranking small sites:
 - Needs Bing Webmaster recapture: yes / no
 
-## 5. Competitor Snapshot
+## 5. Root-Domain Occupancy
+
+Use `references/root-domain-occupancy.md`.
+
+- Strong keyword-matching root domains in Bing Top 5:
+- Matching domains:
+  -
+- Occupancy decision: open / partially occupied / occupied / heavily occupied
+- Recommendation impact: recommended / caution / avoid
+- Notes:
+
+## 6. Competitor Snapshot
 
 | Bing rank | URL | Page type | Tool above fold | Core features | UX weakness | SEO weakness | Opportunity |
 |---:|---|---|---|---|---|---|---|
@@ -149,7 +160,7 @@ If Bing Webmaster is `blocked-with-evidence`, record the exact blocker and mark 
 | 4 |  |  |  |  |  |  |  |
 | 5 |  |  |  |  |  |  |  |
 
-## 6. Feature Matrix
+## 7. Feature Matrix
 
 | Feature | Rank 1 | Rank 2 | Rank 3 | Rank 4 | Rank 5 | Required for us | Our improvement |
 |---|---|---|---|---|---|---|---|
@@ -164,7 +175,7 @@ If Bing Webmaster is `blocked-with-evidence`, record the exact blocker and mark 
 | Accessibility |  |  |  |  |  |  |  |
 | Edge-case handling |  |  |  |  |  |  |  |
 
-## 7. UX Teardown
+## 8. UX Teardown
 
 ### Common winning patterns
 
@@ -193,7 +204,7 @@ If Bing Webmaster is `blocked-with-evidence`, record the exact blocker and mark 
 - Mobile layout must avoid horizontal scrolling.
 - Ads must not appear near primary actions.
 
-## 8. SEO Teardown
+## 9. SEO Teardown
 
 | SEO item | Competitor pattern | Gap | Our requirement |
 |---|---|---|---|
@@ -208,7 +219,7 @@ If Bing Webmaster is `blocked-with-evidence`, record the exact blocker and mark 
 | Schema |  |  |  |
 | Canonical/indexing |  |  |  |
 
-## 9. Technical Observations
+## 10. Technical Observations
 
 | Area | Competitor issue | Our requirement |
 |---|---|---|

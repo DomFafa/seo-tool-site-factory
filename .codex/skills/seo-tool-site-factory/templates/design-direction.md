@@ -135,7 +135,20 @@ This site must avoid:
 |  |  |  |
 |  |  |  |
 
-## 14. Design Skill Decisions
+## 14. Template Family And Anti-Clone Plan
+
+If using the `Playful Utility Tool` family, read `references/playful-utility-template.md`.
+
+- Template family:
+- Sub-template:
+- Borrowed elements:
+  -
+- Differentiated elements:
+  -
+- Similarity risk: low / medium / high
+- Anti-clone decision:
+
+## 15. Design Skill Decisions
 
 ### Design consultation
 
@@ -156,7 +169,7 @@ This site must avoid:
 - Why this direction is better for the keyword:
 - What must not change during frontend implementation:
 
-## 14. Approved References
+## 16. Approved References
 
 - Mockup / board path:
 - Chosen variant:

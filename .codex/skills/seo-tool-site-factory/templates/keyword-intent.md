@@ -38,16 +38,26 @@
 
 | Factor | Max | Score | Notes |
 |---|---:|---:|---|
-| User task clarity | 25 |  |  |
-| Competitor weakness | 20 |  |  |
+| User task clarity | 20 |  |  |
+| Competitor weakness | 15 |  |  |
 | Differentiation potential | 20 |  |  |
 | SEO feasibility | 20 |  |  |
-| Maintenance simplicity | 15 |  |  |
+| Root-domain availability | 15 |  |  |
+| Maintenance simplicity | 10 |  |  |
 | Total | 100 |  |  |
 
 Decision: `standalone-site` / `cluster-page` / `skip`
 
 Reason:
+
+## Root-Domain Availability
+
+Use `references/root-domain-occupancy.md` after Bing Webmaster Top 5 is captured.
+
+- Strong keyword-matching root domains in Bing Top 5:
+- Root-domain availability score:
+- Root-domain rule decision: pass / caution / fail
+- Recommendation impact: recommended / caution / avoid
 
 
 ## Keyword Cluster

@@ -34,6 +34,19 @@
 - Page does not shift when result appears.
 - Ads are not placed near primary actions.
 
+## Customer Experience Causality Tests
+
+Use `references/customer-experience-testing.md`.
+
+- Main result explains what it represents.
+- Inputs that affect the main result are visible by default.
+- Editing a result-driving input changes the main result.
+- Editing a planner-only or secondary input does not change the current result, and the distinction is clear.
+- Preset switching preserves user edits or clearly warns before reset.
+- Invalid input blocks copy/export actions.
+- Error messages identify the exact row or field to fix.
+- Mobile layout preserves the same input-result causality.
+
 ## SEO Tests
 
 - Title exists.
@@ -54,6 +67,9 @@
 - If status is `blocked-with-evidence`, attempted URL, timestamp, blocker text or screenshot/artifact, fallback source, and fallback confidence are recorded.
 - If status is `not-attempted`, implementation edit gate is marked blocked unless the user explicitly asked for code-only work.
 - Public SERP results are not labeled as Bing Webmaster ranking competitors.
+- Root-domain occupancy is recorded from Bing Webmaster Top 5.
+- Root-domain availability score is included in `keyword-intent.md`.
+- Priority recommendation is limited to zero-occupancy keywords unless the user explicitly asks for fallback options.
 
 ## Accessibility Tests
 

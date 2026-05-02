@@ -108,8 +108,12 @@ Differentiation choices for this site:
 
 - Tool visible early.
 - Main task is obvious.
+- Inputs that determine the main result are visible by default.
+- Main result label explains what the result represents.
+- Users can tell which inputs change the main result and which inputs affect secondary planning/output only.
 - Examples are useful.
 - Copy action is reliable.
+- Copy/export is disabled when the result is invalid or misleading.
 - Mobile layout is usable.
 - Privacy note is close to the tool.
 - Page does not feel like a thin template.

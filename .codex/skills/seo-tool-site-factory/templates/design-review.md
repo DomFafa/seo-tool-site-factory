@@ -111,7 +111,22 @@ What would make this a 10/10:
 | 4 | Copies or uses result |  |  |
 | 5 | Reads extra guidance if needed |  |  |
 
-## 8. First Viewport And Responsive Findings
+## 8. Customer Experience Causality Review
+
+Use `references/customer-experience-testing.md`.
+
+| Check | Result | Evidence / fix |
+|---|---|---|
+| Main result explains what it represents |  |  |
+| Inputs that affect the main result are visible by default |  |  |
+| Editing result-driving input changes the main result |  |  |
+| Editing planner-only/secondary input has clear distinction |  |  |
+| Preset switching preserves user edits or warns before reset |  |  |
+| Invalid input blocks copy/export actions |  |  |
+| Errors identify the exact row or field to fix |  |  |
+| Mobile preserves input-result causality |  |  |
+
+## 9. First Viewport And Responsive Findings
 
 | Check | Desktop result | 390px mobile result | Fix required |
 |---|---|---|---|
@@ -122,7 +137,7 @@ What would make this a 10/10:
 | Result area stable |  |  |  |
 | Content hierarchy clear |  |  |  |
 
-## 9. AI Slop / Template Risk
+## 10. AI Slop / Template Risk
 
 | Risk | Present? | Fix |
 |---|---|---|
@@ -133,14 +148,14 @@ What would make this a 10/10:
 | Reused block rhythm |  |  |
 | Vague marketing copy |  |  |
 
-## 10. Design System Alignment
+## 11. Design System Alignment
 
 - Existing `DESIGN.md` used:
 - Cluster design reused:
 - Site-specific deviations:
 - Reason deviations are justified:
 
-## 11. Responsive And Accessibility Review
+## 12. Responsive And Accessibility Review
 
 | Requirement | Decision | Open issue |
 |---|---|---|
@@ -151,29 +166,29 @@ What would make this a 10/10:
 | Screen reader feedback |  |  |
 | Color contrast |  |  |
 
-## 12. Approved Mockups / Boards
+## 13. Approved Mockups / Boards
 
 | Artifact | Path / URL | Decision | Notes |
 |---|---|---|---|
 |  |  |  |  |
 
-## 13. Required Plan Changes Before Implementation
+## 14. Required Plan Changes Before Implementation
 
 -
 
-## 14. Deferred Decisions
+## 15. Deferred Decisions
 
 | Decision | Why deferred | Missing evidence | Impact | Next action |
 |---|---|---|---|---|
 |  |  |  |  |  |
 
-## 15. Post-UI Fix Log
+## 16. Post-UI Fix Log
 
 | Finding | Evidence | Fix applied | Remaining risk |
 |---|---|---|---|
 |  |  |  |  |
 
-## 16. Implementation Notes
+## 17. Implementation Notes
 
 Changes that must be reflected in:
 
