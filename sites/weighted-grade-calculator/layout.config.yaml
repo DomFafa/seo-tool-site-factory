@@ -3,6 +3,22 @@ recipe: playful-tool
 chrome:
   navVariant: compact
   footerVariant: simple
+  headerLinks:
+    - label: FAQ
+      href: /faq/
+    - label: Contact
+      href: /contact/
+  footerLinks:
+    - label: About
+      href: /about/
+    - label: Contact
+      href: /contact/
+    - label: Privacy
+      href: /privacy/
+    - label: FAQ
+      href: /faq/
+    - label: Calculation method
+      href: /calculation-method/
 home:
   blocks:
     - type: hero

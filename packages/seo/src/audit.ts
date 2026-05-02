@@ -2,7 +2,7 @@ import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { gzipSync } from 'node:zlib';
 import type { ContentDocument, SiteContext } from '@factory/site-core';
-import { getIndexableLocales, getIndexingMode, isPagesDevHost, isRealDomain, listGuideContent, loadFaqContent, loadHomeContent, shouldAllowRobotsCrawl } from '@factory/site-core';
+import { getIndexableLocales, getIndexingMode, isPagesDevHost, isRealDomain, listGuideContent, listPageContent, loadFaqContent, loadHomeContent, shouldAllowRobotsCrawl } from '@factory/site-core';
 import { buildPageSeo } from './metadata';
 import { generateRobotsTxt } from './robots';
 import { getSitemapEntries } from './sitemap';
@@ -12,7 +12,7 @@ const issue = (level: SeoIssue['level'], code: string, message: string, file?: s
 const isTrailingSlashUrl = (url: string) => /\/$/.test(new URL(url).pathname);
 const countMarkdownH1 = (body: string) => body.split('\n').filter((line) => /^#\s+/.test(line.trim())).length;
 
-function validateDoc(ctx: SiteContext, doc: ContentDocument, pageType: 'home' | 'guide', slug?: string): SeoIssue[] {
+function validateDoc(ctx: SiteContext, doc: ContentDocument, pageType: 'home' | 'guide' | 'page', slug?: string): SeoIssue[] {
   const issues: SeoIssue[] = [];
   const seo = buildPageSeo(ctx, { locale: doc.locale, page: doc, pageType, slug });
   if (seo.title.length < 20) issues.push(issue('P2', 'TITLE_SHORT', `Title is short (${seo.title.length} chars).`, relative(ctx.workspaceRoot, doc.filePath)));
@@ -35,6 +35,7 @@ async function allDocs(ctx: SiteContext): Promise<ContentDocument[]> {
     const faq = await loadFaqContent(ctx, locale).catch(() => null);
     if (faq) docs.push(faq);
     docs.push(...await listGuideContent(ctx, locale).catch(() => []));
+    docs.push(...await listPageContent(ctx, locale).catch(() => []));
   }
   return docs;
 }
@@ -198,6 +199,7 @@ export async function auditSiteSeo(ctx: SiteContext): Promise<SeoIssue[]> {
     slugs.set(key, relative(ctx.workspaceRoot, doc.filePath));
     if (doc.kind === 'home') issues.push(...validateDoc(ctx, doc, 'home'));
     if (doc.kind === 'guide') issues.push(...validateDoc(ctx, doc, 'guide', doc.frontmatter.slug));
+    if (doc.kind === 'page') issues.push(...validateDoc(ctx, doc, 'page', doc.frontmatter.slug));
   }
   issues.push(...auditAds(ctx), ...auditAnalyticsSafeFields(ctx), ...lintSitePublicContent(ctx), ...auditCloudflareStaticFiles(ctx));
   return issues;

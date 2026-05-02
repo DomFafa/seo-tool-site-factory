@@ -104,13 +104,20 @@ export const LayoutBlockSchema = z.object({
   props: z.record(z.any()).default({})
 });
 
+const ChromeLinkSchema = z.object({
+  label: z.string().min(1),
+  href: z.string().min(1)
+});
+
 export const LayoutConfigSchema = z.object({
   schemaVersion: z.number().int().default(1),
   recipe: z.string().default('tool-first'),
   chrome: z.object({
     navVariant: z.string().default('compact'),
-    footerVariant: z.string().default('simple')
-  }).default({ navVariant: 'compact', footerVariant: 'simple' }),
+    footerVariant: z.string().default('simple'),
+    headerLinks: z.array(ChromeLinkSchema).default([]),
+    footerLinks: z.array(ChromeLinkSchema).default([])
+  }).default({ navVariant: 'compact', footerVariant: 'simple', headerLinks: [], footerLinks: [] }),
   home: z.object({
     blocks: z.array(LayoutBlockSchema).min(1).default([
       { type: 'hero', variant: 'simple', props: {} },

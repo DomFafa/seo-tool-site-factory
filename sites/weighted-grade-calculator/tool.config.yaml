@@ -13,3 +13,9 @@ analytics:
 options:
   defaultPreset: standard
   maxRows: 12
+  applicationSubCategory: EducationApplication
+  featureList:
+    - Weighted grade calculation
+    - Category weight validation
+    - Final grade planning
+    - Local-only grade inputs

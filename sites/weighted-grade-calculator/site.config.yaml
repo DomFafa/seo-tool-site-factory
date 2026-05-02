@@ -4,9 +4,9 @@ brandName: WeightedGrade
 category: calculator
 primaryKeyword: weighted grade calculator
 lifecycle:
-  status: draft
+  status: live
 launch:
-  stage: real-domain-noindex
+  stage: real-domain-indexed
 domains:
   production: weighted-gradecalculator.com
   canonicalHost: weighted-gradecalculator.com
@@ -16,11 +16,11 @@ defaultLocale: en
 locales:
   en:
     enabled: true
-    indexable: false
-    reviewed: false
+    indexable: true
+    reviewed: true
 indexing:
-  allowIndex: false
-  mode: allow-noindex
+  allowIndex: true
+  mode: index
 primaryTool: weighted-grade-calculator
 seo:
   defaultTitle: Weighted Grade Calculator - Category Weights & Final Grade Planner

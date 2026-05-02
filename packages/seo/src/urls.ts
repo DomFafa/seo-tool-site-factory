@@ -19,3 +19,11 @@ export function getGuidePath(ctx: SiteContext, locale: string, slug: string): st
 export function getGuideUrl(ctx: SiteContext, locale: string, slug: string): string {
   return new URL(getGuidePath(ctx, locale, slug), getBaseUrl(ctx)).toString();
 }
+
+export function getPagePath(ctx: SiteContext, locale: string, slug: string): string {
+  return locale === ctx.siteConfig.defaultLocale ? `/${slug}/` : `/${locale}/${slug}/`;
+}
+
+export function getPageUrl(ctx: SiteContext, locale: string, slug: string): string {
+  return new URL(getPagePath(ctx, locale, slug), getBaseUrl(ctx)).toString();
+}

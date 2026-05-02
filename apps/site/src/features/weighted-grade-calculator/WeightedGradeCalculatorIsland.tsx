@@ -202,8 +202,8 @@ export default function WeightedGradeCalculatorIsland({ locale, config }: Props)
 
       <section className="wgc-tool-card" aria-labelledby="wgc-result-title">
         <div className="wgc-result-strip">
-          <p className="wgc-kicker">Current grade from included categories</p>
-          <h2 id="wgc-result-title">{visibleGrade === null ? '--' : formatPercent(visibleGrade)}</h2>
+          <h2 id="wgc-result-title" className="wgc-kicker">Current grade from included categories</h2>
+          <output className="wgc-result-value" aria-live="polite">{visibleGrade === null ? '--' : formatPercent(visibleGrade)}</output>
           <p className="wgc-help" aria-live="polite">{grade.messages[0]}</p>
           <div className={`wgc-meter wgc-meter--${grade.status}`} aria-label={`Included weight ${formatPercent(grade.totalWeight)}`}>
             <span style={{ width: `${Math.min(100, grade.totalWeight)}%` }}></span>
@@ -377,7 +377,8 @@ const styles = `
   font-size: 13px;
   font-weight: 800;
 }
-.wgc-result-strip h2 {
+.wgc-result-value {
+  display: block;
   margin: 0;
   color: #101828;
   font-size: clamp(38px, 6vw, 64px);
@@ -677,7 +678,7 @@ const styles = `
   .wgc-fields {
     grid-template-columns: 1fr;
   }
-  .wgc-result-strip h2 {
+  .wgc-result-value {
     font-size: 36px;
   }
   .wgc-needed strong {

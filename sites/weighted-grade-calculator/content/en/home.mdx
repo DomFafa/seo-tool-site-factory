@@ -3,8 +3,8 @@ title: "Weighted Grade Calculator - Category Weights & Final Grade Planner"
 description: "Calculate your weighted course grade from category weights and scores, check missing weights, and see what you need on a final or remaining assignment."
 slug: "weighted-grade-calculator"
 lastModified: "2026-05-02"
-index: false
-contentStatus: draft
+index: true
+contentStatus: approved
 ---
 
 ## What is a weighted grade?
@@ -20,6 +20,8 @@ Weighted grade = (score1 x weight1 + score2 x weight2 + ... ) / total included w
 ```
 
 If your included weights add to 100%, the result is a full course-grade estimate. If you only enter completed categories, the result is a current-grade estimate for the categories you have so far.
+
+This method follows the common syllabus approach: each category score is multiplied by its category weight, then the weighted points are added together. The calculator keeps blank grades out of the current-grade result unless you enter a score and include that row.
 
 ## Examples
 
@@ -39,4 +41,12 @@ If your included weights add to 100%, the result is a full course-grade estimate
 
 ## Important notes
 
-Different schools can use different grading scales, rounding policies, extra credit rules, and dropped-score policies. Use this calculator for planning and checking the math, then compare the result with your official gradebook or syllabus rules.
+Different schools can use different grading scales, rounding policies, extra credit rules, and dropped-score policies. This calculator is meant for planning and checking the math, not for replacing your official gradebook or syllabus rules.
+
+## Calculation method and trust
+
+WeightedGrade runs the calculation in your browser and does not send raw scores, category names, or target grades to analytics. The formula, examples, and FAQ were reviewed for the common percentage-based weighted grading model on May 2, 2026.
+
+The calculator does not automatically apply dropped lowest scores, curve adjustments, extra credit policies, late penalties, or school-specific rounding rules. If your class uses one of those policies, adjust the category score first or compare the result with your official gradebook.
+
+For questions or correction requests, contact contact@weighted-gradecalculator.com.

@@ -32,7 +32,7 @@ export type ContentFrontmatter = {
 export type ContentDocument = {
   filePath: string;
   locale: string;
-  kind: 'home' | 'faq' | 'guide';
+  kind: 'home' | 'faq' | 'guide' | 'page';
   frontmatter: ContentFrontmatter;
   body: string;
   html: string;

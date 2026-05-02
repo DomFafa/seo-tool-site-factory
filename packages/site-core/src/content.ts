@@ -68,3 +68,19 @@ export async function loadGuideContent(ctx: SiteContext, locale: string, slug: s
   if (!guide) throw new Error(`Guide not found for locale=${locale}, slug=${slug}`);
   return guide;
 }
+
+export async function listPageContent(ctx: SiteContext, locale: string): Promise<ContentDocument[]> {
+  const dir = join(ctx.siteDir, 'content', locale, 'pages');
+  if (!existsSync(dir)) return [];
+  const files = readdirSync(dir).filter((file) => file.endsWith('.md') || file.endsWith('.mdx')).sort();
+  const docs = [];
+  for (const file of files) docs.push(await readContentFile(ctx, locale, `pages/${file}`, 'page'));
+  return docs;
+}
+
+export async function loadPageContent(ctx: SiteContext, locale: string, slug: string): Promise<ContentDocument> {
+  const pages = await listPageContent(ctx, locale);
+  const page = pages.find((doc) => doc.frontmatter.slug === slug);
+  if (!page) throw new Error(`Page not found for locale=${locale}, slug=${slug}`);
+  return page;
+}

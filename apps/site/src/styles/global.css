@@ -34,6 +34,8 @@ a:hover { text-decoration: underline; }
 .content-card h2, .content-card h3 { line-height: 1.2; letter-spacing: 0; }
 .content-card p, .content-card li { color: #30343b; }
 .footer { border-top: 1px solid var(--factory-border); padding: 32px 0; margin-top: 56px; color: var(--factory-muted); font-size: 14px; }
+.footer-links { display: flex; flex-wrap: wrap; gap: 10px 16px; margin-top: 10px; }
+.footer-links a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
 .language-switcher { display: flex; gap: 8px; flex-wrap: wrap; }
 .language-switcher a { border: 1px solid var(--factory-border); border-radius: 999px; padding: 5px 10px; font-size: 13px; color: var(--factory-text); background: #fff; }
 .language-switcher a[aria-current="true"] { background: var(--factory-primary); color: white; border-color: var(--factory-primary); }

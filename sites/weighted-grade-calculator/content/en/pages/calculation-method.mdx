@@ -1,0 +1,43 @@
+---
+title: "Weighted Grade Calculation Method"
+description: "Review the formula, assumptions, and limitations used by the WeightedGrade calculator."
+slug: "calculation-method"
+lastModified: "2026-05-03"
+index: true
+contentStatus: approved
+---
+
+## Calculation method
+
+WeightedGrade uses the common weighted-average formula for percentage-based course categories:
+
+```text
+Weighted grade = (score1 x weight1 + score2 x weight2 + ... ) / total included weight
+```
+
+Each included category contributes its score multiplied by its category weight. The calculator then divides by the total included weight.
+
+## Current grade vs full course estimate
+
+If the included weights add to 100%, the result is a full course-grade estimate.
+
+If the included weights are below 100%, the result is a current-grade estimate for the categories entered so far. The remaining weight can be used in the final-grade planner.
+
+## Blank and excluded rows
+
+Blank scores are treated as missing, not zero. If a missing assignment should count as zero, enter `0` as the score and keep that row included.
+
+Rows that are not checked are excluded from the current-grade calculation.
+
+## Limitations
+
+The calculator does not automatically apply:
+
+- Dropped lowest scores.
+- Curve adjustments.
+- Extra credit policies.
+- Late penalties.
+- School-specific rounding.
+- GPA or credit-hour weighting.
+
+For official grade decisions, compare the result with your syllabus and gradebook.

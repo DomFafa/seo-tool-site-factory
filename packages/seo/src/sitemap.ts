@@ -1,7 +1,7 @@
-import { getIndexableLocales, listGuideContent, loadHomeContent, type SiteContext } from '@factory/site-core';
-import { getBaseUrl, getGuideUrl, getLocaleHomeUrl } from './urls';
+import { getIndexableLocales, listGuideContent, listPageContent, loadHomeContent, type SiteContext } from '@factory/site-core';
+import { getBaseUrl, getGuideUrl, getLocaleHomeUrl, getPageUrl } from './urls';
 
-export type SitemapEntry = { loc: string; lastmod: string; type: 'home' | 'guide' | 'tool' };
+export type SitemapEntry = { loc: string; lastmod: string; type: 'home' | 'guide' | 'page' | 'tool' };
 
 function escapeXml(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;').replace(/'/g, '&apos;');
@@ -20,6 +20,10 @@ export async function getSitemapEntries(ctx: SiteContext): Promise<SitemapEntry[
       for (const guide of guides) {
         if (guide.frontmatter.index && guide.frontmatter.contentStatus === 'approved') entries.push({ loc: getGuideUrl(ctx, locale, guide.frontmatter.slug), lastmod: guide.frontmatter.lastModified, type: 'guide' });
       }
+    }
+    const pages = await listPageContent(ctx, locale);
+    for (const page of pages) {
+      if (page.frontmatter.index && page.frontmatter.contentStatus === 'approved') entries.push({ loc: getPageUrl(ctx, locale, page.frontmatter.slug), lastmod: page.frontmatter.lastModified, type: 'page' });
     }
   }
   return entries;

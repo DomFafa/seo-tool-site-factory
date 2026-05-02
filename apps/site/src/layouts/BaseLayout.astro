@@ -82,6 +82,7 @@ const chromeCopy = locale === 'es'
         </a>
         <nav class="nav" aria-label={chromeCopy.navLabel}>
           <a href={seo.homeUrl}>{chromeCopy.home}</a>
+          {ctx.layoutConfig.chrome.headerLinks.map((link) => <a href={link.href}>{link.label}</a>)}
           <LanguageSwitcher ctx={ctx} locale={locale} />
         </nav>
       </div>
@@ -92,6 +93,11 @@ const chromeCopy = locale === 'es'
     <footer class={`footer footer--${ctx.layoutConfig.chrome.footerVariant}`}>
       <div class="container">
         <p>© {new Date().getFullYear()} {ctx.siteConfig.brandName}. {chromeCopy.footer}</p>
+        {ctx.layoutConfig.chrome.footerLinks.length > 0 && (
+          <nav class="footer-links" aria-label="Footer navigation">
+            {ctx.layoutConfig.chrome.footerLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+          </nav>
+        )}
       </div>
     </footer>
   </body>
