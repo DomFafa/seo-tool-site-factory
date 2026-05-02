@@ -1,0 +1,15 @@
+schemaVersion: 1
+toolId: weighted-grade-calculator
+executionModel: client-only
+privacy:
+  storesUserInput: false
+  processing: client-only
+analytics:
+  safeFields:
+    - locale
+    - action
+    - status
+    - targetStatus
+options:
+  defaultPreset: standard
+  maxRows: 12

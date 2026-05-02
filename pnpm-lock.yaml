@@ -87,6 +87,9 @@ importers:
       '@factory/typing-engine':
         specifier: workspace:*
         version: link:../../packages/tools/typing-engine
+      '@factory/weighted-grade-calculator':
+        specifier: workspace:*
+        version: link:../../packages/tools/weighted-grade-calculator
 
   packages/integrations:
     dependencies:
@@ -132,6 +135,8 @@ importers:
   packages/tools/image-converter: {}
 
   packages/tools/typing-engine: {}
+
+  packages/tools/weighted-grade-calculator: {}
 
 packages:
 

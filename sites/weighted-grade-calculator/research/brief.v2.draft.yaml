@@ -1,0 +1,101 @@
+schemaVersion: 2
+primaryKeyword: "weighted grade calculator"
+category: "calculator"
+
+keywordCluster:
+  - "weighted grade calculator"
+  - "grade calculator"
+  - "weighted average grade calculator"
+  - "final grade calculator"
+  - "class grade calculator"
+  - "grade weight calculator"
+
+intent:
+  userJob: "Students need to calculate an overall course grade from categories with different weights, then test what scores they need on remaining assignments or finals."
+  expectedAction: "Enter grade categories, weights, earned scores, and optional remaining work; get an instant weighted average, missing-weight warnings, and what-if final-grade scenarios."
+  primaryIntent: "tool-use"
+  secondaryIntents:
+    - "learn weighted grade formula"
+    - "check what score is needed on a final"
+    - "verify category weights add to 100%"
+
+competitorInsights:
+  commonStrengths:
+    - "Calculator appears early on ranking pages."
+    - "Formula or explanatory copy supports the tool."
+    - "Broad calculator domains can rank without exact-match roots."
+  commonWeaknesses:
+    - "Generic grade calculator pages can blur weighted grade, final grade, and average grade tasks."
+    - "Mobile row editing can become awkward if implemented as a wide table."
+    - "Blank grades and missing weights are often ambiguous."
+  ourOpportunities:
+    - "Make weight total status visible at all times."
+    - "Pair current weighted grade with final/remaining what-if solving."
+    - "Use realistic student presets and examples."
+
+productBoundary:
+  thisSiteIs:
+    - "A client-side weighted grade calculator."
+    - "A category weight checker."
+    - "A final or remaining score planner."
+  thisSiteIsNot:
+    - "A GPA calculator."
+    - "A school LMS."
+    - "An official transcript calculator."
+    - "An academic counseling tool."
+
+requiredFeatures:
+  - "Editable category rows with name, weight, score, and include/exclude behavior."
+  - "Live weighted grade result."
+  - "Total-weight meter with under, exact, and over states."
+  - "Target grade and remaining/final score solver."
+  - "Example presets for common course structures."
+  - "Copy result summary."
+  - "Clear/reset action."
+  - "Local-only privacy note."
+
+niceToHaveFeatures:
+  - "Optional standard letter-grade scale."
+  - "Points-to-percentage helper."
+  - "Local preset saving, off by default."
+
+edgeCases:
+  - empty input
+  - invalid input
+  - weight total below 100
+  - weight total above 100
+  - zero weight category
+  - blank score
+  - impossible target grade
+  - already secured target grade
+  - mobile use
+
+design:
+  direction: "Academic workbench: compact gradebook rows, visible weight meter, and result/what-if rail."
+  layoutRecipe: "tool-led first viewport with category editor and result rail"
+  visualPersonality: "calm classroom planner, precise, low anxiety"
+  typography: "clean sans-serif with tabular numerals for grade values"
+  colorSystem: "neutral worksheet surfaces with green valid states, amber warnings, and red invalid states"
+  density: "medium-high in the workbench, comfortable below the fold"
+  motion: "subtle result/copy feedback only"
+  antiTemplateConstraints:
+    - no generic centered hero plus three feature cards
+    - no decorative icon circles
+    - no default purple or blue gradient system
+    - no wide desktop-only table on mobile
+    - no article-first layout that buries the calculator
+  reviewedBeforeImplementation: true
+
+privacy:
+  storesUserInput: false
+  processing: client-only
+  analyticsRawInputAllowed: false
+
+qualityBar:
+  toolAboveFold: true
+  mobileFirst: true
+  noLoginForCoreTask: true
+  noAdsNearPrimaryActions: true
+  contentMustBeKeywordSpecific: true
+  designDirectionRequired: true
+  designReviewRequired: true

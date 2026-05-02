@@ -1,0 +1,43 @@
+schemaVersion: 1
+recipe: playful-tool
+chrome:
+  navVariant: compact
+  footerVariant: simple
+home:
+  blocks:
+    - type: hero
+      variant: friendly-tool
+      props:
+        eyebrow: Grade planning tool
+        title: Weighted Grade Calculator
+        description: Add category weights, check your current grade, and plan the score you need next.
+        badges: []
+    - type: tool
+      variant: dashed-card
+    - type: examples
+      variant: friendly-cards
+      props:
+        title: Weighted grade examples
+        items:
+          - "Homework 20%, quizzes 15%, exams 45%, final 20%."
+          - "A lab course with labs 30%, participation 10%, tests 40%, final 20%."
+          - "A final-heavy class where the final exam is 40% of the course."
+          - "Only completed categories entered so far, with the remaining weight still unknown."
+          - "A target-grade plan showing what is needed to finish with a 90%."
+    - type: howItWorks
+      variant: friendly-steps
+      props:
+        title: How to calculate a weighted grade
+        steps:
+          - Add each class category from your syllabus and enter its weight.
+          - Enter your current score for each category and check whether the weights add to 100%.
+          - Use the target-grade planner to estimate what score you need on the final or remaining work.
+    - type: privacyNote
+      variant: inline
+      props:
+        title: Local grade calculation
+        text: Your grades and category names stay in your browser. Raw scores are not collected in analytics.
+    - type: content
+      variant: lower-guide
+    - type: faq
+      variant: compact

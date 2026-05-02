@@ -57,3 +57,8 @@ accounts:
     label: Convert Image to PNG Demo Cloudflare Account
     accountIdEnv: CF_ACCOUNT_CONVERT_IMAGE_TO_PNG
     apiTokenEnv: CF_TOKEN_CONVERT_IMAGE_TO_PNG
+
+  weighted-grade-calculator:
+    label: Weighted Grade Calculator Cloudflare Account
+    accountIdEnv: CF_ACCOUNT_WEIGHTED_GRADE_CALCULATOR
+    apiTokenEnv: CF_TOKEN_WEIGHTED_GRADE_CALCULATOR

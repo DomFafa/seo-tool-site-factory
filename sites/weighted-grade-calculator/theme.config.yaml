@@ -1,0 +1,15 @@
+schemaVersion: 1
+name: weighted-grade-calculator
+personality: playful-seo-tool
+density: comfortable
+surface: panels
+colors:
+  primary: "#ff7a1a"
+  background: "#fff8f1"
+  surface: "#ffffff"
+  accent: "#17679a"
+radius: 14px
+layout: tool-first
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true

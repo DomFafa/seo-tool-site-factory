@@ -7,6 +7,8 @@ body.recipe-performance-dashboard { color: #181512; background: linear-gradient(
 body.recipe-word-solver { background: #f8fafc; }
 body.recipe-worksheet-learning { background: #fffdf7; }
 body.recipe-writing-assistant { background: linear-gradient(180deg, #f8fafc, #eef2f7); }
+body.recipe-apple-minimal { color: #1d1d1f; background: #f5f5f7; }
+body.recipe-playful-tool { color: #101828; background: #fff8f1; }
 .site-header--floating, .site-header--dark-floating { position: sticky; top: 12px; z-index: 20; width: min(1120px, calc(100% - 24px)); margin: 12px auto 0; border-radius: 999px; border: 1px solid rgba(148, 163, 184, .32); background: rgba(255, 255, 255, .82); backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(15, 23, 42, .08); }
 .site-header--dark-floating { color: #f8fafc; background: rgba(16, 16, 28, .82); border-color: rgba(255,255,255,.16); }
 .site-header--dark-floating a { color: inherit; }
@@ -219,8 +221,84 @@ body.recipe-elegant-generator .footer { border-top-color: rgba(124, 45, 18, .12)
 body.recipe-glitch-playground .content-card, body.recipe-glitch-playground .step-card, body.recipe-glitch-playground .example-card, body.recipe-glitch-playground .guide-card, body.recipe-glitch-playground .privacy-panel { color: #fff7ed; background: rgba(255, 247, 237, .07); border-color: rgba(248,113,113,.18); border-radius: 10px; }
 body.recipe-glitch-playground .content-card h2, body.recipe-glitch-playground .content-card h3, body.recipe-glitch-playground .content-card p, body.recipe-glitch-playground .content-card li { color: #f8fafc; }
 body.recipe-glitch-playground .hero-lead, body.recipe-glitch-playground .guide-card span { color: #fed7aa; }
+body.recipe-apple-minimal .site-header--compact { border-bottom: 0; background: rgba(245, 245, 247, .78); backdrop-filter: saturate(180%) blur(20px); }
+body.recipe-apple-minimal .site-header-inner { min-height: 48px; }
+body.recipe-apple-minimal .brand { color: #1d1d1f; font-size: 14px; font-weight: 700; }
+body.recipe-apple-minimal .brand-mark { width: 26px; height: 26px; border-radius: 7px; background: #1d1d1f; font-size: 13px; }
+body.recipe-apple-minimal .nav { font-size: 13px; }
+body.recipe-apple-minimal .nav a { color: #424245; }
+body.recipe-apple-minimal .page-block { padding: clamp(26px, 5vw, 62px) 0; }
+body.recipe-apple-minimal .page-block:first-child { padding-top: clamp(42px, 7vw, 78px); padding-bottom: 14px; }
+body.recipe-apple-minimal .page-block--hero-minimal-product { text-align: center; }
+body.recipe-apple-minimal .page-block--hero-minimal-product .eyebrow { color: #6e6e73; font-size: 13px; letter-spacing: 0; text-transform: none; }
+body.recipe-apple-minimal .page-block--hero-minimal-product h1 { max-width: 900px; margin: 0 auto 12px; color: #1d1d1f; font-size: clamp(3.2rem, 8vw, 7.4rem); line-height: .94; letter-spacing: 0; }
+body.recipe-apple-minimal .page-block--hero-minimal-product .hero-lead { max-width: 560px; margin: 0 auto; color: #6e6e73; font-size: clamp(1.15rem, 2vw, 1.55rem); line-height: 1.35; }
+body.recipe-apple-minimal .page-block--hero-minimal-product .badge-row { display: none; }
+body.recipe-apple-minimal .page-block--tool-apple-minimal { padding-top: 0; }
+body.recipe-apple-minimal .page-block--tool-apple-minimal .tool-shell { max-width: 1080px; margin: 0 auto; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+body.recipe-apple-minimal .example-card,
+body.recipe-apple-minimal .step-card,
+body.recipe-apple-minimal .privacy-panel,
+body.recipe-apple-minimal .content-card,
+body.recipe-apple-minimal .faq-card { border-color: transparent; border-radius: 28px; background: #ffffff; box-shadow: none; }
+body.recipe-apple-minimal .section-heading { text-align: center; }
+body.recipe-apple-minimal .section-heading .eyebrow { color: #6e6e73; letter-spacing: 0; text-transform: none; }
+body.recipe-apple-minimal .section-heading h2 { color: #1d1d1f; font-size: clamp(2rem, 4vw, 4rem); line-height: 1; }
+body.recipe-apple-minimal .example-grid,
+body.recipe-apple-minimal .step-grid { max-width: 980px; margin: 0 auto; }
+body.recipe-apple-minimal .content-card { max-width: 900px; margin-inline: auto; color: #1d1d1f; }
+body.recipe-apple-minimal .content-card p,
+body.recipe-apple-minimal .content-card li { color: #424245; }
+body.recipe-apple-minimal .footer { border-top-color: #e8e8ed; color: #6e6e73; }
+body.recipe-playful-tool .site-header--compact { border-bottom: 1px solid #ece0d5; background: #ffffff; box-shadow: 0 1px 0 rgba(16, 24, 40, .04), 0 10px 24px rgba(23, 103, 154, .06); backdrop-filter: none; }
+body.recipe-playful-tool .site-header-inner { min-height: 76px; max-width: 1320px; }
+body.recipe-playful-tool .brand { color: #101828; font-size: 19px; font-weight: 900; letter-spacing: 0; }
+body.recipe-playful-tool .brand-mark { position: relative; width: 42px; height: 42px; border: 3px solid #17679a; border-radius: 10px; background: #ffffff; color: #17679a; font-size: 17px; box-shadow: 5px 5px 0 #ffe1c2; }
+body.recipe-playful-tool .brand-mark::after { content: ""; position: absolute; right: -8px; top: -7px; width: 12px; height: 12px; border-radius: 999px; background: #ff7a1a; box-shadow: -14px 3px 0 #ff7a1a; }
+body.recipe-playful-tool .nav { gap: 18px; font-size: 15px; }
+body.recipe-playful-tool .nav > a { min-height: 38px; padding: 7px 13px; border-radius: 999px; color: #101828; font-weight: 800; }
+body.recipe-playful-tool .nav > a:hover { background: #fff3e8; color: #0f4c7a; text-decoration: none; }
+body.recipe-playful-tool .language-switcher a { min-width: 42px; min-height: 38px; display: inline-flex; align-items: center; justify-content: center; font-weight: 900; }
+body.recipe-playful-tool .language-switcher a[aria-current="true"] { border-color: #ff7a1a; background: #ff7a1a; color: #ffffff; box-shadow: 0 8px 18px rgba(255, 122, 26, .18); }
+body.recipe-playful-tool .page-block { padding: clamp(26px, 4vw, 48px) 0; }
+body.recipe-playful-tool .page-block:first-child { padding-top: clamp(18px, 3vw, 34px); padding-bottom: 4px; }
+body.recipe-playful-tool .page-block--hero-friendly-tool { position: relative; text-align: center; }
+body.recipe-playful-tool .page-block--hero-friendly-tool .eyebrow { margin-bottom: 8px; color: #ff7a1a; font-size: .9rem; letter-spacing: 0; text-transform: none; }
+body.recipe-playful-tool .page-block--hero-friendly-tool h1 { max-width: 920px; margin: 0 auto 10px; color: #101828; font-size: clamp(2.05rem, 4vw, 3.25rem); line-height: 1.08; letter-spacing: 0; }
+body.recipe-playful-tool .page-block--hero-friendly-tool .hero-lead { max-width: 580px; margin: 0 auto; color: #475467; font-size: clamp(1rem, 1.45vw, 1.12rem); line-height: 1.5; }
+body.recipe-playful-tool .page-block--hero-friendly-tool .badge-row { display: none; }
+body.recipe-playful-tool .page-block--tool-dashed-card { padding-top: 0; }
+body.recipe-playful-tool .page-block--tool-dashed-card .tool-shell { padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+body.recipe-playful-tool .section-heading { text-align: center; }
+body.recipe-playful-tool .section-heading .eyebrow { color: #ff7a1a; letter-spacing: 0; text-transform: none; }
+body.recipe-playful-tool .section-heading h2 { color: #101828; font-size: clamp(1.75rem, 3vw, 2.55rem); line-height: 1.1; }
+body.recipe-playful-tool .step-card,
+body.recipe-playful-tool .example-card,
+body.recipe-playful-tool .content-card,
+body.recipe-playful-tool .faq-card,
+body.recipe-playful-tool .privacy-panel { border: 1px solid #f0e1d3; border-radius: 16px; background: #ffffff; box-shadow: 0 10px 24px rgba(16, 24, 40, .06); }
+body.recipe-playful-tool .step-number { border-radius: 7px; background: #17679a; }
+body.recipe-playful-tool .content-card { max-width: 980px; margin-inline: auto; }
+body.recipe-playful-tool .content-card p,
+body.recipe-playful-tool .content-card li,
+body.recipe-playful-tool .example-card { color: #475467; }
+body.recipe-playful-tool .footer { border-top-color: #f0e1d3; color: #667085; }
 @media (max-width: 760px) { .page-block { padding: 24px 0; } .page-block--hero-metric .block-inner, .page-block--hero-test-setup .block-inner, .page-block--hero-upload .block-inner { display: block; } .page-block--hero-metric .block-inner::after, .page-block--hero-upload .block-inner::after { margin-top: 18px; } .step-grid, .example-grid, .guide-grid { grid-template-columns: 1fr; } .page-block--faq-split .content-card, .page-block--faq-split-panel .content-card { column-count: 1; } .page-block--privacyNote-badge-row .privacy-panel, .page-block--privacyNote-inline .privacy-panel { display: block; } }
 @media (max-width: 760px) {
+  body.recipe-playful-tool .site-header-inner { align-items: center; flex-direction: row; min-height: 64px; padding: 0 16px; }
+  body.recipe-playful-tool,
+  body.recipe-playful-tool main,
+  body.recipe-playful-tool .page-recipe { max-width: 100vw; overflow-x: clip; }
+  body.recipe-playful-tool .brand { min-width: 0; max-width: calc(100vw - 92px); font-size: 17px; }
+  body.recipe-playful-tool .brand span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  body.recipe-playful-tool .brand-mark { flex: 0 0 38px; width: 38px; height: 38px; }
+  body.recipe-playful-tool .nav { flex: 0 0 auto; gap: 6px; font-size: 14px; }
+  body.recipe-playful-tool .nav > a { display: none; }
+  body.recipe-playful-tool .language-switcher a { min-width: 38px; padding-inline: 8px; }
+  body.recipe-playful-tool .page-block:first-child { padding-top: 18px; }
+  body.recipe-playful-tool .page-block--hero-friendly-tool h1 { max-width: calc(100vw - 32px); font-size: clamp(1.75rem, 8.8vw, 2.25rem); line-height: 1.08; overflow-wrap: anywhere; }
+  body.recipe-playful-tool .page-block--hero-friendly-tool .hero-lead { font-size: 1rem; line-height: 1.45; }
+  body.recipe-playful-tool .section-heading h2 { font-size: clamp(1.55rem, 8vw, 2.15rem); }
   body.recipe-file-drop-studio .site-header-inner { align-items: center; flex-direction: row; min-height: 56px; padding: 0; }
   body.recipe-file-drop-studio .nav { gap: 10px; }
   body.recipe-file-drop-studio .page-block--hero-upload { padding: 18px 0 10px; }
@@ -298,4 +376,10 @@ body.recipe-glitch-playground .hero-lead, body.recipe-glitch-playground .guide-c
   .cursed-presets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .cursed-presets button { min-width: 0; padding-inline: 8px; }
   .cursed-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 430px) {
+  body.recipe-playful-tool .site-header-inner { padding-inline: 14px; }
+  body.recipe-playful-tool .brand { max-width: calc(100vw - 78px); }
+  body.recipe-playful-tool .nav > a { display: none; }
+  body.recipe-playful-tool .page-block--hero-friendly-tool h1 { max-width: calc(100vw - 32px); font-size: clamp(1.75rem, 8.8vw, 2.25rem); }
 }

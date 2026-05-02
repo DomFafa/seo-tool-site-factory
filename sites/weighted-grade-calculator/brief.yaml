@@ -1,0 +1,16 @@
+schemaVersion: 1
+primaryKeyword: weighted grade calculator
+category: calculator
+intent:
+  userJob: "Calculate an overall course grade from weighted categories, then test what score is needed on remaining assignments or a final."
+  expectedAction: "Enter grade categories, weights, and scores; review the weighted grade, weight total, and final-grade what-if result."
+productBoundary:
+  thisSiteIs:
+    - a weighted grade calculator
+    - a course category weight checker
+    - a final or remaining score planner
+  thisSiteIsNot:
+    - a GPA calculator
+    - a school LMS
+    - an official transcript calculator
+    - academic counseling

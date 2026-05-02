@@ -100,6 +100,9 @@ function selectedToolFor(toolId: string): { componentSource: string; rendererSou
   if (toolId === 'spellcheck') {
     return reactTool('../features/spellcheck/SpellcheckIsland', { renderer: 'react', toolId, mode: '' });
   }
+  if (toolId === 'weighted-grade-calculator') {
+    return reactTool('../features/weighted-grade-calculator/WeightedGradeCalculatorIsland', { renderer: 'react', toolId, mode: '' });
+  }
   throw new Error(`Tool renderer for ${toolId} is not implemented yet.`);
 }
 

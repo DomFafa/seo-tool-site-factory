@@ -1,0 +1,43 @@
+schemaVersion: 1
+id: weighted-grade-calculator
+brandName: WeightedGrade
+category: calculator
+primaryKeyword: weighted grade calculator
+lifecycle:
+  status: draft
+launch:
+  stage: pages-dev
+domains:
+  production: seo-tool-weighted-grade-calculator.pages.dev
+  canonicalHost: seo-tool-weighted-grade-calculator.pages.dev
+  aliases: []
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+  mode: disallow
+primaryTool: weighted-grade-calculator
+seo:
+  defaultTitle: Weighted Grade Calculator - Category Weights & Final Grade Planner
+  defaultDescription: Calculate your weighted course grade from category weights and scores, check missing weights, and see what you need on a final or remaining assignment.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+  sitemap:
+    split: false
+  ogImage:
+    mode: generated
+    path: /og-image.svg
+  pagesDevRedirect:
+    status: unknown
+deployment:
+  provider: cloudflare-pages
+  accountAlias: weighted-grade-calculator
+  projectName: seo-tool-weighted-grade-calculator
+  outputDir: dist/sites/weighted-grade-calculator
