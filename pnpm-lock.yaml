@@ -78,6 +78,9 @@ importers:
       '@factory/integrations':
         specifier: workspace:*
         version: link:../../packages/integrations
+      '@factory/random-date-generator':
+        specifier: workspace:*
+        version: link:../../packages/tools/random-date-generator
       '@factory/seo':
         specifier: workspace:*
         version: link:../../packages/seo
@@ -133,6 +136,8 @@ importers:
   packages/tools/cursed-text-generator: {}
 
   packages/tools/image-converter: {}
+
+  packages/tools/random-date-generator: {}
 
   packages/tools/typing-engine: {}
 

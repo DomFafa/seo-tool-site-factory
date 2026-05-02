@@ -1,0 +1,15 @@
+schemaVersion: 1
+name: random-date-generator
+personality: clean-utility
+density: comfortable
+surface: panels
+colors:
+  primary: "#ff9bc2"
+  background: "#fff7f2"
+  surface: "#ffffff"
+  accent: "#b8dcff"
+radius: 12px
+layout: tool-first
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true

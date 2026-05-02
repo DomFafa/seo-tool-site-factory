@@ -1,0 +1,34 @@
+---
+title: "Random Date Generator Method"
+description: "Review how Random Date Generator builds the eligible date pool, applies filters, and chooses random date results."
+slug: "calculation-method"
+lastModified: "2026-05-03"
+index: false
+contentStatus: draft
+---
+
+## Calculation method
+
+Random Date Generator builds a list of eligible calendar dates from the selected start date through the selected end date. The range is inclusive, so both boundary dates can appear in the result when they match the selected filters.
+
+## Weekday filtering
+
+After building the date pool, the tool removes dates whose weekdays are not selected. For example, a workdays filter keeps Monday through Friday and excludes Saturday and Sunday.
+
+## Unique and repeated dates
+
+When unique dates are enabled, each generated date can appear only once. If the requested count is larger than the eligible date pool, the tool reports the limit instead of repeating dates.
+
+When repeats are allowed, the same eligible date can be selected more than once.
+
+## Random selection
+
+The tool uses browser pseudo-randomness to select from the eligible dates. This is practical for test data, examples, content planning, and casual random choices.
+
+## Formatting
+
+After dates are selected, the tool formats them for display and copying. Formatting changes only the output text, not the underlying selected calendar dates.
+
+## Limitations
+
+The generator is not intended for cryptographic security, regulated drawings, official scheduling, legal deadlines, or systems that require an auditable random source.

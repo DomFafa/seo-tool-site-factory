@@ -1,0 +1,21 @@
+schemaVersion: 1
+primaryKeyword: random date generator
+category: generator
+intent:
+  userJob: "Generate one or many random dates inside a chosen range, optionally excluding weekends or specific weekdays, then copy the dates in a useful format."
+  expectedAction: "Choose a date range, count, weekday filter, output format, and generate copy-ready random dates."
+productBoundary:
+  thisSiteIs:
+    - a random date generator
+    - a random calendar date picker
+    - a local test-data date generator
+  thisSiteIsNot:
+    - a date planner
+    - a calendar app
+    - a true-random atmospheric noise service
+    - a scheduling or booking system
+tool:
+  start: Generate dates
+  copy: Copy dates
+  copied: Dates copied
+  clear: Reset

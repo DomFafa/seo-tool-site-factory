@@ -103,6 +103,9 @@ function selectedToolFor(toolId: string): { componentSource: string; rendererSou
   if (toolId === 'weighted-grade-calculator') {
     return reactTool('../features/weighted-grade-calculator/WeightedGradeCalculatorIsland', { renderer: 'react', toolId, mode: '' });
   }
+  if (toolId === 'random-date-generator') {
+    return reactTool('../features/random-date-generator/RandomDateGeneratorIsland', { renderer: 'react', toolId, mode: '' });
+  }
   throw new Error(`Tool renderer for ${toolId} is not implemented yet.`);
 }
 
@@ -259,7 +262,7 @@ function createSite(siteId: string, createArgs: string[]) {
   const category = argValue('--category', 'generator');
   const tool = argValue('--tool', siteId);
   const locale = argValue('--default-locale', 'en');
-  const accountAlias = argValue('--cloudflare-account', siteId);
+  const accountAlias = argValue('--cloudflare-account', 'shared');
   const siteDir = join(workspaceRoot, 'sites', siteId);
   if (existsSync(siteDir)) throw new Error(`Site already exists: ${siteDir}`);
   mkdirSync(join(siteDir, 'content', locale, 'guides'), { recursive: true });

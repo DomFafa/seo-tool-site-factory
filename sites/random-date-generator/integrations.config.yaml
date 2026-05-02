@@ -1,0 +1,32 @@
+schemaVersion: 1
+consent:
+  enabled: false
+  googleConsentMode: false
+  clarityConsentMode: false
+ads:
+  enabled: false
+  activeProvider: adsense
+  adsTxt:
+    enabled: false
+    entries: []
+  providers:
+    adsense:
+      enabled: false
+      publisherId: ""
+      slots: {}
+    adsterra:
+      enabled: false
+      placements: {}
+analytics:
+  googleAnalytics:
+    enabled: false
+  microsoftClarity:
+    enabled: false
+webmaster:
+  googleSearchConsole:
+    enabled: false
+  bingWebmaster:
+    enabled: false
+indexing:
+  indexNow:
+    enabled: false

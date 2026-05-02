@@ -1,0 +1,44 @@
+schemaVersion: 1
+id: random-date-generator
+brandName: Random Date Generator
+category: generator
+primaryKeyword: random date generator
+lifecycle:
+  status: draft
+launch:
+  stage: pages-dev
+domains:
+  production: random-dategenerator.com
+  canonicalHost: random-dategenerator.com
+  aliases:
+    - www.random-dategenerator.com
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+  mode: disallow
+primaryTool: random-date-generator
+seo:
+  defaultTitle: Random Date Generator - Pick Dates by Range, Format, and Weekday
+  defaultDescription: Generate one or many random dates from any range. Exclude weekends, choose output formats, sort results, and copy dates locally in your browser.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+  sitemap:
+    split: false
+  ogImage:
+    mode: generated
+    path: /og-image.svg
+  pagesDevRedirect:
+    status: configured
+deployment:
+  provider: cloudflare-pages
+  accountAlias: shared
+  projectName: seo-tool-random-date-generator
+  outputDir: dist/sites/random-date-generator

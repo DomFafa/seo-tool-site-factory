@@ -1,0 +1,28 @@
+schemaVersion: 2
+siteId: random-date-generator
+primaryKeyword: random date generator
+mode: implement
+locale: en
+market: US
+decision:
+  score: 83
+  recommendation: build standalone draft site
+competitorSource:
+  bingWebmasterStatus: blocked-with-evidence
+  fallbackApprovedByUser: true
+product:
+  userJob: Generate random dates inside a selected range with practical filters and copy-ready output.
+  mustHave:
+    - range controls
+    - count
+    - weekday filtering
+    - unique dates mode
+    - output formats
+    - copy action
+design:
+  reference: TinyWow
+  direction: clean utility workbench
+launch:
+  status: DRAFT_ONLY
+  indexing: false
+

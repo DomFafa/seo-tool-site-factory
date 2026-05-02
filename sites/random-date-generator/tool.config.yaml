@@ -1,0 +1,23 @@
+schemaVersion: 1
+toolId: random-date-generator
+executionModel: client-only
+privacy:
+  storesUserInput: false
+  processing: client-only
+analytics:
+  safeFields:
+    - locale
+    - action
+    - status
+    - format
+options:
+  defaultCount: 8
+  maxCount: 500
+  defaultFormat: iso
+  applicationSubCategory: UtilitiesApplication
+  featureList:
+    - Random date generation
+    - Date range filtering
+    - Weekday and weekend controls
+    - Multiple date output formats
+    - Local-only processing
