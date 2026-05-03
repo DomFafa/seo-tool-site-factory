@@ -93,6 +93,19 @@ All support pages should:
 - use `contentStatus: draft`
 - describe the current tool accurately
 - avoid claiming support inboxes, production review, or legal policies that do not exist yet
+- after the user confirms a production domain, replace placeholder contact wording with `contact@<canonical-domain>` on the Contact page and, when relevant, Privacy page contact wording
+
+### Mobile Header
+
+The mobile header must remain a single row. Do not stack the brand and navigation vertically on small screens.
+
+If header links do not fit comfortably, use a hamburger menu or equivalent compact disclosure:
+
+- brand mark and brand name stay on the left
+- menu button stays on the right
+- tapping opens Home, Contact, FAQ, language switcher, and any other configured header links
+- menu links must point to the same real pages as desktop navigation
+- text must not overflow outside the header
 
 ## UI Template 3: Soft Utility Inspired By Sejda
 

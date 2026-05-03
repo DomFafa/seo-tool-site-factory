@@ -607,13 +607,25 @@ pnpm ops report
 
 Fix P0 issues before considering the work complete. Note any P1/P2 tradeoffs in the final summary.
 
-For SEO reviews, launch preparation, or indexing changes, apply `references/google-seo-review.md` after build and record which issues were preventable before build versus detectable only after build/deploy.
+For SEO reviews, launch preparation, indexing changes, or any new site deployment, apply `references/google-seo-review.md` after build and record which issues were preventable before build versus detectable only after build/deploy.
+
+Full Google SEO deep review is a mandatory gate for deployed new sites. After a new site is deployed, create or update:
+
+```text
+sites/<site-id>/research/seo-audit.md
+```
+
+This file must contain the human/HTML deep review described in `references/google-seo-review.md`, including Strengths, Areas for Improvement, and Professional Recommendations with Google Search Central references, fixes, and priorities.
+
+Do not claim SEO self-check, Google SEO review, launch SEO review, or SEO audit is complete unless `sites/<site-id>/research/seo-audit.md` exists and reflects the current generated or deployed HTML. `pnpm seo audit <site-id>` is required automation, but it does not replace the manual generated-HTML review and does not by itself satisfy this gate.
 
 STOP: Do not enable indexing or call the site launch-ready until validation has no P0 issues and launch status is explicitly `READY_TO_INDEX`.
 
 ### 18. Real-domain canonical handoff
 
-When the user confirms that DNS is configured for a real domain, automatically update the site pack before the next production deploy. Do not leave `pages.dev` as the canonical host after the user has confirmed DNS and custom domain binding.
+When the user confirms that a real domain is bound to the Cloudflare Pages project, automatically update the site pack before the next production deploy. Do not leave `pages.dev` as the canonical host after the user has confirmed custom domain binding.
+
+Default launch assumption: Cloudflare Pages-only. Do not assume the domain is managed as a Cloudflare Website/Zone. A site can be validly launched as a static Pages project with custom domains bound directly to Pages and no visible zone.
 
 Required update in `sites/<site-id>/site.config.yaml`:
 
@@ -625,10 +637,24 @@ domains:
     - www.<apex-domain>
 seo:
   pagesDevRedirect:
-    status: configured
+    status: pending
 ```
 
 If the user chooses `www` as canonical, invert the canonical and alias values and record that decision in `research/seo-spec.md` or `research/launch-review.md`.
+
+For `seo.pagesDevRedirect.status`:
+
+- use `configured` only after `https://<project>.pages.dev/` is verified as a 301 to the canonical domain
+- use `pending` when the Pages project is live but the pages.dev redirect still needs manual Bulk Redirects or another verified account-level redirect
+- use `not-needed` only when the pages.dev hostname is intentionally inaccessible or otherwise cannot serve duplicate content
+
+After the user confirms the production domain, update the Contact page before the next production deploy so it exposes a real domain-based contact email:
+
+```text
+contact@<canonical-domain>
+```
+
+For example, `example.com` should use `contact@example.com`. Use this address in the Contact page and, when relevant, Privacy page contact wording. Do not keep placeholder language such as "project contact path" after a production domain is confirmed.
 
 After the update:
 
@@ -638,11 +664,13 @@ After the update:
 - Deploy with `pnpm site deploy <site-id> --production` when deployment is requested or already in progress.
 - Verify generated or deployed HTML so the canonical link, Open Graph URL, brand/Home links, JSON-LD URL, sitemap, and robots output use the real domain.
 - Verify `https://www.<apex-domain>/` redirects to `https://<apex-domain>/` when apex is canonical, or the reverse when `www` is canonical.
+- Verify `https://<project>.pages.dev/`. For Pages-only launches, Cloudflare Pages `_redirects` does not solve domain-level `pages.dev -> custom domain` redirects; use account-level Bulk Redirects or a manually configured Cloudflare redirect if available. If it cannot be configured from the current API token, record it as a deferred/manual task instead of assuming a Zone is required.
+- Create or update `sites/<site-id>/research/seo-audit.md` with the full Google SEO deep review when this is a new deployed site or when the user asks whether SEO self-check/review/audit was completed.
 - Keep `indexing.allowIndex: false` and `indexing.mode: disallow` unless the user separately approves indexing.
 
 Record the handoff in `research/seo-spec.md`, `research/implementation-trace.md`, or `research/launch-review.md` when those files exist.
 
-STOP: Do not ask the user to manually edit canonical URLs after they have confirmed DNS/custom domain setup. Update the YAML and redeploy.
+STOP: Do not ask the user to manually edit canonical URLs after they have confirmed custom domain setup. Update the YAML and redeploy. Do not require Cloudflare Zone access for a Pages-only launch; Zone cache purge and Zone rules are optional tools only when the domain is actually managed as a Cloudflare Website/Zone.
 
 ### 19. Pass the research consumption trace gate
 

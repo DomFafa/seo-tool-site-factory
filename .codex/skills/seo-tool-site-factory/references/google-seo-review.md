@@ -56,9 +56,28 @@ Handle these in research, SEO spec, UX spec, and templates before implementation
 - Keep draft pages noindex until launch review passes.
 - Before indexing, define canonical host, aliases, sitemap policy, and redirect plan.
 - Avoid launching on pages.dev as canonical.
-- After the user confirms DNS/custom domain setup, update `sites/<site-id>/site.config.yaml` so `domains.production` and `domains.canonicalHost` point to the real domain, `domains.aliases` includes the non-canonical host, and `seo.pagesDevRedirect.status` reflects the redirect state.
+- After the user confirms Cloudflare Pages custom domain setup, update `sites/<site-id>/site.config.yaml` so `domains.production` and `domains.canonicalHost` point to the real domain, `domains.aliases` includes the non-canonical host, and `seo.pagesDevRedirect.status` reflects the verified redirect state.
 - Plan `www` to apex or apex to `www` 301 before indexing.
-- Plan pages.dev to canonical 301 or record why it is deferred.
+- Default to Pages-only launch. Do not assume there is a Cloudflare Website/Zone for the domain.
+- Plan pages.dev to canonical 301 using account-level Bulk Redirects or an equivalent verified redirect; record it as deferred/manual if the current API token or Pages-only setup cannot configure it.
+- Do not use Cloudflare Pages `_redirects` as the solution for domain-level `pages.dev -> custom domain` redirects; `_redirects` is for path redirects within a Pages site.
+
+## Mandatory Completion Gate
+
+Full Google SEO deep review is mandatory after a new site is deployed and before any claim that SEO self-check, Google SEO review, launch SEO review, or SEO audit is complete.
+
+Required artifact:
+
+```text
+sites/<site-id>/research/seo-audit.md
+```
+
+Completion rules:
+
+- The audit file must reflect the current generated or deployed HTML, not only source files or planning docs.
+- `pnpm seo audit <site-id>` is required automation, but it does not replace this human/HTML deep review.
+- Do not say SEO self-check is complete when `seo-audit.md` is missing, stale, or only contains command output.
+- For new deployed sites, create or update `seo-audit.md` even when the site remains draft/noindex; record that indexing is intentionally blocked when applicable.
 
 ## After Build: Required SEO Checks
 
@@ -136,8 +155,15 @@ Expected:
 
 - Canonical host returns 200.
 - Alias host returns 301 to canonical.
-- pages.dev redirects to canonical or is recorded as deferred.
+- pages.dev redirects to canonical or is recorded as a deferred/manual task.
 - Deployed HTML on the latest Pages deployment contains the real-domain canonical, OG URL, JSON-LD URL, and Home link.
+
+### Cloudflare Pages-only Notes
+
+- Pages-only custom-domain launches do not require Cloudflare Zone access.
+- Zone cache purge is optional and only possible when the domain exists as a Cloudflare Website/Zone visible to the token.
+- If `robots.txt` or other root files show stale content on the bare URL but cache-busting URLs show the new content, record it as Cloudflare edge cache propagation rather than a site-pack generation failure.
+- For pages.dev duplicate-host handling, prefer account-level Bulk Redirects or verified manual dashboard configuration; if unavailable, leave `seo.pagesDevRedirect.status: pending` and document the residual canonical risk.
 
 ### Search Console / Bing Webmaster
 
@@ -165,3 +191,5 @@ Clearly separate:
 
 - Problems that should be prevented before build
 - Problems only detectable after build or deploy
+
+Save the same report structure to `sites/<site-id>/research/seo-audit.md` for deployed new sites and for any task where SEO completion status is being asserted.
