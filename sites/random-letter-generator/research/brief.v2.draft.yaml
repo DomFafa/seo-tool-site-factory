@@ -1,0 +1,31 @@
+schemaVersion: 2
+siteId: random-letter-generator
+primaryKeyword: random letter generator
+mode: implement
+locale: en
+market: US
+decision:
+  score: 79
+  recommendation: build standalone draft site with implemented differentiation
+competitorSource:
+  bingWebmasterStatus: captured
+  dateRange: 3M
+  top5Captured: true
+  rootDomainOccupancy: 0
+product:
+  userJob: Generate one or many random letters for games, classrooms, alphabet practice, prompts, team labels, worksheets, and sample data.
+  mustHave:
+    - A-Z, vowels, consonants, and custom alphabet modes
+    - count control
+    - no-repeat validation
+    - uppercase and lowercase output
+    - grouped, line, comma, and space copy formats
+    - client-only processing
+design:
+  reference: Sejda
+  direction: clean green and coffee utility workbench with theme-derived letter details
+launch:
+  status: READY_TO_INDEX
+  indexing: true
+  canonicalHost: random-lettergenerator.com
+  pagesDevRedirect: configured

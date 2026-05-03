@@ -4,9 +4,9 @@ brandName: Random Letter Generator
 category: generator
 primaryKeyword: random letter generator
 lifecycle:
-  status: draft
+  status: live
 launch:
-  stage: pages-dev
+  stage: real-domain-indexed
 domains:
   production: random-lettergenerator.com
   canonicalHost: random-lettergenerator.com
@@ -16,11 +16,11 @@ defaultLocale: en
 locales:
   en:
     enabled: true
-    indexable: false
-    reviewed: false
+    indexable: true
+    reviewed: true
 indexing:
-  allowIndex: false
-  mode: disallow
+  allowIndex: true
+  mode: index
 primaryTool: random-letter-generator
 seo:
   defaultTitle: Random Letter Generator - Pick Letters, Teams, and Sequences
@@ -36,7 +36,8 @@ seo:
     mode: generated
     path: /og-image.svg
   pagesDevRedirect:
-    status: pending
+    status: configured
+    notes: Cloudflare Bulk Redirects verified for pages.dev and alias canonical redirects.
 deployment:
   provider: cloudflare-pages
   accountAlias: shared
