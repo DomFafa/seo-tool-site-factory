@@ -1,0 +1,62 @@
+schemaVersion: 1
+recipe: sejda-letter-workbench
+chrome:
+  navVariant: sejda
+  footerVariant: simple
+  headerLinks:
+    - label: Contact
+      href: /contact/
+    - label: FAQ
+      href: /faq/
+  footerLinks:
+    - label: About
+      href: /about/
+    - label: Contact
+      href: /contact/
+    - label: Privacy
+      href: /privacy/
+    - label: FAQ
+      href: /faq/
+home:
+  blocks:
+    - type: hero
+      variant: sejda-clean
+      props:
+        title: Random Letter Generator
+        titleHighlight: Letter
+        description: Generate one letter or a clean list of random letters for games, classrooms, naming drills, alphabet practice, and test data.
+        badges:
+          - A-Z
+          - Vowels
+          - Consonants
+          - No repeats
+    - type: tool
+      variant: sejda-panel
+    - type: examples
+      variant: soft-grid
+      props:
+        title: Letter ideas you can generate
+        items:
+          - "Pick one random letter for a drawing prompt."
+          - "Generate 26 shuffled letters with no repeats."
+          - "Create vowel-only practice rounds for phonics."
+          - "Split random letters into teams or classroom groups."
+          - "Use a custom alphabet without Q, X, or Z."
+          - "Copy comma-separated letters for worksheets."
+    - type: howItWorks
+      variant: clean-steps
+      props:
+        title: How to generate random letters
+        steps:
+          - Choose a preset alphabet or enter custom letters.
+          - Set how many letters you need and whether repeats are allowed.
+          - Generate, group, and copy the result in the format you need.
+    - type: privacyNote
+      variant: inline
+      props:
+        title: Local letter generation
+        text: Letters are generated in your browser. Custom alphabets and generated output are not sent to analytics.
+    - type: content
+      variant: lower-guide
+    - type: faq
+      variant: compact

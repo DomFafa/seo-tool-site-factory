@@ -46,6 +46,17 @@ function propString(block: LayoutBlock, name: string, fallback = ''): string {
   return typeof value === 'string' ? value : fallback;
 }
 
+function titleParts(title: string, highlight: string): { text: string; highlight: boolean }[] {
+  if (!highlight) return [{ text: title, highlight: false }];
+  const index = title.toLowerCase().indexOf(highlight.toLowerCase());
+  if (index < 0) return [{ text: title, highlight: false }];
+  return [
+    { text: title.slice(0, index), highlight: false },
+    { text: title.slice(index, index + highlight.length), highlight: true },
+    { text: title.slice(index + highlight.length), highlight: false }
+  ].filter((part) => part.text.length > 0);
+}
+
 function propList(block: LayoutBlock, name: string, fallback: string[] = []): string[] {
   const value = block.props?.[name];
   return Array.isArray(value) ? value.map((item) => String(item)) : fallback;
@@ -83,7 +94,11 @@ function examplesFor(block: LayoutBlock): string[] {
                 {propString(block, 'titleSuffix') && <span>{propString(block, 'titleSuffix')}</span>}
               </h1>
             ) : (
-              <h1>{propString(block, 'title', home.frontmatter.title)}</h1>
+              <h1>
+                {titleParts(propString(block, 'title', home.frontmatter.title), propString(block, 'titleHighlight')).map((part) => (
+                  part.highlight ? <span class="title-highlight">{part.text}</span> : <span>{part.text}</span>
+                ))}
+              </h1>
             )}
             <p class="hero-lead">{propString(block, 'description', home.frontmatter.description)}</p>
             {propList(block, 'badges').length > 0 && (

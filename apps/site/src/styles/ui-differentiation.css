@@ -10,6 +10,7 @@ body.recipe-writing-assistant { background: linear-gradient(180deg, #f8fafc, #ee
 body.recipe-apple-minimal { color: #1d1d1f; background: #f5f5f7; }
 body.recipe-playful-tool { color: #101828; background: #fff8f1; }
 body.recipe-tiny-tool-workbench { color: #1d2340; background: radial-gradient(circle at 12% 0%, rgba(255, 179, 205, .36), transparent 30rem), radial-gradient(circle at 88% 8%, rgba(159, 217, 255, .38), transparent 28rem), #f7fbff; }
+body.recipe-sejda-letter-workbench { color: #3a312b; background: #fbf7f1; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif; }
 .site-header--floating, .site-header--dark-floating { position: sticky; top: 12px; z-index: 20; width: min(1120px, calc(100% - 24px)); margin: 12px auto 0; border-radius: 999px; border: 1px solid rgba(148, 163, 184, .32); background: rgba(255, 255, 255, .82); backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(15, 23, 42, .08); }
 .site-header--dark-floating { color: #f8fafc; background: rgba(16, 16, 28, .82); border-color: rgba(255,255,255,.16); }
 .site-header--dark-floating a { color: inherit; }
@@ -35,6 +36,13 @@ body.recipe-performance-dashboard .brand-mark { border-radius: 8px; background: 
 body.recipe-performance-dashboard .nav a { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; color: #374151; font-weight: 800; }
 body.recipe-performance-dashboard .language-switcher a { min-width: 44px; justify-content: center; }
 body.recipe-performance-dashboard .language-switcher a[aria-current="true"] { border-color: #181512; background: #181512; color: #fbbf24; }
+body.recipe-sejda-letter-workbench .site-header--sejda { border-bottom: 1px solid rgba(138, 106, 79, .1); background: rgba(255, 255, 255, .94); backdrop-filter: blur(12px); }
+body.recipe-sejda-letter-workbench .site-header-inner { min-height: 56px; }
+body.recipe-sejda-letter-workbench .brand { color: #302a26; font-weight: 700; }
+body.recipe-sejda-letter-workbench .brand-mark { width: 30px; height: 30px; border-radius: 999px; background: #25c28a; color: #ffffff; }
+body.recipe-sejda-letter-workbench .nav a { min-height: 38px; display: inline-flex; align-items: center; color: #302a26; font-weight: 600; }
+body.recipe-sejda-letter-workbench .language-switcher a { border-color: rgba(138, 106, 79, .16); color: #3a312b; }
+body.recipe-sejda-letter-workbench .language-switcher a[aria-current="true"] { border-color: #25c28a; background: #25c28a; color: #ffffff; }
 .page-recipe { overflow: clip; }
 .page-block { padding: 34px 0; }
 .page-block:first-child { padding-top: 54px; }
@@ -251,6 +259,175 @@ body.recipe-apple-minimal .content-card { max-width: 900px; margin-inline: auto;
 body.recipe-apple-minimal .content-card p,
 body.recipe-apple-minimal .content-card li { color: #424245; }
 body.recipe-apple-minimal .footer { border-top-color: #e8e8ed; color: #6e6e73; }
+body.recipe-sejda-letter-workbench .page-recipe { position: relative; }
+body.recipe-sejda-letter-workbench .page-recipe::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: clamp(250px, 36vw, 380px);
+  height: 430px;
+  background:
+    radial-gradient(circle, rgba(37, 194, 138, .22) 1.5px, transparent 2px) left 22px top 18px / 14px 14px no-repeat,
+    radial-gradient(circle, rgba(37, 194, 138, .18) 1.5px, transparent 2px) right 22px top 12px / 14px 14px no-repeat,
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 320' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill='%23f8f1e9' d='M0,74 C160,128 252,36 410,98 C560,157 613,211 760,146 C909,81 1038,111 1154,151 C1263,188 1326,92 1440,112 L1440,320 L0,320 Z'/%3E%3Cpath fill='%23efe2d3' d='M0,104 C154,166 248,61 394,116 C548,174 600,259 744,166 C895,68 1013,157 1130,198 C1244,239 1283,62 1440,125 L1440,320 L0,320 Z'/%3E%3C/svg%3E") center top / 100% 100% no-repeat;
+  pointer-events: none;
+}
+body.recipe-sejda-letter-workbench .page-block:first-child { padding-top: 72px; padding-bottom: 18px; }
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean { text-align: center; }
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .block-inner::before,
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .block-inner::after {
+  content: "A";
+  position: absolute;
+  top: 74px;
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 58px;
+  border: 4px solid #17679a;
+  border-radius: 10px;
+  background: #fffdf9;
+  color: #25c28a;
+  font-size: 1.85rem;
+  font-weight: 800;
+  box-shadow: 10px 10px 0 rgba(138, 106, 79, .16);
+  transform: rotate(-10deg);
+}
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .block-inner::before { left: 24px; }
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .block-inner::after {
+  content: "Z";
+  right: 24px;
+  border-color: #25c28a;
+  color: #17679a;
+  transform: rotate(9deg);
+}
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean h1 { max-width: 1100px; margin: 0 auto 12px; color: #302a26; font-size: clamp(2.8rem, 5vw, 5.1rem); font-weight: 700; line-height: 1.03; white-space: nowrap; }
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean h1 .title-highlight { color: #25c28a; }
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .hero-lead { max-width: 690px; margin: 0 auto; color: #25c28a; font-size: clamp(.95rem, 1.45vw, 1.15rem); font-weight: 500; line-height: 1.42; }
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .badge-row { justify-content: center; margin-top: 24px; transform: translateY(72px); }
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .badge { border: 1px solid rgba(37, 194, 138, .16); border-radius: 999px; background: #e9f8f2; color: #14986b; }
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .badge,
+body.recipe-sejda-letter-workbench .nav a,
+body.recipe-sejda-letter-workbench .language-switcher a {
+  transition: transform .16s ease, color .16s ease, background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .badge:hover,
+body.recipe-sejda-letter-workbench .nav a:hover,
+body.recipe-sejda-letter-workbench .language-switcher a:hover {
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .badge:hover {
+  border-color: rgba(37, 194, 138, .42);
+  background: #dff8ef;
+  box-shadow: 0 8px 18px rgba(37, 194, 138, .12);
+}
+body.recipe-sejda-letter-workbench .page-block--tool-sejda-panel { padding-top: 12px; }
+body.recipe-sejda-letter-workbench .page-block--tool-sejda-panel .tool-shell { max-width: 1040px; margin: 0 auto; padding: 0; border: 0; background: transparent; box-shadow: none; }
+body.recipe-sejda-letter-workbench .example-card,
+body.recipe-sejda-letter-workbench .step-card,
+body.recipe-sejda-letter-workbench .privacy-panel,
+body.recipe-sejda-letter-workbench .content-card,
+body.recipe-sejda-letter-workbench .faq-card { border-color: rgba(138, 106, 79, .12); border-radius: 8px; background: rgba(255, 255, 255, .94); box-shadow: 0 14px 38px rgba(58, 49, 43, .06); }
+body.recipe-sejda-letter-workbench .section-heading h2,
+body.recipe-sejda-letter-workbench .content-card h2,
+body.recipe-sejda-letter-workbench .content-card h3 { color: #302a26; }
+body.recipe-sejda-letter-workbench .content-card p,
+body.recipe-sejda-letter-workbench .content-card li,
+body.recipe-sejda-letter-workbench .example-card { color: #5f5148; }
+body.recipe-sejda-letter-workbench .step-number { border-radius: 999px; background: #25c28a; color: #ffffff; }
+body.recipe-sejda-letter-workbench .privacy-panel strong { color: #14986b; }
+body.recipe-sejda-letter-workbench .footer { border-top-color: rgba(138, 106, 79, .12); color: #7b6a5e; }
+body.recipe-sejda-letter-workbench .page-block--examples-soft-grid,
+body.recipe-sejda-letter-workbench .page-block--howItWorks-clean-steps,
+body.recipe-sejda-letter-workbench .page-block--content-lower-guide,
+body.recipe-sejda-letter-workbench .page-block--faq-compact {
+  position: relative;
+}
+body.recipe-sejda-letter-workbench .page-block--examples-soft-grid::before,
+body.recipe-sejda-letter-workbench .page-block--howItWorks-clean-steps::before,
+body.recipe-sejda-letter-workbench .page-block--content-lower-guide::before,
+body.recipe-sejda-letter-workbench .page-block--faq-compact::before {
+  content: "R";
+  position: absolute;
+  z-index: 0;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 44px;
+  border: 3px solid #17679a;
+  border-radius: 9px;
+  background: #fffdf9;
+  color: #25c28a;
+  font-size: 1.35rem;
+  font-weight: 800;
+  box-shadow: 8px 8px 0 rgba(138, 106, 79, .14);
+  pointer-events: none;
+}
+body.recipe-sejda-letter-workbench .page-block--examples-soft-grid::before {
+  content: "L";
+  left: max(28px, calc((100vw - 1120px) / 2 - 74px));
+  top: 82px;
+  transform: rotate(-8deg);
+}
+body.recipe-sejda-letter-workbench .page-block--howItWorks-clean-steps::before {
+  content: "H";
+  right: max(30px, calc((100vw - 1120px) / 2 - 76px));
+  top: 76px;
+  border-color: #25c28a;
+  color: #17679a;
+  transform: rotate(9deg);
+}
+body.recipe-sejda-letter-workbench .page-block--content-lower-guide::before {
+  content: "G";
+  left: max(36px, calc((100vw - 1120px) / 2 - 52px));
+  top: 58px;
+  transform: rotate(-6deg);
+}
+body.recipe-sejda-letter-workbench .page-block--faq-compact::before {
+  content: "F";
+  right: max(30px, calc((100vw - 1120px) / 2 - 76px));
+  top: 64px;
+  border-color: #25c28a;
+  color: #17679a;
+  transform: rotate(7deg);
+}
+body.recipe-sejda-letter-workbench .page-block--examples-soft-grid .block-inner,
+body.recipe-sejda-letter-workbench .page-block--howItWorks-clean-steps .block-inner,
+body.recipe-sejda-letter-workbench .page-block--content-lower-guide .block-inner,
+body.recipe-sejda-letter-workbench .page-block--faq-compact .block-inner {
+  position: relative;
+  z-index: 1;
+}
+@media (max-width: 980px) {
+  body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .block-inner::before,
+  body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .block-inner::after {
+    top: 10px;
+    width: 52px;
+    height: 42px;
+    border-width: 3px;
+    font-size: 1.25rem;
+    opacity: .7;
+  }
+  body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .block-inner::before { left: 4px; }
+  body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .block-inner::after { right: 4px; }
+}
+@media (max-width: 720px) {
+  body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean h1 {
+    white-space: normal;
+  }
+  body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .block-inner::before,
+  body.recipe-sejda-letter-workbench .page-block--hero-sejda-clean .block-inner::after {
+    display: none;
+  }
+  body.recipe-sejda-letter-workbench .page-block--examples-soft-grid::before,
+  body.recipe-sejda-letter-workbench .page-block--howItWorks-clean-steps::before,
+  body.recipe-sejda-letter-workbench .page-block--content-lower-guide::before {
+    display: none;
+  }
+  body.recipe-sejda-letter-workbench .page-block--faq-compact::before { display: none; }
+}
 body.recipe-playful-tool .site-header--compact { border-bottom: 1px solid #ece0d5; background: #ffffff; box-shadow: 0 1px 0 rgba(16, 24, 40, .04), 0 10px 24px rgba(23, 103, 154, .06); backdrop-filter: none; }
 body.recipe-playful-tool .site-header-inner { min-height: 76px; max-width: 1320px; }
 body.recipe-playful-tool .brand { color: #101828; font-size: 19px; font-weight: 900; letter-spacing: 0; }

@@ -1,0 +1,22 @@
+schemaVersion: 1
+toolId: random-letter-generator
+executionModel: client-only
+privacy:
+  storesUserInput: false
+  processing: client-only
+analytics:
+  safeFields:
+    - locale
+    - action
+    - status
+    - mode
+options:
+  defaultCount: 12
+  maxCount: 500
+  applicationSubCategory: UtilitiesApplication
+  featureList:
+    - Random letter generation
+    - Vowel and consonant filters
+    - Custom alphabet support
+    - No-repeat and grouped output
+    - Local-only processing

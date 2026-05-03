@@ -1,0 +1,12 @@
+schemaVersion: 1
+primaryKeyword: random letter generator
+category: generator
+intent:
+  userJob: "Generate one or many random letters quickly for games, classrooms, writing prompts, selection tasks, and sample data."
+productBoundary:
+  thisSiteIs:
+    - "A browser-only random letter generator with presets, no-repeat mode, custom alphabets, grouping, and copy formats."
+  thisSiteIsNot:
+    - "A cryptographic lottery service."
+    - "A word generator or name generator."
+    - "A random number generator."

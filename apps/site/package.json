@@ -16,6 +16,7 @@
     "@factory/image-converter": "workspace:*",
     "@factory/cursed-text-generator": "workspace:*",
     "@factory/weighted-grade-calculator": "workspace:*",
-    "@factory/random-date-generator": "workspace:*"
+    "@factory/random-date-generator": "workspace:*",
+    "@factory/random-letter-generator": "workspace:*"
   }
 }

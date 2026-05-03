@@ -1,0 +1,43 @@
+schemaVersion: 1
+id: random-letter-generator
+brandName: Random Letter Generator
+category: generator
+primaryKeyword: random letter generator
+lifecycle:
+  status: draft
+launch:
+  stage: pages-dev
+domains:
+  production: randomlettergenerator.pages.dev
+  canonicalHost: randomlettergenerator.pages.dev
+  aliases: []
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: false
+    reviewed: false
+indexing:
+  allowIndex: false
+  mode: disallow
+primaryTool: random-letter-generator
+seo:
+  defaultTitle: Random Letter Generator - Pick Letters, Teams, and Sequences
+  defaultDescription: Generate random letters from A-Z, custom alphabets, no-repeat sets, vowels, consonants, and copy-ready classroom or game lists.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+  sitemap:
+    split: false
+  ogImage:
+    mode: generated
+    path: /og-image.svg
+  pagesDevRedirect:
+    status: unknown
+deployment:
+  provider: cloudflare-pages
+  accountAlias: shared
+  projectName: seo-tool-random-letter-generator
+  outputDir: dist/sites/random-letter-generator

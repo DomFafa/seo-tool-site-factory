@@ -1,0 +1,15 @@
+schemaVersion: 1
+name: random-letter-generator
+personality: sejda-soft-utility
+density: comfortable
+surface: panels
+colors:
+  primary: "#25c28a"
+  background: "#fbf7f1"
+  surface: "#ffffff"
+  accent: "#8a6a4f"
+radius: 8px
+layout: tool-first
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true

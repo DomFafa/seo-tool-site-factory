@@ -81,6 +81,9 @@ importers:
       '@factory/random-date-generator':
         specifier: workspace:*
         version: link:../../packages/tools/random-date-generator
+      '@factory/random-letter-generator':
+        specifier: workspace:*
+        version: link:../../packages/tools/random-letter-generator
       '@factory/seo':
         specifier: workspace:*
         version: link:../../packages/seo
@@ -138,6 +141,8 @@ importers:
   packages/tools/image-converter: {}
 
   packages/tools/random-date-generator: {}
+
+  packages/tools/random-letter-generator: {}
 
   packages/tools/typing-engine: {}
 

@@ -6,7 +6,7 @@ import AnalyticsScripts from '../components/integrations/AnalyticsScripts.astro'
 import AdProviderScripts from '../components/integrations/AdProviderScripts.astro';
 import LanguageSwitcher from '../components/LanguageSwitcher.astro';
 import type { SiteContext, ContentDocument } from '@factory/site-core';
-import { buildPageSeo } from '@factory/seo';
+import { buildPageSeo, getLocaleHomePath } from '@factory/seo';
 
 interface Props {
   ctx: SiteContext;
@@ -39,6 +39,7 @@ const chromeCopy = locale === 'es'
       navLabel: 'Main navigation',
       footer: 'Built as a lightweight tool site.'
     };
+const homePath = getLocaleHomePath(ctx, locale);
 ---
 <!doctype html>
 <html lang={locale}>
@@ -76,12 +77,12 @@ const chromeCopy = locale === 'es'
   <body class={`recipe-${recipe} nav-${navVariant} density-${density} surface-${surfaceStyle}`}>
     <header class={`site-header site-header--${navVariant}`}>
       <div class="container site-header-inner">
-        <a class="brand" href={seo.homeUrl}>
+        <a class="brand" href={homePath}>
           <span class="brand-mark">{ctx.siteConfig.brandName.slice(0, 1).toUpperCase()}</span>
           <span>{ctx.siteConfig.brandName}</span>
         </a>
         <nav class="nav" aria-label={chromeCopy.navLabel}>
-          <a href={seo.homeUrl}>{chromeCopy.home}</a>
+          <a href={homePath}>{chromeCopy.home}</a>
           {ctx.layoutConfig.chrome.headerLinks.map((link) => <a href={link.href}>{link.label}</a>)}
           <LanguageSwitcher ctx={ctx} locale={locale} />
         </nav>
