@@ -105,3 +105,37 @@ sites:
           siteStatus: not_submitted
           verificationContent: ""
     cloudflareAccount: cursive-generator
+  random-letter-generator:
+    domain: "random-lettergenerator.com"
+    projectName: seo-tool-random-letter-generator
+    mode: noindex-first
+    integrations:
+      googleAnalytics:
+        measurementId: ""
+      microsoftClarity:
+        projectId: ""
+      googleSearchConsole:
+        enabled: false
+        propertyType: url-prefix
+        verification:
+          method: meta
+          metaName: google-site-verification
+          content: ""
+      bingWebmaster:
+        enabled: false
+        verification:
+          method: import-from-gsc
+      indexNow:
+        enabled: false
+        key: ""
+        keyFile: ""
+        submitOnProductionDeploy: false
+      ads:
+        activeProvider: adsense
+        adsTxtEntries: []
+        adsense:
+          enabled: false
+          publisherId: ""
+          siteStatus: not_submitted
+          verificationContent: ""
+    cloudflareAccount: shared

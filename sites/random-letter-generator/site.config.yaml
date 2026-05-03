@@ -8,9 +8,10 @@ lifecycle:
 launch:
   stage: pages-dev
 domains:
-  production: randomlettergenerator.pages.dev
-  canonicalHost: randomlettergenerator.pages.dev
-  aliases: []
+  production: random-lettergenerator.com
+  canonicalHost: random-lettergenerator.com
+  aliases:
+    - www.random-lettergenerator.com
 defaultLocale: en
 locales:
   en:
@@ -35,7 +36,7 @@ seo:
     mode: generated
     path: /og-image.svg
   pagesDevRedirect:
-    status: unknown
+    status: pending
 deployment:
   provider: cloudflare-pages
   accountAlias: shared
