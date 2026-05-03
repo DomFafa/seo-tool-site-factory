@@ -259,6 +259,8 @@ The UX spec must explain how this site will feel different from other sites in t
 
 Use the UX spec template. Cover first viewport, task path, mobile, empty/result/error states, accessibility, ad restrictions, and UI differentiation.
 
+Before finalizing first-build UX or implementing a new site UI, read `references/first-build-ui-defaults.md` and apply its navigation, support-page, typography, template-3, decorative-element, and validation rules. Do not treat its decorative examples as literal assets to copy; derive visual motifs from the tool keyword and the user's reference site.
+
 ### 6. Define the design direction
 
 Create or update:
