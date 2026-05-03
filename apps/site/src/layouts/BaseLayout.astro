@@ -81,11 +81,23 @@ const homePath = getLocaleHomePath(ctx, locale);
           <span class="brand-mark">{ctx.siteConfig.brandName.slice(0, 1).toUpperCase()}</span>
           <span>{ctx.siteConfig.brandName}</span>
         </a>
-        <nav class="nav" aria-label={chromeCopy.navLabel}>
+        <nav class="nav nav--desktop" aria-label={chromeCopy.navLabel}>
           <a href={homePath}>{chromeCopy.home}</a>
           {ctx.layoutConfig.chrome.headerLinks.map((link) => <a href={link.href}>{link.label}</a>)}
           <LanguageSwitcher ctx={ctx} locale={locale} />
         </nav>
+        <details class="mobile-menu">
+          <summary aria-label="Open navigation">
+            <span></span>
+            <span></span>
+            <span></span>
+          </summary>
+          <nav class="mobile-menu__panel" aria-label={chromeCopy.navLabel}>
+            <a href={homePath}>{chromeCopy.home}</a>
+            {ctx.layoutConfig.chrome.headerLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+            <LanguageSwitcher ctx={ctx} locale={locale} />
+          </nav>
+        </details>
       </div>
     </header>
     <main>

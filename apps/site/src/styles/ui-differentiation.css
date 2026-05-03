@@ -41,8 +41,10 @@ body.recipe-sejda-letter-workbench .site-header-inner { min-height: 56px; }
 body.recipe-sejda-letter-workbench .brand { color: #302a26; font-weight: 700; }
 body.recipe-sejda-letter-workbench .brand-mark { width: 30px; height: 30px; border-radius: 999px; background: #25c28a; color: #ffffff; }
 body.recipe-sejda-letter-workbench .nav a { min-height: 38px; display: inline-flex; align-items: center; color: #302a26; font-weight: 600; }
+body.recipe-sejda-letter-workbench .mobile-menu summary { border-color: rgba(138, 106, 79, .16); color: #302a26; }
+body.recipe-sejda-letter-workbench .mobile-menu__panel { border-color: rgba(138, 106, 79, .14); }
 body.recipe-sejda-letter-workbench .language-switcher a { border-color: rgba(138, 106, 79, .16); color: #3a312b; }
-body.recipe-sejda-letter-workbench .language-switcher a[aria-current="true"] { border-color: #25c28a; background: #25c28a; color: #ffffff; }
+body.recipe-sejda-letter-workbench .language-switcher a[aria-current="true"] { border-color: #0f6f51; background: #0f6f51; color: #ffffff; }
 .page-recipe { overflow: clip; }
 .page-block { padding: 34px 0; }
 .page-block:first-child { padding-top: 54px; }
