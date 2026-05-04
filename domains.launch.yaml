@@ -139,3 +139,37 @@ sites:
           siteStatus: not_submitted
           verificationContent: ""
     cloudflareAccount: shared
+  color-contrast-checker:
+    domain: "colorcontrastchecker.online"
+    projectName: seo-tool-color-contrast-checker
+    mode: noindex-first
+    integrations:
+      googleAnalytics:
+        measurementId: ""
+      microsoftClarity:
+        projectId: ""
+      googleSearchConsole:
+        enabled: false
+        propertyType: url-prefix
+        verification:
+          method: meta
+          metaName: google-site-verification
+          content: ""
+      bingWebmaster:
+        enabled: false
+        verification:
+          method: import-from-gsc
+      indexNow:
+        enabled: false
+        key: ""
+        keyFile: ""
+        submitOnProductionDeploy: false
+      ads:
+        activeProvider: adsense
+        adsTxtEntries: []
+        adsense:
+          enabled: false
+          publisherId: ""
+          siteStatus: not_submitted
+          verificationContent: ""
+    cloudflareAccount: shared

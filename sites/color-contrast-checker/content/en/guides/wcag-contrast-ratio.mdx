@@ -1,0 +1,37 @@
+---
+title: WCAG Contrast Ratio Guide
+description: >-
+  Understand WCAG contrast ratios, AA and AAA thresholds, relative luminance,
+  normal text, large text, and UI component checks.
+slug: wcag-contrast-ratio
+lastModified: '2026-05-04'
+index: true
+contentStatus: approved
+---
+
+## What WCAG contrast ratio means
+
+WCAG contrast ratio compares the relative luminance of a foreground color and a background color. The ratio is written as a number like `4.5:1`, where higher values mean stronger contrast.
+
+The lowest possible ratio is `1:1`, which happens when two colors are identical. The highest common ratio is `21:1`, which happens with black against white.
+
+## Common thresholds
+
+- Normal text AA: `4.5:1`
+- Normal text AAA: `7:1`
+- Large text AA: `3:1`
+- Large text AAA: `4.5:1`
+- UI components and graphical objects: `3:1`
+
+These thresholds are used to decide whether text and important interface graphics have enough separation from their background.
+
+## Normal text vs large text
+
+Most labels, body copy, nav links, small buttons, helper text, and error messages should be checked as normal text. Large text is usually at least 18pt regular text or 14pt bold text.
+
+When in doubt, use the normal text threshold. It is stricter and avoids accidentally approving small UI copy that is hard to read.
+
+## Why ratio is not the whole story
+
+Contrast ratio is measurable, but readability also depends on font choice, size, weight, line height, surrounding colors, and the actual user environment. Passing a ratio does not replace full interface testing.
+

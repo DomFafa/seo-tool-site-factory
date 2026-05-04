@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@factory/integrations": "workspace:*",
+    "@factory/color-contrast-checker": "workspace:*",
     "@factory/seo": "workspace:*",
     "@factory/site-core": "workspace:*",
     "@factory/typing-engine": "workspace:*",

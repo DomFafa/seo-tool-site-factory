@@ -1,0 +1,34 @@
+schemaVersion: 2
+siteId: color-contrast-checker
+primaryKeyword: color contrast checker
+mode: implement
+locale: en
+market: US
+decision:
+  score: 80
+  recommendation: build standalone draft site with implemented differentiation
+competitorSource:
+  bingWebmasterStatus: captured
+  dateRange: 3M
+  top5Captured: true
+  rootDomainOccupancy: 0
+product:
+  userJob: Check whether foreground and background colors meet WCAG contrast thresholds, then fix failing pairs.
+  mustHave:
+    - HEX and rgb color parsing
+    - foreground and background pickers
+    - WCAG AA and AAA verdicts
+    - normal text, large text, and UI component thresholds
+    - live preview
+    - copyable report
+    - suggested passing color
+    - client-only processing
+design:
+  reference: WordPress Primarium notebook theme
+  direction: ruled worksheet paper with blue ink, red teacher marks, and check-mark grading
+launch:
+  status: DRAFT_ONLY
+  indexing: false
+  canonicalHost: example.com
+  pagesDevRedirect: unknown
+

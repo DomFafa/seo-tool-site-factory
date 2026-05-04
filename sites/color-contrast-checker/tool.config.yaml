@@ -1,0 +1,14 @@
+schemaVersion: 1
+toolId: color-contrast-checker
+executionModel: client-only
+privacy:
+  storesUserInput: false
+  processing: client-only
+analytics:
+  safeFields:
+    - locale
+    - action
+    - status
+    - aaNormal
+    - aaaNormal
+options: {}

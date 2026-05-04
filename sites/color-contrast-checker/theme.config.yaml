@@ -1,0 +1,15 @@
+schemaVersion: 1
+name: color-contrast-checker
+personality: notebook worksheet checker
+density: comfortable
+surface: editorial
+colors:
+  primary: "#2554d9"
+  background: "#fbfbf5"
+  surface: "#fffefa"
+  accent: "#e23b3b"
+radius: 8px
+layout: notebook-tool-first
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true

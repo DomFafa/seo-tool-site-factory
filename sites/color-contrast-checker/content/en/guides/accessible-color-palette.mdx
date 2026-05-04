@@ -1,0 +1,30 @@
+---
+title: How to Fix an Accessible Color Palette
+description: >-
+  Practical steps for repairing failing foreground and background color pairs
+  while keeping brand colors recognizable.
+slug: accessible-color-palette
+lastModified: '2026-05-04'
+index: true
+contentStatus: approved
+---
+
+## Start with the color pair that failed
+
+A palette can contain many colors, but contrast is checked one pair at a time. Start with the exact foreground and background colors used in the interface: button label against button fill, helper text against card surface, or link text against page background.
+
+## Change the color that matters least
+
+If the background is a core brand color, adjust the foreground first. If the foreground is locked, adjust the surface behind it. Small changes in lightness can often move a pair from fail to pass without changing the overall visual identity.
+
+## Keep state colors readable
+
+Error red, success green, muted gray, disabled text, and empty-field hint copy are common sources of contrast failures. These colors often need stronger contrast than a style guide originally planned because they are used for small text.
+
+## Check real UI sizes
+
+Do not approve a color pair only from a large preview. Check the pair at the real text size and weight used in the product. Small text needs the stricter normal text threshold.
+
+## Record the decision
+
+When you fix a pair, copy the ratio and verdict into the design ticket or pull request. This makes future palette changes easier to review.

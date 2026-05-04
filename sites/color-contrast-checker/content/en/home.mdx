@@ -1,0 +1,51 @@
+---
+title: 'Color Contrast Checker - WCAG Ratio, AA/AAA, and Fix Suggestions'
+description: >-
+  Check foreground and background colors for WCAG contrast, preview the pair,
+  see AA/AAA pass marks, and copy a quick accessibility note.
+slug: color-contrast-checker
+lastModified: '2026-05-04'
+index: true
+contentStatus: approved
+---
+
+## Check color contrast before it ships
+
+A color contrast checker compares a foreground color against a background color and reports the contrast ratio. Designers and developers use that ratio to decide whether body text, headings, buttons, icons, and form labels are readable enough for accessibility requirements.
+
+This checker focuses on the common WCAG contrast thresholds. It calculates the ratio locally in your browser, marks each threshold as pass or fail, and gives a practical color suggestion when the pair needs more contrast.
+
+## WCAG contrast thresholds
+
+The common thresholds are:
+
+- `4.5:1` for WCAG AA normal text.
+- `7:1` for WCAG AAA normal text.
+- `3:1` for WCAG AA large text.
+- `4.5:1` for WCAG AAA large text.
+- `3:1` for UI components and graphical objects.
+
+Large text usually means at least 18pt regular text or 14pt bold text. UI component checks can apply to important boundaries, icons, focus indicators, and controls.
+
+## Color contrast examples
+
+- Blue interface text on a pale notebook-paper background.
+- Red error text on a light red warning panel.
+- Muted gray helper copy below a form input.
+- White button text on a saturated brand color.
+- A disabled-looking label that may be too faint to read.
+
+## How to fix a failing color pair
+
+When a pair fails, change one side of the pair until the ratio rises above the threshold you need. In practice, that usually means making the foreground darker on a light background, making the foreground lighter on a dark background, or choosing a less subtle gray for small text.
+
+This tool suggests a nearby foreground color when possible. Treat the suggestion as a starting point and review the final color in the real interface where spacing, font weight, and surrounding colors can affect perception.
+
+## What this checker does not prove
+
+Passing color contrast is one important accessibility step, but it is not a full accessibility audit or legal compliance certificate. A page can pass contrast and still have issues with keyboard access, labels, focus order, alt text, motion, or screen reader structure.
+
+## Privacy and trust
+
+Color checks run locally in the browser. Raw foreground and background values are not collected in analytics events.
+

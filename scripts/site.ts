@@ -109,6 +109,9 @@ function selectedToolFor(toolId: string): { componentSource: string; rendererSou
   if (toolId === 'random-letter-generator') {
     return reactTool('../features/random-letter-generator/RandomLetterGeneratorIsland', { renderer: 'react', toolId, mode: '' });
   }
+  if (toolId === 'color-contrast-checker') {
+    return reactTool('../features/color-contrast-checker/ColorContrastCheckerIsland', { renderer: 'react', toolId, mode: '' });
+  }
   throw new Error(`Tool renderer for ${toolId} is not implemented yet.`);
 }
 

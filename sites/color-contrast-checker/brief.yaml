@@ -1,0 +1,14 @@
+schemaVersion: 1
+primaryKeyword: color contrast checker
+category: checker
+intent:
+  userJob: "Check whether foreground and background colors meet WCAG contrast thresholds and get a practical fix when they fail."
+productBoundary:
+  thisSiteIs:
+    - "A client-side color contrast checker."
+    - "A WCAG AA/AAA ratio and pass/fail tool."
+    - "A worksheet-style helper for designers and developers."
+  thisSiteIsNot:
+    - "A full ADA compliance audit."
+    - "A screenshot scanner."
+    - "A legal compliance certification tool."

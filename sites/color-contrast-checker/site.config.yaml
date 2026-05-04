@@ -1,0 +1,45 @@
+schemaVersion: 1
+id: color-contrast-checker
+brandName: Contrast Check
+category: checker
+primaryKeyword: color contrast checker
+lifecycle:
+  status: live
+launch:
+  stage: real-domain-indexed
+domains:
+  production: colorcontrastchecker.online
+  canonicalHost: colorcontrastchecker.online
+  aliases:
+    - www.colorcontrastchecker.online
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: true
+    reviewed: true
+indexing:
+  allowIndex: true
+  mode: index
+primaryTool: color-contrast-checker
+seo:
+  defaultTitle: Color Contrast Checker - WCAG Ratio, AA/AAA, and Fix Suggestions
+  defaultDescription: Check foreground and background colors for WCAG contrast, preview the pair, see AA/AAA pass marks, and copy a quick accessibility note.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+  sitemap:
+    split: false
+  ogImage:
+    mode: generated
+    path: /og-image.svg
+  pagesDevRedirect:
+    status: configured
+    notes: Cloudflare Bulk Redirects verified for pages.dev and alias canonical redirects.
+deployment:
+  provider: cloudflare-pages
+  accountAlias: shared
+  projectName: seo-tool-color-contrast-checker
+  outputDir: dist/sites/color-contrast-checker

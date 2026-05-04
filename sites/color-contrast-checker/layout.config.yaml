@@ -1,0 +1,74 @@
+schemaVersion: 1
+recipe: notebook-contrast-checker
+chrome:
+  navVariant: notebook
+  footerVariant: simple
+  headerLinks:
+    - label: WCAG guide
+      href: /guide/wcag-contrast-ratio/
+    - label: FAQ
+      href: /faq/
+    - label: Contact
+      href: /contact/
+  footerLinks:
+    - label: About
+      href: /about/
+    - label: WCAG contrast ratio
+      href: /guide/wcag-contrast-ratio/
+    - label: Accessible palette
+      href: /guide/accessible-color-palette/
+    - label: Contact
+      href: /contact/
+    - label: Privacy
+      href: /privacy/
+    - label: FAQ
+      href: /faq/
+home:
+  blocks:
+    - type: hero
+      variant: notebook
+      props:
+        eyebrow: Marked like a design worksheet
+        title: Color Contrast Checker
+        description: "Check a color pair like a graded assignment: ratio, WCAG AA/AAA marks, preview text, and red-pen fixes when contrast fails."
+        badges:
+          - WCAG AA/AAA
+          - Client-side
+          - Copyable notes
+    - type: tool
+      variant: worksheet
+    - type: examples
+      variant: notebook-lines
+      props:
+        eyebrow: Practice pairs
+        title: Color contrast examples
+        items:
+          - "Blue ink on notebook paper for readable editorial text."
+          - "Red teacher marks on pale paper for error and warning states."
+          - "Small gray helper text against a white form surface."
+          - "A primary button label against a brand color."
+          - "A card heading, body copy, border, and UI component check."
+          - "A failing low-contrast pair with a suggested repair."
+    - type: howItWorks
+      variant: notebook-steps
+      props:
+        eyebrow: Method
+        title: How the contrast grade is marked
+        steps:
+          - Enter foreground and background colors as HEX or RGB.
+          - The checker calculates relative luminance and the WCAG contrast ratio.
+          - Read the AA/AAA marks, preview the pair, and copy a short note or apply a suggested fix.
+    - type: privacyNote
+      variant: red-note
+      props:
+        title: Local color check
+        text: Color values are checked in your browser. Raw foreground and background colors are not sent to analytics.
+    - type: guideLinks
+      variant: notebook-guides
+      props:
+        eyebrow: Study notes
+        title: Contrast guides
+    - type: content
+      variant: notebook-article
+    - type: faq
+      variant: notebook-faq
