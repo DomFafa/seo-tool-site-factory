@@ -27,6 +27,7 @@
 | Content lint | pending / passed / failed |  |  |
 | Google SEO review | pending / passed / failed |  |  |
 | Trust pages | pending / passed / deferred |  |  |
+| Domain contact email | pending / passed / failed / not-applicable |  |  |
 | Header/footer navigation | pending / passed / failed |  |  |
 | UI similarity audit | pending / passed / warning / failed |  |  |
 | Research trace | pending / passed / blocked |  |  |
@@ -101,6 +102,20 @@ Use `references/trust-navigation-template.md`.
 | Calculation method | `/calculation-method/` |  |  |
 | Header FAQ | `/faq/` |  |  |
 | Header Contact | `/contact/` |  |  |
+
+### Domain Contact Email
+
+For a confirmed real-domain launch, derive the default mailbox as `contact@{canonical_host}` unless the user supplied a same-domain mailbox.
+
+| Check | Status | Evidence |
+|---|---|---|
+| Selected contact email |  |  |
+| Contact page uses selected email |  |  |
+| Privacy page uses selected email when contact wording exists |  |  |
+| Placeholder/example emails removed |  | `rg -n "contact@example\\.com|support@example\\.com|hello@example\\.com|privacy@example\\.com|@[A-Za-z0-9.-]*example\\.com|project contact path|placeholder email" sites/{site_id}` |
+| Public content email scan reviewed |  | `rg -n "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}" sites/{site_id}/content sites/{site_id}/messages` |
+
+STOP: Do not mark `READY_TO_INDEX` while placeholder emails, generic example-domain emails, or stale off-domain contact emails remain in public content.
 
 ## 7. Browser Evidence
 

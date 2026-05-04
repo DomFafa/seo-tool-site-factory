@@ -100,6 +100,8 @@ For live/indexable sites, create `/about/`, `/contact/`, `/privacy/`, `/faq/`, a
 
 Each page needs unique metadata, H1, visible content, canonical URL, and sitemap inclusion.
 
+After a real domain is confirmed, Contact and Privacy contact wording must use a domain mailbox such as `contact@{canonical_host}` unless the user supplies another same-domain mailbox. Do not leave `contact@example.com`, `support@example.com`, generic example-domain mailboxes, or placeholder contact language in public content.
+
 ## 5. Internal Links
 
 Header links:
@@ -162,6 +164,7 @@ Launch requirement:
 - Sitemap includes all approved indexable pages.
 - Header/footer trust links resolve to 200 pages.
 - Google SEO review is complete using `references/google-seo-review.md`.
+- Public contact email uses the confirmed domain mailbox and no placeholder/example-domain emails remain.
 
 ## 8. Google SEO Review Planning
 

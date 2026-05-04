@@ -308,8 +308,9 @@ Reusable UI template families:
 
 - When the keyword fits a friendly calculator/checker/planner utility experience, read `references/playful-utility-template.md`. The `weighted-grade-calculator` final UI is available as a template family, not a cloneable page.
 - When the keyword fits a clean generator/picker/randomizer/formatter experience, read `references/tiny-tool-workbench-template.md`. The `random-date-generator` final UI is available as the second template family, not a cloneable page.
+- When the keyword fits a checker, validator, grader, accessibility, education, or review workflow and the user asks for a notebook, worksheet, study-note, teacher-marked, or red-pen style, read `references/notebook-worksheet-template.md`. The `color-contrast-checker` final UI is available as a template family, not a cloneable page.
 
-If either family is reused, record the template family, sub-template, borrowed elements, differentiated elements, similarity risk, and anti-clone decision in `design-direction.md`.
+If any family is reused, record the template family, sub-template, borrowed elements, differentiated elements, similarity risk, and anti-clone decision in `design-direction.md`.
 
 ### 7. Review the design plan before implementation
 
@@ -648,13 +649,41 @@ For `seo.pagesDevRedirect.status`:
 - use `pending` when the Pages project is live but the pages.dev redirect still needs manual Bulk Redirects or another verified account-level redirect
 - use `not-needed` only when the pages.dev hostname is intentionally inaccessible or otherwise cannot serve duplicate content
 
-After the user confirms the production domain, update the Contact page before the next production deploy so it exposes a real domain-based contact email:
+After the user confirms the production domain, update the public contact email before the next production deploy so the site exposes a real domain-based contact email:
 
 ```text
 contact@<canonical-domain>
 ```
 
-For example, `example.com` should use `contact@example.com`. Use this address in the Contact page and, when relevant, Privacy page contact wording. Do not keep placeholder language such as "project contact path" after a production domain is confirmed.
+For example, `mytool.com` should use `contact@mytool.com`. Use this address in the Contact page and, when relevant, Privacy page contact wording. Do not keep placeholder language such as "project contact path" after a production domain is confirmed. If the user explicitly provides a different mailbox on the same domain, record that mailbox and use it consistently.
+
+Domain contact email is a mandatory launch gate. Before `pnpm domain configure`, `pnpm domain bind`, `pnpm domain deploy`, or `pnpm domain go-live` on a confirmed real domain, do all of the following:
+
+1. Derive the default mailbox as `contact@<canonical-domain>` unless the user supplied a same-domain mailbox.
+2. Update public content references in:
+
+```text
+sites/<site-id>/content/<locale>/pages/contact.mdx
+sites/<site-id>/content/<locale>/pages/privacy.mdx
+sites/<site-id>/content/<locale>/**/*.mdx
+sites/<site-id>/messages/**
+```
+
+3. Search the site pack for placeholder or wrong-domain contact emails:
+
+```bash
+rg -n "contact@example\\.com|support@example\\.com|hello@example\\.com|privacy@example\\.com|@[A-Za-z0-9.-]*example\\.com|project contact path|placeholder email" sites/<site-id>
+```
+
+4. Search public content for any non-selected contact mailbox and resolve intentional exceptions:
+
+```bash
+rg -n "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}" sites/<site-id>/content sites/<site-id>/messages
+```
+
+5. Record the selected mailbox and search result in `sites/<site-id>/research/launch-review.md` when the file exists.
+
+STOP: Do not deploy a confirmed real-domain site or open indexing while placeholder emails, generic example-domain emails, or stale off-domain contact emails remain in public content.
 
 After the update:
 
