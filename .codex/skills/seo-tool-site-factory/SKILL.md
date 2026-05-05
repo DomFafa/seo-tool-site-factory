@@ -694,6 +694,7 @@ After the update:
 - Verify generated or deployed HTML so the canonical link, Open Graph URL, brand/Home links, JSON-LD URL, sitemap, and robots output use the real domain.
 - Verify `https://www.<apex-domain>/` redirects to `https://<apex-domain>/` when apex is canonical, or the reverse when `www` is canonical.
 - Verify `https://<project>.pages.dev/`. For Pages-only launches, Cloudflare Pages `_redirects` does not solve domain-level `pages.dev -> custom domain` redirects; use account-level Bulk Redirects or a manually configured Cloudflare redirect if available. If it cannot be configured from the current API token, record it as a deferred/manual task instead of assuming a Zone is required.
+- If Cloudflare Pages custom domains stay `pending` or `pnpm domain bind <site-id> --ensure-dns` fails on `/dns_records` with HTTP 403, apply `docs/real-domain-automation.md#dns-troubleshooting-playbook` before asking the user to rotate tokens again. Key rule: old apex/`www` `A`, `AAAA`, or `CNAME` records must be replaced with Pages CNAME records, unrelated email/verification records must be preserved, and Pages verification CNAME records should be `DNS only` until the custom domains are active.
 - Create or update `sites/<site-id>/research/seo-audit.md` with the full Google SEO deep review when this is a new deployed site or when the user asks whether SEO self-check/review/audit was completed.
 - Keep `indexing.allowIndex: false` and `indexing.mode: disallow` unless the user separately approves indexing.
 

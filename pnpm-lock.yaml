@@ -81,6 +81,9 @@ importers:
       '@factory/integrations':
         specifier: workspace:*
         version: link:../../packages/integrations
+      '@factory/open-heic-file':
+        specifier: workspace:*
+        version: link:../../packages/tools/open-heic-file
       '@factory/random-date-generator':
         specifier: workspace:*
         version: link:../../packages/tools/random-date-generator
@@ -99,6 +102,9 @@ importers:
       '@factory/weighted-grade-calculator':
         specifier: workspace:*
         version: link:../../packages/tools/weighted-grade-calculator
+      heic2any:
+        specifier: ^0.0.4
+        version: 0.0.4
 
   packages/integrations:
     dependencies:
@@ -144,6 +150,12 @@ importers:
   packages/tools/cursed-text-generator: {}
 
   packages/tools/image-converter: {}
+
+  packages/tools/open-heic-file:
+    dependencies:
+      heic2any:
+        specifier: ^0.0.4
+        version: 0.0.4
 
   packages/tools/random-date-generator: {}
 
@@ -1535,6 +1547,9 @@ packages:
 
   hastscript@9.0.1:
     resolution: {integrity: sha512-g7df9rMFX/SPi34tyGCyUBREQoKkapwdY/T04Qn9TDWfHhAYt4/I0gMVirzK5wEzeUqIjEB+LXC/ypb7Aqno5w==}
+
+  heic2any@0.0.4:
+    resolution: {integrity: sha512-3lLnZiDELfabVH87htnRolZ2iehX9zwpRyGNz22GKXIu0fznlblf0/ftppXKNqS26dqFSeqfIBhAmAj/uSp0cA==}
 
   html-escaper@3.0.3:
     resolution: {integrity: sha512-RuMffC89BOWQoY0WKGpIhn5gX3iI54O6nRA0yC124NYVtzjmFWBIiFd8M0x+ZdX0P9R4lADg1mgP8C7PxGOWuQ==}
@@ -3646,6 +3661,8 @@ snapshots:
       hast-util-parse-selector: 4.0.0
       property-information: 7.1.0
       space-separated-tokens: 2.0.2
+
+  heic2any@0.0.4: {}
 
   html-escaper@3.0.3: {}
 

@@ -1,0 +1,31 @@
+schemaVersion: 1
+recipe: heic-pixel-native
+chrome:
+  navVariant: compact
+  footerVariant: simple
+  headerLinks:
+    - label: Privacy
+      href: "/privacy/"
+    - label: FAQ
+      href: "/faq/"
+    - label: Contact
+      href: "/contact/"
+    - label: Open HEIC File
+      href: "/#open"
+  footerLinks:
+    - label: Home
+      href: "/"
+    - label: Privacy
+      href: "/privacy/"
+    - label: FAQ
+      href: "/faq/"
+    - label: Contact
+      href: "/contact/"
+home:
+  blocks:
+    - type: hero
+      variant: native
+    - type: tool
+      variant: native
+    - type: faq
+      variant: native

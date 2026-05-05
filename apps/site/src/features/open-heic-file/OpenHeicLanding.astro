@@ -1,0 +1,196 @@
+---
+import ToolRenderer from '../../components/ToolRenderer.astro';
+import type { ContentDocument, SiteContext } from '@factory/site-core';
+
+interface Props {
+  ctx: SiteContext;
+  locale: string;
+  home: ContentDocument;
+  faq: ContentDocument | null;
+}
+
+const { ctx, locale } = Astro.props as Props;
+
+const assetBase = '/open-heic-file';
+
+const steps = [
+  {
+    number: '1',
+    title: 'Choose your HEIC file',
+    body: 'Select a .heic or .heif file from your computer, iPhone export, or downloaded attachment.',
+    image: 'heic-step-1.png',
+    alt: 'Person choosing a HEIC file'
+  },
+  {
+    number: '2',
+    title: 'Preview the image',
+    body: 'Your HEIC image is decoded locally in your browser. Confirm the preview and dimensions.',
+    image: 'heic-step-2.png',
+    alt: 'Person previewing a decoded image'
+  },
+  {
+    number: '3',
+    title: 'Download as JPG or PNG',
+    body: 'Download a JPG for universal compatibility or PNG for higher quality when you need it.',
+    image: 'heic-step-3.png',
+    alt: 'Person downloading a converted image'
+  }
+] as const;
+
+const guideCards = [
+  {
+    id: 'why-heic-files-fail-to-open',
+    title: 'Why HEIC files fail to open',
+    bullets: [
+      'Windows Photos may ask for HEIF extensions.',
+      'Unsupported upload forms or CMS often reject HEIC.',
+      'Older editors may not support HEIC.'
+    ],
+    action: 'Learn more',
+    href: '/guide/why-heic-file-wont-open/',
+    image: 'heic-card-fail.png',
+    alt: 'Person seeing a HEIC file open error'
+  },
+  {
+    id: 'heic-vs-jpg-vs-png',
+    title: 'HEIC vs JPG vs PNG',
+    bullets: [
+      'HEIC saves space but has limited compatibility.',
+      'JPG is best for sharing and compatibility.',
+      'PNG is ideal for quality and design work.'
+    ],
+    action: 'Compare formats',
+    href: '/guide/heic-to-jpg-vs-png/',
+    image: 'heic-card-compare.png',
+    alt: 'HEIC JPG and PNG file comparison'
+  },
+  {
+    id: 'fix-common-heic-problems',
+    title: 'Fix common HEIC problems',
+    bullets: [
+      'Convert HEIC to JPG or PNG.',
+      'Handle upload errors and rejections.',
+      'Open HEIC images on Windows easily.'
+    ],
+    action: 'See solutions',
+    href: '/guide/fix-common-heic-problems/',
+    image: 'heic-card-fix.png',
+    alt: 'Person fixing a HEIC file problem'
+  }
+] as const;
+
+const faqs = [
+  ['What is a HEIC file?', 'HEIC is an image format commonly used by Apple devices for photos. It can keep good image quality with smaller file sizes, but some apps still do not support it.'],
+  ['Does this upload my image?', 'No. The selected HEIC or HEIF file is decoded in your browser session. The tool does not need a server upload to preview or export the file.'],
+  ['Can I save the image as JPG or PNG?', 'Yes. After the preview is ready, use the JPG or PNG download buttons to create a more widely supported copy.'],
+  ['Should I choose JPG or PNG?', 'Choose JPG for broad compatibility. Choose PNG when you want a lossless copy for documentation, screenshots, or design workflows.'],
+  ['Does this work without the Windows HEVC extension?', 'The browser-side decoder is separate from Windows Photos or the Microsoft HEVC extension. Final compatibility still depends on the browser and HEIC variant.'],
+  ['Can this repair a corrupted HEIC file?', 'No. This is a viewer and export helper, not a photo repair tool.']
+] as const;
+---
+<div class="heic-native">
+  <section class="heic-native-hero">
+    <div class="container heic-native-hero__grid">
+      <div class="heic-native-hero__copy">
+        <p class="heic-native-kicker"><span aria-hidden="true">+</span> Private HEIC viewer</p>
+        <h1>Open HEIC files instantly, privately.</h1>
+        <p class="heic-native-lead">Preview and convert HEIC images to JPG or PNG online. 100% private. No upload. Works on any device.</p>
+        <div class="heic-native-pills" aria-label="Privacy and compatibility highlights">
+          <span>No server upload</span>
+          <span>Works in your browser</span>
+          <span>100% private</span>
+        </div>
+        <div class="heic-native-actions">
+          <a class="heic-native-button heic-native-button--primary" href="#open">Open HEIC File</a>
+          <a class="heic-native-button" href="#how-it-works">Try Sample Image</a>
+        </div>
+      </div>
+      <div class="heic-native-hero__art" aria-hidden="true">
+        <img src={`${assetBase}/heic-hero-art.png`} alt="" width="345" height="315" loading="eager" decoding="async" />
+      </div>
+    </div>
+  </section>
+
+  <section id="open" class="heic-native-tool" aria-label="Open HEIC tool">
+    <div class="container">
+      <ToolRenderer ctx={ctx} locale={locale} />
+    </div>
+  </section>
+
+  <section class="heic-native-note" aria-label="Local processing note">
+    <div class="container">
+      <div class="heic-native-note__card">
+        <strong>Local processing</strong>
+        <span>Your image is decoded in your browser. This tool does not upload selected HEIC files to any server.</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="how-it-works" class="heic-native-section heic-native-section--steps">
+    <div class="container">
+      <div class="heic-native-heading">
+        <p>How it works</p>
+        <h2>Open and convert in 3 simple steps</h2>
+      </div>
+      <div class="heic-native-steps">
+        {steps.map((step) => (
+          <article class="heic-native-step">
+            <span>{step.number}</span>
+            <img src={`${assetBase}/${step.image}`} alt={step.alt} width="145" height="105" loading="lazy" decoding="async" />
+            <h3>{step.title}</h3>
+            <p>{step.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="heic-native-section heic-native-section--guides">
+    <div class="container heic-native-card-grid">
+      {guideCards.map((card) => (
+        <article id={card.id} class="heic-native-card">
+          <img src={`${assetBase}/${card.image}`} alt={card.alt} width="180" height="130" loading="lazy" decoding="async" />
+          <h2>{card.title}</h2>
+          <ul>
+            {card.bullets.map((item) => <li>{item}</li>)}
+          </ul>
+          <a href={card.href}>{card.action} <span aria-hidden="true">&rarr;</span></a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section id="privacy" class="heic-native-section heic-native-privacy">
+    <div class="container heic-native-privacy__panel">
+      <img src={`${assetBase}/heic-privacy-art.png`} alt="" width="168" height="122" loading="lazy" decoding="async" />
+      <div>
+        <h2>Privacy by design</h2>
+        <p>Your files never leave your device.</p>
+      </div>
+      <div class="heic-native-privacy__points">
+        <div><strong>No uploads</strong><span>Files are processed locally in your browser only.</span></div>
+        <div><strong>No tracking</strong><span>We do not collect, store, or analyze your images.</span></div>
+        <div><strong>Your data stays yours</strong><span>No one can access your files - not even us.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="heic-native-section heic-native-faq">
+    <div class="container">
+      <div class="heic-native-heading">
+        <h2>FAQ</h2>
+      </div>
+      <div class="heic-native-faq__grid">
+        {faqs.map(([question, answer], index) => (
+          <details open={index === 0}>
+            <summary>{question}</summary>
+            <p>{answer}</p>
+          </details>
+        ))}
+      </div>
+      <div class="heic-native-faq__action">
+        <a class="heic-native-button" href="/faq/">View all FAQs <span aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+  </section>
+</div>

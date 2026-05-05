@@ -112,6 +112,9 @@ function selectedToolFor(toolId: string): { componentSource: string; rendererSou
   if (toolId === 'color-contrast-checker') {
     return reactTool('../features/color-contrast-checker/ColorContrastCheckerIsland', { renderer: 'react', toolId, mode: '' });
   }
+  if (toolId === 'open-heic-file') {
+    return reactTool('../features/open-heic-file/OpenHeicFileIsland', { renderer: 'react', toolId, mode: '' });
+  }
   throw new Error(`Tool renderer for ${toolId} is not implemented yet.`);
 }
 

@@ -1,0 +1,20 @@
+schemaVersion: 1
+toolId: open-heic-file
+executionModel: browser-file-processing
+privacy:
+  storesUserInput: false
+  uploadsFiles: false
+  localProcessing: true
+analytics:
+  safeFields:
+    - locale
+    - fileSizeBucket
+    - outputFormat
+options:
+  maxFileSizeMb: 25
+  acceptedExtensions:
+    - .heic
+    - .heif
+  outputFormats:
+    - jpg
+    - png

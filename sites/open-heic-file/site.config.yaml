@@ -1,0 +1,45 @@
+schemaVersion: 1
+id: open-heic-file
+brandName: HEIC Open
+category: other
+primaryKeyword: open heic file
+lifecycle:
+  status: live
+launch:
+  stage: real-domain-indexed
+domains:
+  production: openheicfile.net
+  canonicalHost: openheicfile.net
+  aliases:
+    - www.openheicfile.net
+defaultLocale: en
+locales:
+  en:
+    enabled: true
+    indexable: true
+    reviewed: true
+indexing:
+  allowIndex: true
+  mode: index
+primaryTool: open-heic-file
+seo:
+  defaultTitle: Open HEIC File Online - Private HEIC Viewer
+  defaultDescription: Open HEIC files online in your browser, preview iPhone photos, and save JPG or PNG copies without uploading images to a server.
+  xDefaultLocale: en
+  structuredData:
+    - WebSite
+    - WebPage
+    - SoftwareApplication
+  sitemap:
+    split: false
+  ogImage:
+    mode: generated
+    path: /og-image.svg
+  pagesDevRedirect:
+    status: configured
+    notes: Cloudflare Bulk Redirects verified for pages.dev and alias canonical redirects.
+deployment:
+  provider: cloudflare-pages
+  accountAlias: shared
+  projectName: seo-tool-open-heic-file
+  outputDir: dist/sites/open-heic-file

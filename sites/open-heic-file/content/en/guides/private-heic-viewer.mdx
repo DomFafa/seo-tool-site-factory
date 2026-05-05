@@ -1,0 +1,26 @@
+---
+title: 'Private HEIC Viewer: What No-Upload Processing Means'
+description: >-
+  Understand browser-side HEIC viewing, local image decoding, object URLs, and
+  why no-upload conversion matters for private photos.
+slug: private-heic-viewer
+lastModified: '2026-05-05'
+index: true
+contentStatus: approved
+---
+
+## Upload-first converters create extra exposure
+
+Many image converters ask you to upload the original file before they can show a preview or create a download. That may be acceptable for low-risk images, but it is unnecessary exposure for private photos, client work, receipts, IDs, or legal evidence.
+
+## Browser-side viewing is different
+
+A no-upload HEIC viewer uses code running in your browser to read the selected file. The page can create a temporary preview URL and export a JPG or PNG copy without sending the original image to a conversion server.
+
+## What still matters
+
+No-upload processing does not mean every browser can decode every HEIC variant. It also does not replace your normal device security. It means the core preview and conversion workflow is designed to happen locally in the browser session.
+
+## Practical rule
+
+If a photo is sensitive, prefer local decoding first. Only upload the converted copy to the exact website or workflow that actually needs it.

@@ -1,0 +1,53 @@
+---
+title: "Privacy for HEIC Open"
+description: "How HEIC Open handles selected HEIC and HEIF files, browser-side conversion, analytics boundaries, and no-upload image processing."
+slug: "privacy"
+lastModified: "2026-05-05"
+index: false
+contentStatus: draft
+---
+
+## Privacy by design
+
+HEIC Open is designed around local browser processing. When you choose a `.heic` or `.heif` file, the page reads that file in your current browser session so it can preview the image and create JPG or PNG downloads.
+
+The selected image is not uploaded to a conversion server for the core open, preview, or download workflow.
+
+## What happens to your file
+
+When you use the tool:
+
+1. Your browser receives the selected file from the file picker or drag-and-drop area.
+2. The tool attempts to decode the HEIC or HEIF image locally.
+3. The preview is shown with a temporary browser URL.
+4. JPG and PNG outputs are created in the browser.
+5. Temporary preview and download URLs are cleared when the page resets or closes.
+
+## What we do not collect
+
+The tool must not send raw image content, file names, typed text, or uploaded file contents in analytics events.
+
+If analytics are enabled in the future, events should only use safe operational fields such as:
+
+- Whether the tool completed successfully.
+- A broad file-size bucket.
+- The selected output format.
+- The tool ID and locale.
+
+## When data leaves your device
+
+The original selected HEIC file should only leave your device if you later upload a converted JPG or PNG to another website or app yourself.
+
+For sensitive photos such as IDs, receipts, client work, legal evidence, or medical documents, use local preview first and upload only the converted copy to the exact destination that needs it.
+
+## Browser limitations
+
+No-upload processing does not mean every browser can decode every HEIC variant. Some files may fail because of browser support, image encoding, metadata, or file size. In that case, try exporting again from the original device or using a browser with better HEIC support.
+
+## Privacy contact
+
+For privacy questions or correction requests, email:
+
+```text
+contact@openheicfile.net
+```

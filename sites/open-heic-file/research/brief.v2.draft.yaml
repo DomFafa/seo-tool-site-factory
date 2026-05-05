@@ -1,0 +1,34 @@
+schemaVersion: 1
+siteId: open-heic-file
+primaryKeyword: open heic file
+category: other
+locale: en
+market: US
+mode: implement
+researchStatus: READY_WITH_FALLBACK
+launchStatus: DRAFT_ONLY
+bingWebmasterStatus: user-approved-skip
+userApprovalContext: "User selected the keyword and requested skipping keyword research before implementation."
+product:
+  name: HEIC Open
+  job: Open and preview a HEIC or HEIF file in the browser, then optionally export PNG or JPEG.
+  boundary:
+    is:
+      - Browser-side single-file HEIC opener.
+      - Privacy-forward PNG/JPEG export helper.
+    isNot:
+      - Server-side upload service.
+      - Batch image converter.
+      - Photo editor.
+design:
+  reference: User-provided TypeScale/Zephtor screenshot.
+  aesthetic: Precise monochrome file utility.
+  notes:
+    - Off-white background, black type, compact black buttons.
+    - Thin-line file illustration motifs.
+    - Tool-first, not marketing-first.
+validation:
+  requiredCommands:
+    - pnpm --filter @factory/open-heic-file test
+    - pnpm site check open-heic-file
+    - pnpm site build open-heic-file

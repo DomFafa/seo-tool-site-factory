@@ -57,9 +57,11 @@ For the shared account token, start with:
 
 - Cloudflare Pages edit permission
 - Zone read permission
-- DNS edit permission, only if you later use `--ensure-dns`
+- Zone `DNS` read and edit permission, required for `pnpm domain bind <site-id> --ensure-dns`
 - Account `Account Rule Lists` read/write permissions, only if you later use `pnpm domain redirects --ensure`
 - Account `Mass URL Redirects` read/write permissions, only if you later use `pnpm domain redirects --ensure`
+
+`pnpm cf accounts check shared --api` verifies account endpoint access, not every later Cloudflare API surface. Treat DNS as separately verified. If `pnpm domain check <site-id>` can read the zone and Pages project but `pnpm domain bind <site-id> --ensure-dns` fails on `/dns_records` with HTTP 403, the token is insufficient for DNS record reads/writes for that zone. Fix the token's zone DNS permissions or use a logged-in Cloudflare dashboard session to perform the one-time DNS changes described in `docs/real-domain-automation.md`.
 
 Bulk Redirects need both permission groups. `Account Rule Lists` manages the redirect list and list items. `Mass URL Redirects` reads and updates the account `http_request_redirect` ruleset that enables the list. Cloudflare may show older labels as `Account Filter Lists` and `Bulk URL Redirects`; use the read/write variants for both.
 

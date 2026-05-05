@@ -1,0 +1,146 @@
+---
+interface Props {
+  kind:
+    | 'hero'
+    | 'helps'
+    | 'formats'
+    | 'privacy'
+    | 'fail'
+    | 'compare'
+    | 'fix'
+    | 'upload'
+    | 'preview'
+    | 'download';
+}
+const { kind } = Astro.props as Props;
+---
+{kind === 'hero' && (
+  <svg class="heic-art heic-art--hero" viewBox="0 0 520 430" role="img" aria-label="Person opening HEIC files locally in the browser">
+    <path class="dash" d="M54 310c-22-62 42-98 112-85 104 19 116-110 218-102 71 5 100 50 76 103" />
+    <path class="dash" d="M362 47c89-20 148 20 104 104" />
+    <rect class="soft" x="57" y="144" width="150" height="222" rx="22" transform="rotate(-13 132 255)" />
+    <path class="ink" d="M74 195l92-20M83 262l116-24M95 325l106-22" />
+    <rect class="soft" x="279" y="75" width="185" height="258" rx="26" transform="rotate(-15 371 204)" />
+    <path class="ink" d="M309 142l126-32M318 188l132-34M329 235l120-31M338 283l92-24" />
+    <circle class="solid" cx="229" cy="84" r="26" />
+    <path class="ink" d="M224 114c10 8 18 8 29-1" />
+    <path class="ink" d="M193 165c28-26 83-31 114 4l40 45" />
+    <path class="soft" d="M197 169l66 2 8 142-75-1z" />
+    <path class="ink" d="M200 172c-34 10-45 45-31 94M271 173c54 6 102-14 119-55" />
+    <path class="ink" d="M390 118l18-32M399 126l26-19M386 132l20 10" />
+    <path class="solid" d="M244 315c18 8 62 8 79-2l-17 78h-48z" />
+    <path class="solid" d="M196 311h61l-8 86h-42z" />
+    <path class="ink" d="M206 399l-25 17 58 2M298 395l31 14-58 11" />
+    <circle class="solid" cx="100" cy="339" r="22" />
+    <circle class="soft" cx="100" cy="339" r="44" />
+    <path class="ink" d="M100 286v-26M100 418v-26M47 339H21M179 339h-26M63 302L44 283M156 394l-19-19M137 302l19-19M44 394l19-19" />
+    <circle class="soft" cx="174" cy="335" r="31" />
+    <circle class="solid" cx="174" cy="335" r="14" />
+    <path class="ink" d="M231 63V30M210 70l-24-19M254 70l24-20" />
+  </svg>
+)}
+
+{kind === 'helps' && (
+  <svg class="heic-art" viewBox="0 0 360 250" role="img" aria-label="Checklist of when an HEIC opener helps">
+    <rect class="soft" x="76" y="36" width="206" height="178" rx="22" />
+    <circle class="solid" cx="114" cy="82" r="8" /><path class="ink" d="M137 82h72M137 104h118" />
+    <circle class="solid" cx="114" cy="126" r="8" /><path class="ink" d="M137 126h92M137 148h82" />
+    <circle class="solid" cx="114" cy="170" r="8" /><path class="ink" d="M137 170h76M137 192h112" />
+    <path class="ink" d="M96 80l8 8 17-22M96 124l8 8 17-22M96 168l8 8 17-22" />
+    <path class="dash" d="M42 78c29-59 92-60 130-40M250 33c52 6 81 34 67 83M64 214c47 27 103 24 146 5" />
+    <circle class="soft" cx="293" cy="54" r="31" /><path class="ink" d="M293 36v21l14 11" />
+    <path class="solid" d="M48 165h32v50H48z" />
+  </svg>
+)}
+
+{kind === 'formats' && (
+  <svg class="heic-art" viewBox="0 0 360 250" role="img" aria-label="Format choices for HEIC JPG PNG">
+    <rect class="soft" x="76" y="40" width="208" height="170" rx="20" />
+    <g class="format-buttons">
+      <rect class="soft" x="100" y="66" width="76" height="44" rx="12" /><text x="138" y="93" text-anchor="middle">HEIC</text>
+      <rect class="soft" x="188" y="66" width="76" height="44" rx="12" /><text x="226" y="93" text-anchor="middle">JPG</text>
+      <rect class="soft" x="100" y="124" width="76" height="44" rx="12" /><text x="138" y="151" text-anchor="middle">PNG</text>
+      <rect class="soft" x="188" y="124" width="76" height="44" rx="12" /><text x="226" y="151" text-anchor="middle">WEBP</text>
+    </g>
+    <path class="solid" d="M58 134c24-22 45-17 55 6 6 16 2 37-14 50H65z" />
+    <path class="ink" d="M63 192v28M89 192v28M69 121c-6-22 33-30 38-4" />
+    <circle class="soft" cx="287" cy="203" r="28" /><path class="solid" d="M287 186l8 18h-16z" />
+    <path class="dash" d="M40 70c44-44 110-41 151-17M269 39c44 20 62 53 51 96" />
+  </svg>
+)}
+
+{kind === 'privacy' && (
+  <svg class="heic-art heic-art--privacy" viewBox="0 0 360 250" role="img" aria-label="Privacy boundary for local HEIC processing">
+    <path class="soft" d="M181 32l112 38v65c0 65-40 101-112 128C109 236 69 200 69 135V70z" />
+    <path class="ink" d="M181 54l84 29v52c0 47-27 76-84 100-57-24-84-53-84-100V83z" />
+    <rect class="soft" x="138" y="112" width="86" height="68" rx="13" />
+    <path class="ink" d="M154 112V92c0-27 52-27 52 0v20" />
+    <circle class="solid" cx="181" cy="143" r="9" /><path class="ink" d="M181 151v24" />
+    <path class="dash" d="M34 86c35-45 70-54 112-41M269 52c48 11 72 39 67 82" />
+    <path class="ink" d="M271 196h36M289 178v36" />
+  </svg>
+)}
+
+{kind === 'fail' && (
+  <svg class="heic-art" viewBox="0 0 360 250" role="img" aria-label="HEIC file open error">
+    <path class="soft" d="M63 206h226c13 0 24-11 24-24V70c0-13-11-24-24-24H63c-13 0-24 11-24 24v112c0 13 11 24 24 24z" />
+    <path class="solid" d="M92 120c19-21 53-15 62 10 6 17 0 40-18 53H98z" />
+    <path class="ink" d="M104 183v23M132 183v23" />
+    <path class="soft" d="M200 91h72l28 28v72H200z" />
+    <path class="ink" d="M272 91v28h28M218 153l18-18 18 18M254 135l18 18" />
+    <circle class="soft" cx="284" cy="58" r="38" /><path class="solid" d="M268 42l32 32M300 42l-32 32" />
+    <path class="dash" d="M56 46c38-31 89-23 126 8M49 224c62 24 137 20 205-2" />
+  </svg>
+)}
+
+{kind === 'compare' && (
+  <svg class="heic-art" viewBox="0 0 360 250" role="img" aria-label="HEIC JPG PNG comparison">
+    <g>
+      <path class="soft" d="M58 44h76l28 28v118H58z" /><path class="ink" d="M134 44v28h28" /><text x="96" y="160" text-anchor="middle">HEIC</text>
+      <path class="soft" d="M158 44h76l28 28v118h-104z" /><path class="ink" d="M234 44v28h28" /><text x="196" y="160" text-anchor="middle">JPG</text>
+      <path class="soft" d="M258 44h76l28 28v118H258z" transform="translate(-20 0)" /><path class="ink" d="M314 44v28h28" /><text x="296" y="160" text-anchor="middle">PNG</text>
+    </g>
+    <path class="solid" d="M76 126l20-24 18 20 12-13 28 35H66zM176 126l20-24 18 20 12-13 28 35H166zM256 126l20-24 18 20 12-13 28 35H246z" />
+    <path class="ink" d="M72 212h60M172 212h60M252 212h60" />
+    <path class="ink" d="M72 226h42M172 226h54M252 226h46" />
+  </svg>
+)}
+
+{kind === 'fix' && (
+  <svg class="heic-art" viewBox="0 0 360 250" role="img" aria-label="Fix HEIC problems">
+    <rect class="soft" x="77" y="47" width="235" height="152" rx="20" />
+    <path class="soft" d="M204 82h70l24 24v68h-94z" />
+    <path class="ink" d="M274 82v24h24" /><text x="240" y="146" text-anchor="middle">HEIC</text>
+    <rect class="solid" x="108" y="169" width="112" height="14" rx="7" /><rect class="soft" x="220" y="169" width="62" height="14" rx="7" />
+    <path class="solid" d="M74 130c23-22 43-18 56 4 8 15 5 38-12 50H82z" />
+    <path class="ink" d="M83 184v25M111 184v25" />
+    <path class="ink" d="M122 73l-52 52M75 117l-16 31 31-16M242 203v35M224 220h72" />
+    <circle class="soft" cx="305" cy="211" r="30" /><path class="ink" d="M305 194v34M288 211h34" />
+    <path class="dash" d="M43 73c35-42 90-45 146-20M66 226c62 23 141 18 230-5" />
+  </svg>
+)}
+
+{kind === 'upload' && (
+  <svg class="heic-art heic-art--mini" viewBox="0 0 180 120" role="img" aria-label="Upload HEIC file">
+    <rect class="soft" x="34" y="18" width="112" height="84" rx="14" />
+    <path class="soft" d="M73 36h45l16 16v50H73z" /><path class="ink" d="M118 36v16h16" /><text x="96" y="79" text-anchor="middle">HEIC</text>
+    <path class="ink" d="M40 58H18M29 47l-11 11 11 11" />
+  </svg>
+)}
+
+{kind === 'preview' && (
+  <svg class="heic-art heic-art--mini" viewBox="0 0 180 120" role="img" aria-label="Preview HEIC image">
+    <rect class="soft" x="28" y="20" width="124" height="84" rx="13" />
+    <path class="solid" d="M48 78l22-25 16 20 10-11 36 42H43z" />
+    <circle class="solid" cx="120" cy="47" r="9" />
+    <path class="ink" d="M29 18l-14-14M151 18l14-14M29 104l-14 14M151 104l14 14" />
+  </svg>
+)}
+
+{kind === 'download' && (
+  <svg class="heic-art heic-art--mini" viewBox="0 0 180 120" role="img" aria-label="Download JPG or PNG">
+    <rect class="soft" x="38" y="22" width="104" height="76" rx="14" />
+    <circle class="soft" cx="90" cy="60" r="28" />
+    <path class="ink" d="M90 36v42M74 62l16 16 16-16M62 91h56" />
+  </svg>
+)}

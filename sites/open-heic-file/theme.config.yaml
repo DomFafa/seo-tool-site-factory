@@ -1,0 +1,14 @@
+schemaVersion: 1
+name: open-heic-pixel-native
+density: comfortable
+surface: flat
+colors:
+  primary: "#050505"
+  background: "#ffffff"
+  surface: "#ffffff"
+  accent: "#050505"
+radius: 8px
+layout: custom-pixel-native
+adLayout:
+  avoidPrimaryActions: true
+  disableOnToolResultPanel: true

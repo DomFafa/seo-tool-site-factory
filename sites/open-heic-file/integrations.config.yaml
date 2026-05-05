@@ -1,0 +1,37 @@
+schemaVersion: 1
+consent:
+  enabled: false
+  googleConsentMode: false
+  clarityConsentMode: false
+ads:
+  enabled: false
+  activeProvider: adsense
+  adsTxt:
+    enabled: false
+    entries: []
+  providers:
+    adsense:
+      enabled: false
+      publisherId: ""
+      slots: {}
+      siteStatus: not_submitted
+    adsterra:
+      enabled: false
+      placements: {}
+analytics:
+  googleAnalytics:
+    enabled: false
+  microsoftClarity:
+    enabled: false
+webmaster:
+  googleSearchConsole:
+    enabled: false
+  bingWebmaster:
+    enabled: false
+    verification:
+      method: import-from-gsc
+      metaName: msvalidate.01
+      content: ""
+indexing:
+  indexNow:
+    enabled: false

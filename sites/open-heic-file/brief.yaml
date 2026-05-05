@@ -1,0 +1,13 @@
+schemaVersion: 1
+primaryKeyword: open heic file
+category: other
+intent:
+  userJob: "Open an HEIC or HEIF image that the current device or app cannot preview, then optionally save a PNG or JPEG copy."
+productBoundary:
+  thisSiteIs:
+    - "A browser-side HEIC/HEIF viewer for single image files."
+    - "A privacy-forward helper for exporting PNG or JPEG copies."
+  thisSiteIsNot:
+    - "A server-side photo upload or cloud storage product."
+    - "A batch image management suite."
+    - "A metadata extraction service that stores original image details."

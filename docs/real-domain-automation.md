@@ -93,6 +93,65 @@ pnpm domain verify typing-speed-test
 
 `domain bind` and `domain verify` wait for Pages custom domains to become active by default. Use `--wait-seconds 0` to skip the wait during manual troubleshooting.
 
+## DNS troubleshooting playbook
+
+Use this flow when `pnpm domain bind <site-id> --ensure-dns` fails or Cloudflare Pages custom domains stay `pending`.
+
+First separate account access from DNS-record access:
+
+```bash
+set -a; source .env.local; set +a
+pnpm cf accounts check shared --api
+pnpm domain check <site-id>
+```
+
+`pnpm cf accounts check shared --api` only proves the token can reach the configured Cloudflare account endpoint. `pnpm domain check <site-id>` proves the zone and Pages project are visible. A token can pass both checks and still fail on DNS records.
+
+If `--ensure-dns` fails with:
+
+```text
+Cloudflare API GET /zones/<zone-id>/dns_records?... HTTP 403 - Authentication error
+```
+
+then the token is not usable for DNS record reads/writes through the public API, even if zone metadata lists DNS permissions. Do not keep rotating deploy commands. Use one of these fixes:
+
+1. Preferred: update the API token so it has `Zone: DNS: Read` and `Zone: DNS: Edit` for the target zone, then rerun:
+
+```bash
+pnpm domain bind <site-id> --ensure-dns --wait-seconds 240
+pnpm domain verify <site-id> --wait-seconds 240
+```
+
+2. If the browser is logged in to Cloudflare and the token endpoint is blocked, use the dashboard session only as a manual fallback. In the DNS Records page for the zone:
+   - delete old same-host `A`, `AAAA`, or `CNAME` records for the apex and `www` host
+   - keep unrelated records such as `MX`, SPF `TXT`, DKIM `TXT`, DMARC, and verification TXT records
+   - create `CNAME` records for the apex domain and `www` host pointing to the Pages project subdomain shown by `pnpm domain check <site-id>`
+   - set both CNAME records to `DNS only` while Pages verifies the custom domains
+
+Cloudflare CNAME verification can fail when the verification CNAME is proxied. Cloudflare documents this as a common cause of "CNAME record not set"; proxy status should be DNS only during verification: https://developers.cloudflare.com/dns/manage-dns-records/troubleshooting/cname-domain-verification/
+
+After DNS is corrected, verify the state in this order:
+
+```bash
+pnpm domain check <site-id>
+pnpm domain bind <site-id> --wait-seconds 240
+pnpm domain verify <site-id> --wait-seconds 240
+curl -I https://<canonical-domain>/
+curl -I https://www.<canonical-domain>/
+```
+
+Expected progression:
+
+```text
+Pages domain <domain>: bound (pending)
+verification_data.status: active
+validation_data.status: pending
+Pages domains active ...
+homepage: https://<domain> -> HTTP 200
+```
+
+If the hostname returns Cloudflare `522`, check whether the Pages custom domain was associated before the DNS CNAME was created. Cloudflare Pages requires going through the Custom domains association flow; manually pointing DNS at `*.pages.dev` before association can produce 522s. Reference: https://developers.cloudflare.com/pages/configuration/custom-domains/
+
 Pages `_redirects` does not support domain-level redirects. Use Cloudflare Bulk Redirects for `pages.dev` or `www` canonical 301s:
 
 ```bash

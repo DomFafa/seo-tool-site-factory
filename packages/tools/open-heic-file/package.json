@@ -1,0 +1,12 @@
+{
+  "name": "@factory/open-heic-file",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "heic2any": "^0.0.4"
+  }
+}

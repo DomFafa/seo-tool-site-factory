@@ -169,6 +169,23 @@ Tool panel:
 
 Do not copy decorative elements literally across sites.
 
+## UI Template 4: Monochrome File Opener
+
+Use `references/monochrome-file-opener-template.md` for privacy-first file opener, viewer, converter, and local-processing utility sites.
+
+This template is based on the approved `open-heic-file` native UI direction:
+
+- black and white visual system
+- hand-drawn monochrome illustrations
+- large direct hero copy
+- real dropzone/status/download tool panel near the first viewport
+- local-processing trust note
+- three guide cards linking to real guide pages
+- dark privacy band
+- compact FAQ and trust navigation
+
+Use it as a template direction, not as a hard-coded site clone.
+
 Instead, derive decorative elements from:
 
 1. The tool keyword.

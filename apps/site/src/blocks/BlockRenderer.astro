@@ -1,5 +1,6 @@
 ---
 import ToolRenderer from '../components/ToolRenderer.astro';
+import OpenHeicLanding from '../features/open-heic-file/OpenHeicLanding.astro';
 import AdSlot from '../components/AdSlot.astro';
 import type { ContentDocument, LayoutBlock, SiteContext } from '@factory/site-core';
 import { listGuideContent } from '@factory/site-core';
@@ -78,6 +79,9 @@ function examplesFor(block: LayoutBlock): string[] {
   ]);
 }
 ---
+{ctx.siteId === 'open-heic-file' ? (
+  <OpenHeicLanding ctx={ctx} locale={locale} home={home} faq={faq} />
+) : (
 <div class={`page-recipe page-recipe--${ctx.layoutConfig.recipe}`} data-ui-recipe={ctx.layoutConfig.recipe}>
   {blocks.map((block) => (
     <div class="block-rendered" data-block={block.type}>
@@ -207,3 +211,4 @@ function examplesFor(block: LayoutBlock): string[] {
     </div>
   ))}
 </div>
+)}

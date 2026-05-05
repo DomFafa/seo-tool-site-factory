@@ -9,15 +9,17 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@factory/integrations": "workspace:*",
     "@factory/color-contrast-checker": "workspace:*",
+    "@factory/cursed-text-generator": "workspace:*",
+    "@factory/image-converter": "workspace:*",
+    "@factory/integrations": "workspace:*",
+    "@factory/open-heic-file": "workspace:*",
+    "@factory/random-date-generator": "workspace:*",
+    "@factory/random-letter-generator": "workspace:*",
     "@factory/seo": "workspace:*",
     "@factory/site-core": "workspace:*",
     "@factory/typing-engine": "workspace:*",
-    "@factory/image-converter": "workspace:*",
-    "@factory/cursed-text-generator": "workspace:*",
     "@factory/weighted-grade-calculator": "workspace:*",
-    "@factory/random-date-generator": "workspace:*",
-    "@factory/random-letter-generator": "workspace:*"
+    "heic2any": "^0.0.4"
   }
 }
