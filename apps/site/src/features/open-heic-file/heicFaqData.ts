@@ -45,11 +45,44 @@ export const heicViewerFaqs: HeicFaqItem[] = [
   }
 ];
 
+export const heicToPdfFaqs: HeicFaqItem[] = [
+  {
+    question: 'Can I convert HEIC to PDF online?',
+    answer: 'Yes. You can choose one or more HEIC or HEIF photos, preview them, and create a PDF in your browser.'
+  },
+  {
+    question: 'Are my HEIC files uploaded?',
+    answer: 'No. The conversion is designed to happen in your browser session. Your selected images should not be uploaded to a server.'
+  },
+  {
+    question: 'Can I combine multiple HEIC files into one PDF?',
+    answer: 'Yes. The HEIC to PDF tool is designed to support multiple HEIC or HEIF files and place each image on its own PDF page.'
+  },
+  {
+    question: 'Can I choose A4 or Letter PDF size?',
+    answer: 'Yes. The planned PDF options include Auto, A4, and Letter, with simple orientation and margin controls.'
+  },
+  {
+    question: 'Will this work on Windows?',
+    answer: 'It is designed for modern browsers. Some HEIC variants may depend on browser compatibility, so if one file does not preview, try another browser.'
+  },
+  {
+    question: 'Is HEIC to PDF different from HEIC to JPG or PNG?',
+    answer: 'Yes. JPG and PNG create image files, while PDF creates a document that is easier to share, print, or upload where a PDF is required.'
+  }
+];
+
 export const heicFaqGroups: HeicFaqGroup[] = [
   {
     id: 'heic-viewer',
     title: 'HEIC Viewer FAQ',
     description: 'Questions about opening, previewing, and privately viewing HEIC or HEIF photos online.',
     items: heicViewerFaqs
+  },
+  {
+    id: 'heic-to-pdf',
+    title: 'HEIC to PDF FAQ',
+    description: 'Questions about converting HEIC or HEIF photos into PDF documents in the browser.',
+    items: heicToPdfFaqs
   }
 ];
