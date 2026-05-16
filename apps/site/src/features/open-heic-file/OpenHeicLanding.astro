@@ -17,21 +17,21 @@ const steps = [
   {
     number: '1',
     title: 'Choose your HEIC file',
-    body: 'Select a .heic or .heif file from your computer, iPhone export, or downloaded attachment.',
+    body: 'Select a .heic or .heif photo from your computer, iPhone export, or downloaded attachment.',
     image: 'heic-step-1.png',
     alt: 'Person choosing a HEIC file'
   },
   {
     number: '2',
-    title: 'Preview the image',
-    body: 'Your HEIC image is decoded locally in your browser. Confirm the preview and dimensions.',
+    title: 'Preview it in your browser',
+    body: 'The image is decoded locally so you can view it online without uploading it to a server.',
     image: 'heic-step-2.png',
     alt: 'Person previewing a decoded image'
   },
   {
     number: '3',
-    title: 'Download as JPG or PNG',
-    body: 'Download a JPG for universal compatibility or PNG for higher quality when you need it.',
+    title: 'Download a copy if needed',
+    body: 'After previewing, you can download a JPG or PNG copy for easier sharing or editing.',
     image: 'heic-step-3.png',
     alt: 'Person downloading a converted image'
   }
@@ -81,10 +81,12 @@ const guideCards = [
 
 const faqs = [
   ['What is a HEIC file?', 'HEIC is an image format commonly used by Apple devices for photos. It can keep good image quality with smaller file sizes, but some apps still do not support it.'],
-  ['Does this upload my image?', 'No. The selected HEIC or HEIF file is decoded in your browser session. The tool does not need a server upload to preview or export the file.'],
+  ['Can I use this as a HEIC viewer online?', 'Yes. You can open and preview HEIC or HEIF photos directly in your browser without installing software.'],
+  ['Is this online HEIC viewer private?', 'Yes. Your image is decoded locally in your browser session and is not uploaded to a server.'],
+  ['Can I view HEIC files on Windows with this tool?', 'Yes. This browser-based HEIC viewer can help you preview HEIC files even when your default photo app cannot open them. Browser compatibility may still vary by HEIC variant.'],
+  ['Do I need to convert HEIC to JPG first?', 'No. You can preview the HEIC file first, then optionally download a JPG or PNG copy if you need a more compatible format.'],
   ['Can I save the image as JPG or PNG?', 'Yes. After the preview is ready, use the JPG or PNG download buttons to create a more widely supported copy.'],
   ['Should I choose JPG or PNG?', 'Choose JPG for broad compatibility. Choose PNG when you want a lossless copy for documentation, screenshots, or design workflows.'],
-  ['Does this work without the Windows HEVC extension?', 'The browser-side decoder is separate from Windows Photos or the Microsoft HEVC extension. Final compatibility still depends on the browser and HEIC variant.'],
   ['Can this repair a corrupted HEIC file?', 'No. This is a viewer and export helper, not a photo repair tool.']
 ] as const;
 ---
@@ -92,17 +94,17 @@ const faqs = [
   <section class="heic-native-hero">
     <div class="container heic-native-hero__grid">
       <div class="heic-native-hero__copy">
-        <p class="heic-native-kicker"><span aria-hidden="true">+</span> Private HEIC viewer</p>
-        <h1>Open HEIC files instantly, privately.</h1>
-        <p class="heic-native-lead">Preview and convert HEIC images to JPG or PNG online. 100% private. No upload. Works on any device.</p>
+        <p class="heic-native-kicker"><span aria-hidden="true">+</span> Private online HEIC viewer</p>
+        <h1>HEIC Viewer Online</h1>
+        <p class="heic-native-lead">Open and preview HEIC or HEIF photos directly in your browser. No upload, no signup, and no server processing.</p>
         <div class="heic-native-pills" aria-label="Privacy and compatibility highlights">
           <span>No server upload</span>
           <span>Works in your browser</span>
-          <span>100% private</span>
+          <span>Open HEIC files online</span>
         </div>
         <div class="heic-native-actions">
-          <a class="heic-native-button heic-native-button--primary" href="#open">Open HEIC File</a>
-          <a class="heic-native-button" href="#how-it-works">Try Sample Image</a>
+          <a class="heic-native-button heic-native-button--primary" href="#open">View HEIC Online</a>
+          <a class="heic-native-button" href="#how-it-works">How it works</a>
         </div>
       </div>
       <div class="heic-native-hero__art" aria-hidden="true">
@@ -111,7 +113,7 @@ const faqs = [
     </div>
   </section>
 
-  <section id="open" class="heic-native-tool" aria-label="Open HEIC tool">
+  <section id="open" class="heic-native-tool" aria-label="Online HEIC viewer tool">
     <div class="container">
       <ToolRenderer ctx={ctx} locale={locale} />
     </div>
@@ -130,7 +132,7 @@ const faqs = [
     <div class="container">
       <div class="heic-native-heading">
         <p>How it works</p>
-        <h2>Open and convert in 3 simple steps</h2>
+        <h2>View HEIC files online in 3 simple steps</h2>
       </div>
       <div class="heic-native-steps">
         {steps.map((step) => (
@@ -141,6 +143,15 @@ const faqs = [
             <p>{step.body}</p>
           </article>
         ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="heic-native-note" aria-labelledby="viewer-first-heading">
+    <div class="container">
+      <div class="heic-native-note__card">
+        <strong id="viewer-first-heading" role="heading" aria-level="2">HEIC viewer first, converter second</strong>
+        <span>This page is designed as an online HEIC viewer. Open your HEIC file first, check the preview, size, and dimensions, then download a JPG or PNG copy only if you need one.</span>
       </div>
     </div>
   </section>

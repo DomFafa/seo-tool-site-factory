@@ -27,7 +27,7 @@ const maxFileSizeMb = 25;
 
 const initialState: ToolState = {
   status: 'idle',
-  message: 'Your image preview will appear here.',
+  message: 'Your HEIC preview will appear here.',
   fileSize: '-',
   pixels: '-',
   preview: null,
@@ -85,7 +85,7 @@ export default function OpenHeicFileIsland() {
       return {
         ...initialState,
         status: 'working',
-        message: 'Decoding in your browser...',
+        message: 'Decoding the image locally in your browser...',
         fileSize: formatBytes(selectedFile.size)
       };
     });
@@ -99,7 +99,7 @@ export default function OpenHeicFileIsland() {
 
       setState({
         status: 'ready',
-        message: 'Preview ready. Download JPG or PNG.',
+        message: 'Preview ready. You can view the image here or download a JPG/PNG copy.',
         fileSize: formatBytes(selectedFile.size),
         pixels: `${preview.dimensions.width} x ${preview.dimensions.height}`,
         preview,
@@ -118,7 +118,7 @@ export default function OpenHeicFileIsland() {
         return {
           ...initialState,
           status: 'error',
-          message: 'This browser could not decode this HEIC variant. Try another HEIC file or a browser with HEIC support.',
+          message: 'This browser could not preview this HEIC variant. Try another HEIC file or a different browser.',
           fileSize: formatBytes(selectedFile.size)
         };
       });
@@ -132,10 +132,10 @@ export default function OpenHeicFileIsland() {
 
   const hasOutput = Boolean(state.jpg || state.png);
   const statusLabel =
-    state.status === 'ready' ? 'HEIC file ready'
-      : state.status === 'working' ? 'Decoding file'
-        : state.status === 'error' ? 'Could not open file'
-          : 'No file selected';
+    state.status === 'ready' ? 'HEIC preview ready'
+      : state.status === 'working' ? 'Preparing HEIC preview'
+        : state.status === 'error' ? 'Could not preview this HEIC file'
+          : 'No HEIC file selected';
 
   return (
     <div className={`open-heic-tool open-heic-tool--${state.status}`}>
@@ -148,7 +148,7 @@ export default function OpenHeicFileIsland() {
       />
 
       <button className="heic-mobile-button heic-native-button heic-native-button--primary" type="button" onClick={openPicker}>
-        Choose File
+        Choose HEIC File
       </button>
 
       <div
@@ -165,7 +165,7 @@ export default function OpenHeicFileIsland() {
         }}
         role="button"
         tabIndex={0}
-        aria-label="Drag and drop your HEIC file here"
+        aria-label="Drop a HEIC file to view it online"
         onClick={openPicker}
         onKeyDown={(event) => {
           if (event.key === 'Enter' || event.key === ' ') {
@@ -175,9 +175,9 @@ export default function OpenHeicFileIsland() {
         }}
       >
         <div className="heic-file-icon" aria-hidden="true">HEIC</div>
-        <h2>Drag & drop your HEIC file here</h2>
-        <p>or click to choose a file</p>
-        <span className="heic-native-button heic-native-button--primary">Choose File</span>
+        <h2>Drop a HEIC file to view it online</h2>
+        <p>or choose a HEIC/HEIF photo from your device</p>
+        <span className="heic-native-button heic-native-button--primary">Choose HEIC File</span>
         <div className="heic-dropzone__chips" aria-label="Supported file limits">
           <span>.heic</span>
           <span>.heif</span>
@@ -186,11 +186,11 @@ export default function OpenHeicFileIsland() {
       </div>
 
       <aside className="heic-status-panel" aria-live="polite">
-        <p className="heic-tool-eyebrow">Status</p>
+        <p className="heic-tool-eyebrow">Preview status</p>
         <h2>{statusLabel}</h2>
         <p>{state.message}</p>
 
-        <div className="heic-preview-frame">
+        <div className="heic-preview-frame" role="group" aria-label="Preview">
           {state.preview?.url ? (
             <img src={state.preview.url} alt="Preview of the selected HEIC file" />
           ) : (
@@ -202,7 +202,7 @@ export default function OpenHeicFileIsland() {
           )}
         </div>
 
-        <div className="heic-metrics">
+        <div className="heic-metrics" role="group" aria-label="Image details">
           <div><span>Format</span><strong>{state.status === 'idle' ? '-' : 'HEIC'}</strong></div>
           <div><span>File size</span><strong>{state.fileSize}</strong></div>
           <div><span>Pixels</span><strong>{state.pixels}</strong></div>

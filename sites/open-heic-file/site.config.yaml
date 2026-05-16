@@ -23,8 +23,8 @@ indexing:
   mode: index
 primaryTool: open-heic-file
 seo:
-  defaultTitle: Open HEIC File Online - Private HEIC Viewer
-  defaultDescription: Open HEIC files online in your browser, preview iPhone photos, and save JPG or PNG copies without uploading images to a server.
+  defaultTitle: HEIC Viewer Online - Open HEIC Files Privately
+  defaultDescription: Open and preview HEIC or HEIF photos in your browser with a private online HEIC viewer. No upload required. Download JPG or PNG copies if needed.
   xDefaultLocale: en
   structuredData:
     - WebSite
