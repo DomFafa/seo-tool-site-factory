@@ -3,15 +3,21 @@ recipe: heic-pixel-native
 chrome:
   navVariant: compact
   footerVariant: simple
+  showHomeLink: false
   headerLinks:
-    - label: Privacy
-      href: "/privacy/"
+    - label: HEIC Viewer
+      href: "/#open"
+      children:
+        - label: HEIC to JPG/PNG
+          href: "/"
+          description: "Open HEIC files and download JPG or PNG copies."
+        - label: HEIC to PDF
+          href: "/heic-to-pdf/"
+          description: "Convert HEIC or HEIF photos into a PDF document."
     - label: FAQ
       href: "/faq/"
-    - label: Contact
-      href: "/contact/"
-    - label: Open HEIC File
-      href: "/#open"
+    - label: Privacy
+      href: "/privacy/"
   footerLinks:
     - label: Home
       href: "/"

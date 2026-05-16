@@ -1236,11 +1236,34 @@ body.recipe-heic-pixel-native .nav a:hover {
   text-decoration: none;
 }
 
-body.recipe-heic-pixel-native .nav a:last-of-type {
-  padding: 0 18px;
-  background: #050505;
-  color: #fff;
-  box-shadow: 0 12px 22px rgba(0, 0, 0, .18);
+body.recipe-heic-pixel-native .nav a:hover,
+body.recipe-heic-pixel-native .nav a:focus-visible {
+  background: #f3f4f6;
+}
+
+body.recipe-heic-pixel-native .nav-dropdown__menu {
+  border-color: #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .12);
+}
+
+body.recipe-heic-pixel-native .nav .nav-dropdown__item {
+  min-height: auto;
+  display: grid;
+  align-items: start;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: #050505;
+  font-size: 13px;
+}
+
+body.recipe-heic-pixel-native .nav .nav-dropdown__item:hover,
+body.recipe-heic-pixel-native .nav .nav-dropdown__item:focus-visible {
+  background: #f3f4f6;
+}
+
+body.recipe-heic-pixel-native .nav-dropdown__description {
+  color: #667085;
 }
 
 body.recipe-heic-pixel-native .footer {

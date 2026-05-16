@@ -26,14 +26,33 @@ a:hover { text-decoration: underline; }
 .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; color: var(--factory-text); }
 .brand-mark { width: 34px; height: 34px; border-radius: 10px; background: var(--factory-primary); display: inline-flex; color: white; align-items: center; justify-content: center; font-weight: 900; }
 .nav { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+.nav-dropdown { position: relative; display: inline-flex; align-items: center; }
+.nav-dropdown::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 12px; }
+.nav-dropdown__trigger { display: inline-flex; align-items: center; gap: 5px; }
+.nav-dropdown__menu { position: absolute; top: calc(100% + 10px); right: 0; z-index: 60; min-width: 240px; max-width: min(280px, calc(100vw - 32px)); padding: 8px; border: 1px solid var(--factory-border); border-radius: 14px; background: var(--factory-surface); box-shadow: 0 20px 50px rgba(15,23,42,.16); opacity: 0; pointer-events: none; transform: translateY(-4px); transition: opacity .16s ease, transform .16s ease; }
+.nav-dropdown:hover .nav-dropdown__menu,
+.nav-dropdown:focus-within .nav-dropdown__menu { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.nav-dropdown__item { display: grid; gap: 2px; padding: 10px 12px; border-radius: 10px; color: var(--factory-text); font-weight: 800; line-height: 1.25; }
+.nav-dropdown__item:hover,
+.nav-dropdown__item:focus-visible { background: color-mix(in srgb, var(--factory-primary) 8%, #fff); text-decoration: none; }
+.nav-dropdown__description { color: var(--factory-muted); font-size: 12px; font-weight: 600; line-height: 1.35; }
 .mobile-menu { display: none; position: relative; margin-left: auto; }
-.mobile-menu summary { width: 42px; height: 42px; border: 1px solid var(--factory-border); border-radius: 12px; background: #fff; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; list-style: none; }
-.mobile-menu summary::-webkit-details-marker { display: none; }
-.mobile-menu summary span { width: 18px; height: 2px; border-radius: 999px; background: currentColor; }
+.mobile-menu > summary { width: 42px; height: 42px; border: 1px solid var(--factory-border); border-radius: 12px; background: #fff; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; list-style: none; }
+.mobile-menu > summary::-webkit-details-marker { display: none; }
+.mobile-menu > summary span { width: 18px; height: 2px; border-radius: 999px; background: currentColor; }
 .mobile-menu__panel { position: absolute; right: 0; top: calc(100% + 10px); min-width: 210px; padding: 10px; border: 1px solid var(--factory-border); border-radius: 14px; background: var(--factory-surface); box-shadow: 0 20px 50px rgba(15,23,42,.14); display: grid; gap: 4px; z-index: 30; }
 .mobile-menu__panel a { min-height: 42px; display: flex; align-items: center; padding: 8px 10px; border-radius: 10px; color: var(--factory-text); font-weight: 700; }
 .mobile-menu__panel a:hover { background: color-mix(in srgb, var(--factory-primary) 9%, #fff); text-decoration: none; }
 .mobile-menu__panel .language-switcher { padding: 6px 8px 2px; }
+.mobile-nav-group { border-radius: 10px; }
+.mobile-nav-group summary { min-height: 42px; display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-radius: 10px; color: var(--factory-text); cursor: pointer; font-weight: 800; list-style: none; }
+.mobile-nav-group summary::-webkit-details-marker { display: none; }
+.mobile-nav-group summary::after { content: "▾"; font-size: 12px; transition: transform .16s ease; }
+.mobile-nav-group[open] summary::after { transform: rotate(180deg); }
+.mobile-nav-group summary:hover { background: color-mix(in srgb, var(--factory-primary) 9%, #fff); }
+.mobile-nav-group__links { display: grid; gap: 3px; padding: 2px 0 6px 10px; }
+.mobile-nav-group__links a { min-height: 0; display: grid; gap: 2px; padding: 9px 10px; font-weight: 800; line-height: 1.25; }
+.mobile-nav-group__links a span + span { color: var(--factory-muted); font-size: 12px; font-weight: 600; line-height: 1.35; }
 .hero { padding: 56px 0 24px; }
 .hero h1 { font-size: clamp(34px, 5vw, 56px); line-height: 1.05; margin: 0 0 16px; letter-spacing: 0; }
 .hero p { max-width: 760px; font-size: 18px; color: var(--factory-muted); margin: 0; }
