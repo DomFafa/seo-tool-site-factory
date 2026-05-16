@@ -95,7 +95,6 @@ const homePath = getLocaleHomePath(ctx, locale);
                 {link.children.map((child) => (
                   <a class="nav-dropdown__item" href={child.href}>
                     <span>{child.label}</span>
-                    {child.description && <span class="nav-dropdown__description">{child.description}</span>}
                   </a>
                 ))}
               </div>
@@ -120,7 +119,6 @@ const homePath = getLocaleHomePath(ctx, locale);
                   {link.children.map((child) => (
                     <a href={child.href}>
                       <span>{child.label}</span>
-                      {child.description && <span>{child.description}</span>}
                     </a>
                   ))}
                 </div>

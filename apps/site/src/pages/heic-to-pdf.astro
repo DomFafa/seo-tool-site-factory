@@ -42,13 +42,6 @@ const steps = [
   },
   {
     number: '3',
-    title: 'Pick simple PDF settings',
-    body: 'Choose page size, orientation, and margin options for the document.',
-    image: null,
-    alt: null
-  },
-  {
-    number: '4',
     title: 'Download your PDF',
     body: 'Generate a PDF locally and save it to your device.',
     image: 'heic-pdf-step-3.png',
@@ -134,21 +127,19 @@ const privacyBullets = [
       <div class="container">
         <div class="heic-native-heading">
           <p>How it works</p>
-          <h2>Convert HEIC to PDF in 4 simple steps</h2>
+          <h2>Convert HEIC to PDF in 3 simple steps</h2>
         </div>
-        <div class="heic-pdf-steps">
+        <div class="heic-native-steps heic-pdf-steps">
           {steps.map((step) => (
-            <article class="heic-pdf-step">
-              {step.image && (
-                <img
-                  src={`${assetBase}/${step.image}`}
-                  alt={step.alt}
-                  width="145"
-                  height="105"
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
+            <article class="heic-native-step heic-pdf-step">
+              <img
+                src={`${assetBase}/${step.image}`}
+                alt={step.alt}
+                width="145"
+                height="105"
+                loading="lazy"
+                decoding="async"
+              />
               <span>{step.number}</span>
               <h3>{step.title}</h3>
               <p>{step.body}</p>
@@ -177,9 +168,9 @@ const privacyBullets = [
       </div>
     </section>
 
-    <section class="heic-native-section heic-pdf-privacy">
+    <section class="heic-native-section heic-native-privacy heic-pdf-privacy">
       <div class="container">
-        <div class="heic-pdf-privacy__panel">
+        <div class="heic-native-privacy__panel heic-pdf-privacy__panel">
           <img
             src={`${assetBase}/heic-pdf-privacy-art.png`}
             alt="Illustration of a protected local PDF conversion workflow"
@@ -192,14 +183,18 @@ const privacyBullets = [
             <h2>Built for private document conversion</h2>
             <p>HEIC photos often come from iPhones and personal albums. This tool is designed to preview and prepare PDF documents locally in the browser instead of uploading files to a remote server.</p>
           </div>
-          <ul>
-            {privacyBullets.map((item) => <li>{item}</li>)}
-          </ul>
+          <div class="heic-native-privacy__points heic-pdf-privacy__points">
+            {privacyBullets.map((item) => (
+              <div>
+                <strong>{item}</strong>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="heic-native-section heic-pdf-faq">
+    <section class="heic-native-section heic-native-faq heic-pdf-faq">
       <div class="container">
         <div class="heic-native-heading">
           <h2>HEIC to PDF FAQ</h2>
