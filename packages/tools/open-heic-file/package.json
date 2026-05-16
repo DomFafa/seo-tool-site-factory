@@ -7,6 +7,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "heic2any": "^0.0.4"
+    "heic2any": "^0.0.4",
+    "pdf-lib": "^1.17.1"
   }
 }

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import HeicToPdfIsland from '../features/open-heic-file/HeicToPdfIsland';
 import type { ContentDocument } from '@factory/site-core';
 import { loadSelectedSite } from '@factory/site-core';
 import { heicToPdfFaqs } from '../features/open-heic-file/heicFaqData';
@@ -63,7 +64,7 @@ const featureCards = [
 
 const privacyBullets = [
   'Browser-based preview',
-  'Local PDF generation planned',
+  'Local PDF generation',
   'No account or signup',
   'No server upload'
 ] as const;
@@ -79,7 +80,7 @@ const privacyBullets = [
           <div class="heic-native-pills" aria-label="Privacy and PDF highlights">
             <span>No server upload</span>
             <span>Browser-based PDF</span>
-            <span>Multiple photos planned</span>
+            <span>Multiple photos supported</span>
           </div>
           <div class="heic-native-actions">
             <a class="heic-native-button heic-native-button--primary" href="#heic-to-pdf-tool">Choose HEIC Files</a>
@@ -100,38 +101,7 @@ const privacyBullets = [
 
     <section id="heic-to-pdf-tool" class="heic-pdf-tool" aria-label="HEIC to PDF converter tool">
       <div class="container">
-        <div class="heic-pdf-tool__shell">
-          <div class="heic-pdf-dropzone">
-            <div class="heic-file-icon" aria-hidden="true">HEIC</div>
-            <h2>Drop HEIC files to convert to PDF</h2>
-            <p>PDF conversion will be added in the next implementation step.</p>
-            <div class="heic-dropzone__chips" aria-label="Planned file support">
-              <span>.heic</span>
-              <span>.heif</span>
-              <span>Multiple files planned</span>
-              <span>Local processing</span>
-            </div>
-          </div>
-
-          <aside class="heic-pdf-settings">
-            <p class="heic-tool-eyebrow">PDF options</p>
-            <h2>PDF options</h2>
-            <div class="heic-pdf-setting-row">
-              <span>Page size</span>
-              <strong>Auto / A4 / Letter</strong>
-            </div>
-            <div class="heic-pdf-setting-row">
-              <span>Orientation</span>
-              <strong>Auto / Portrait / Landscape</strong>
-            </div>
-            <div class="heic-pdf-setting-row">
-              <span>Margin</span>
-              <strong>None / Small / Medium</strong>
-            </div>
-            <button class="heic-native-button heic-native-button--disabled" type="button" disabled>Create PDF</button>
-            <p>This page layout is ready. PDF generation will be implemented in the next step.</p>
-          </aside>
-        </div>
+        <HeicToPdfIsland client:load />
       </div>
     </section>
 

@@ -60,7 +60,7 @@ export const heicToPdfFaqs: HeicFaqItem[] = [
   },
   {
     question: 'Can I choose A4 or Letter PDF size?',
-    answer: 'Yes. The planned PDF options include Auto, A4, and Letter, with simple orientation and margin controls.'
+    answer: 'Yes. PDF options include Auto, A4, and Letter, with simple orientation and margin controls.'
   },
   {
     question: 'Will this work on Windows?',

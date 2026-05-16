@@ -129,3 +129,5 @@ async function loadHeic2Any(): Promise<(options: { blob: Blob; toType: string; q
 function stripTrailingZero(value: number): string {
   return value.toFixed(1).replace(/\.0$/, '');
 }
+
+export * from './pdf';
