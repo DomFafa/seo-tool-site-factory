@@ -26,6 +26,8 @@ const accent = theme?.colors?.accent ?? primary;
 const radius = theme?.radius ?? '18px';
 const recipe = ctx.layoutConfig.recipe;
 const navVariant = ctx.layoutConfig.chrome.navVariant;
+const showHomeLink = ctx.layoutConfig.chrome.showHomeLink;
+const headerLinks = ctx.layoutConfig.chrome.headerLinks;
 const density = theme?.density ?? 'comfortable';
 const surfaceStyle = theme?.surface ?? 'cards';
 const chromeCopy = locale === 'es'
@@ -82,8 +84,24 @@ const homePath = getLocaleHomePath(ctx, locale);
           <span>{ctx.siteConfig.brandName}</span>
         </a>
         <nav class="nav nav--desktop" aria-label={chromeCopy.navLabel}>
-          <a href={homePath}>{chromeCopy.home}</a>
-          {ctx.layoutConfig.chrome.headerLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+          {showHomeLink && <a href={homePath}>{chromeCopy.home}</a>}
+          {headerLinks.map((link) => link.children.length > 0 ? (
+            <div class="nav-dropdown">
+              <a class="nav-dropdown__trigger" href={link.href} aria-haspopup="true">
+                <span>{link.label}</span>
+                <span aria-hidden="true">▾</span>
+              </a>
+              <div class="nav-dropdown__menu">
+                {link.children.map((child) => (
+                  <a class="nav-dropdown__item" href={child.href}>
+                    <span>{child.label}</span>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <a href={link.href}>{link.label}</a>
+          ))}
           <LanguageSwitcher ctx={ctx} locale={locale} />
         </nav>
         <details class="mobile-menu">
@@ -93,8 +111,21 @@ const homePath = getLocaleHomePath(ctx, locale);
             <span></span>
           </summary>
           <nav class="mobile-menu__panel" aria-label={chromeCopy.navLabel}>
-            <a href={homePath}>{chromeCopy.home}</a>
-            {ctx.layoutConfig.chrome.headerLinks.map((link) => <a href={link.href}>{link.label}</a>)}
+            {showHomeLink && <a href={homePath}>{chromeCopy.home}</a>}
+            {headerLinks.map((link) => link.children.length > 0 ? (
+              <details class="mobile-nav-group">
+                <summary>{link.label}</summary>
+                <div class="mobile-nav-group__links">
+                  {link.children.map((child) => (
+                    <a href={child.href}>
+                      <span>{child.label}</span>
+                    </a>
+                  ))}
+                </div>
+              </details>
+            ) : (
+              <a href={link.href}>{link.label}</a>
+            ))}
             <LanguageSwitcher ctx={ctx} locale={locale} />
           </nav>
         </details>

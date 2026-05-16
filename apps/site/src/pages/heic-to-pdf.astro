@@ -1,0 +1,213 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeicToPdfIsland from '../features/open-heic-file/HeicToPdfIsland';
+import type { ContentDocument } from '@factory/site-core';
+import { loadSelectedSite } from '@factory/site-core';
+import { heicToPdfFaqs } from '../features/open-heic-file/heicFaqData';
+
+const ctx = await loadSelectedSite();
+const locale = ctx.siteConfig.defaultLocale;
+const assetBase = '/open-heic-file';
+
+const page: ContentDocument = {
+  filePath: 'apps/site/src/pages/heic-to-pdf.astro',
+  locale,
+  kind: 'page',
+  frontmatter: {
+    title: 'HEIC to PDF Converter Online - Private Browser Tool',
+    description: 'Convert HEIC or HEIF photos to PDF in your browser. Preview images first, combine multiple photos, and download a PDF without uploading files.',
+    slug: 'heic-to-pdf',
+    lastModified: '2026-05-16',
+    index: true,
+    contentStatus: 'approved'
+  },
+  body: '',
+  html: ''
+};
+
+const steps = [
+  {
+    number: '1',
+    title: 'Choose HEIC or HEIF photos',
+    body: 'Select one or more iPhone photos from your device.',
+    image: 'heic-pdf-step-1.png',
+    alt: 'Illustration of selecting HEIC and HEIF photo files'
+  },
+  {
+    number: '2',
+    title: 'Preview before converting',
+    body: 'Check the decoded images in your browser before creating the PDF.',
+    image: 'heic-pdf-step-2.png',
+    alt: 'Illustration of previewing HEIC photos before PDF conversion'
+  },
+  {
+    number: '3',
+    title: 'Download your PDF',
+    body: 'Generate a PDF locally and save it to your device.',
+    image: 'heic-pdf-step-3.png',
+    alt: 'Illustration of downloading a generated PDF document'
+  }
+] as const;
+
+const featureCards = [
+  {
+    title: 'Combine photos into one PDF',
+    body: 'Turn multiple HEIC or HEIF photos into a single document, with one image per page.',
+    image: 'heic-pdf-card-combine.png',
+    alt: 'Illustration of multiple HEIC photos combined into one PDF'
+  },
+  {
+    title: 'Choose practical page settings',
+    body: 'Prepare common PDF layouts such as Auto, A4, or Letter with simple margin options.',
+    image: 'heic-pdf-card-page-size.png',
+    alt: 'Illustration of PDF page size and margin settings'
+  },
+  {
+    title: 'No upload conversion',
+    body: 'The page is designed for browser-based processing, so your selected photos stay in your session.',
+    image: 'heic-pdf-card-private.png',
+    alt: 'Illustration of private browser-based HEIC to PDF conversion'
+  }
+] as const;
+
+const privacyBullets = [
+  'Browser-based preview',
+  'Local PDF generation',
+  'No account or signup',
+  'No server upload'
+] as const;
+---
+<BaseLayout ctx={ctx} locale={locale} page={page} pageType="page" slug="heic-to-pdf">
+  <div class="heic-native heic-pdf-page">
+    <section class="heic-pdf-hero">
+      <div class="container heic-pdf-hero__grid">
+        <div class="heic-pdf-hero__copy">
+          <p class="heic-native-kicker"><span aria-hidden="true">+</span> Private HEIC to PDF converter</p>
+          <h1>HEIC to PDF Converter Online</h1>
+          <p class="heic-native-lead">Convert HEIC or HEIF photos into a PDF directly in your browser. Preview images first, then prepare a private PDF with no upload.</p>
+          <div class="heic-native-pills" aria-label="Privacy and PDF highlights">
+            <span>No server upload</span>
+            <span>Browser-based PDF</span>
+            <span>Multiple photos supported</span>
+          </div>
+          <div class="heic-native-actions">
+            <a class="heic-native-button heic-native-button--primary" href="#heic-to-pdf-tool">Choose HEIC Files</a>
+            <a class="heic-native-button" href="#how-it-works">How it works</a>
+          </div>
+        </div>
+        <div class="heic-pdf-hero__art">
+          <img
+            src={`${assetBase}/heic-pdf-hero-art.png`}
+            alt="Illustration of HEIC and HEIF files converting into a PDF in a private browser tool"
+            width="345"
+            height="315"
+            loading="eager"
+            decoding="async"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section id="heic-to-pdf-tool" class="heic-pdf-tool" aria-label="HEIC to PDF converter tool">
+      <div class="container">
+        <HeicToPdfIsland client:load />
+      </div>
+    </section>
+
+    <section class="heic-pdf-note" aria-label="Local privacy note">
+      <div class="container">
+        <div class="heic-native-note__card">
+          <strong>Private by design</strong>
+          <span>Your HEIC files will be decoded and converted in your browser session. The finished PDF will be generated locally without uploading your images to a server.</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="heic-native-section">
+      <div class="container">
+        <div class="heic-native-heading">
+          <p>How it works</p>
+          <h2>Convert HEIC to PDF in 3 simple steps</h2>
+        </div>
+        <div class="heic-native-steps heic-pdf-steps">
+          {steps.map((step) => (
+            <article class="heic-native-step heic-pdf-step">
+              <img
+                src={`${assetBase}/${step.image}`}
+                alt={step.alt}
+                width="145"
+                height="105"
+                loading="lazy"
+                decoding="async"
+              />
+              <span>{step.number}</span>
+              <h3>{step.title}</h3>
+              <p>{step.body}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="heic-native-section">
+      <div class="container heic-pdf-card-grid">
+        {featureCards.map((card) => (
+          <article class="heic-pdf-card">
+            <img
+              src={`${assetBase}/${card.image}`}
+              alt={card.alt}
+              width="180"
+              height="130"
+              loading="lazy"
+              decoding="async"
+            />
+            <h2>{card.title}</h2>
+            <p>{card.body}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="heic-native-section heic-native-privacy heic-pdf-privacy">
+      <div class="container">
+        <div class="heic-native-privacy__panel heic-pdf-privacy__panel">
+          <img
+            src={`${assetBase}/heic-pdf-privacy-art.png`}
+            alt="Illustration of a protected local PDF conversion workflow"
+            width="168"
+            height="122"
+            loading="lazy"
+            decoding="async"
+          />
+          <div>
+            <h2>Built for private document conversion</h2>
+            <p>HEIC photos often come from iPhones and personal albums. This tool is designed to preview and prepare PDF documents locally in the browser instead of uploading files to a remote server.</p>
+          </div>
+          <div class="heic-native-privacy__points heic-pdf-privacy__points">
+            {privacyBullets.map((item) => (
+              <div>
+                <strong>{item}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="heic-native-section heic-native-faq heic-pdf-faq">
+      <div class="container">
+        <div class="heic-native-heading">
+          <h2>HEIC to PDF FAQ</h2>
+        </div>
+        <div class="heic-native-faq__grid">
+          {heicToPdfFaqs.map((faq, index) => (
+            <details open={index === 0}>
+              <summary>{faq.question}</summary>
+              <p>{faq.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>

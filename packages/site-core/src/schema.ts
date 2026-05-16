@@ -104,9 +104,14 @@ export const LayoutBlockSchema = z.object({
   props: z.record(z.any()).default({})
 });
 
-const ChromeLinkSchema = z.object({
+const ChromeChildLinkSchema = z.object({
   label: z.string().min(1),
-  href: z.string().min(1)
+  href: z.string().min(1),
+  description: z.string().optional()
+});
+
+const ChromeLinkSchema = ChromeChildLinkSchema.extend({
+  children: z.array(ChromeChildLinkSchema).default([])
 });
 
 export const LayoutConfigSchema = z.object({
@@ -115,9 +120,10 @@ export const LayoutConfigSchema = z.object({
   chrome: z.object({
     navVariant: z.string().default('compact'),
     footerVariant: z.string().default('simple'),
+    showHomeLink: z.boolean().default(true),
     headerLinks: z.array(ChromeLinkSchema).default([]),
     footerLinks: z.array(ChromeLinkSchema).default([])
-  }).default({ navVariant: 'compact', footerVariant: 'simple', headerLinks: [], footerLinks: [] }),
+  }).default({ navVariant: 'compact', footerVariant: 'simple', showHomeLink: true, headerLinks: [], footerLinks: [] }),
   home: z.object({
     blocks: z.array(LayoutBlockSchema).min(1).default([
       { type: 'hero', variant: 'simple', props: {} },

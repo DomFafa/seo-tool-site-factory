@@ -1,6 +1,7 @@
 ---
 import ToolRenderer from '../../components/ToolRenderer.astro';
 import type { ContentDocument, SiteContext } from '@factory/site-core';
+import { heicViewerFaqs } from './heicFaqData';
 
 interface Props {
   ctx: SiteContext;
@@ -79,16 +80,6 @@ const guideCards = [
   }
 ] as const;
 
-const faqs = [
-  ['What is a HEIC file?', 'HEIC is an image format commonly used by Apple devices for photos. It can keep good image quality with smaller file sizes, but some apps still do not support it.'],
-  ['Can I use this as a HEIC viewer online?', 'Yes. You can open and preview HEIC or HEIF photos directly in your browser without installing software.'],
-  ['Is this online HEIC viewer private?', 'Yes. Your image is decoded locally in your browser session and is not uploaded to a server.'],
-  ['Can I view HEIC files on Windows with this tool?', 'Yes. This browser-based HEIC viewer can help you preview HEIC files even when your default photo app cannot open them. Browser compatibility may still vary by HEIC variant.'],
-  ['Do I need to convert HEIC to JPG first?', 'No. You can preview the HEIC file first, then optionally download a JPG or PNG copy if you need a more compatible format.'],
-  ['Can I save the image as JPG or PNG?', 'Yes. After the preview is ready, use the JPG or PNG download buttons to create a more widely supported copy.'],
-  ['Should I choose JPG or PNG?', 'Choose JPG for broad compatibility. Choose PNG when you want a lossless copy for documentation, screenshots, or design workflows.'],
-  ['Can this repair a corrupted HEIC file?', 'No. This is a viewer and export helper, not a photo repair tool.']
-] as const;
 ---
 <div class="heic-native">
   <section class="heic-native-hero">
@@ -192,10 +183,10 @@ const faqs = [
         <h2>FAQ</h2>
       </div>
       <div class="heic-native-faq__grid">
-        {faqs.map(([question, answer], index) => (
+        {heicViewerFaqs.map((faq, index) => (
           <details open={index === 0}>
-            <summary>{question}</summary>
-            <p>{answer}</p>
+            <summary>{faq.question}</summary>
+            <p>{faq.answer}</p>
           </details>
         ))}
       </div>
