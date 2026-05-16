@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import type { ContentDocument } from '@factory/site-core';
+import { loadSelectedSite } from '@factory/site-core';
+import { heicFaqGroups } from '../features/open-heic-file/heicFaqData';
+
+const ctx = await loadSelectedSite();
+const locale = ctx.siteConfig.defaultLocale;
+
+const faqPage: ContentDocument = {
+  filePath: 'apps/site/src/pages/faq.astro',
+  locale,
+  kind: 'page',
+  frontmatter: {
+    title: 'HEIC Tools FAQ',
+    description: 'Find answers about HEIC Viewer, HEIC to JPG/PNG, and upcoming HEIC conversion tools on openheicfile.net.',
+    slug: 'faq',
+    lastModified: '2026-05-16',
+    index: true,
+    contentStatus: 'approved'
+  },
+  body: '',
+  html: ''
+};
+---
+<BaseLayout ctx={ctx} locale={locale} page={faqPage} pageType="page" slug="faq">
+  <div class="heic-native heic-faq-page">
+    <section class="heic-faq-hero">
+      <div class="container">
+        <p class="heic-native-kicker"><span aria-hidden="true">+</span> Help center</p>
+        <h1>HEIC Tools FAQ</h1>
+        <p>Browse common questions by tool type. Start with HEIC Viewer questions, and more HEIC conversion FAQs will be added as new tools launch.</p>
+      </div>
+    </section>
+
+    <section class="heic-native-section" aria-label="HEIC FAQ categories">
+      <div class="container">
+        {heicFaqGroups.map((group) => (
+          <article class="heic-faq-group" id={group.id}>
+            <div class="heic-native-heading">
+              <h2>{group.title}</h2>
+              <p>{group.description}</p>
+            </div>
+            <div class="heic-faq-list">
+              {group.items.map((item, index) => (
+                <details class="heic-faq-item" open={index === 0}>
+                  <summary>{item.question}</summary>
+                  <p>{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>
