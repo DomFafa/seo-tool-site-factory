@@ -2077,11 +2077,15 @@ body.recipe-heic-pixel-native .heic-native-tool .tool-shell {
 }
 
 .heic-pdf-hero__art {
-  min-height: 300px;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  gap: 14px;
+  display: flex;
   align-items: center;
+  justify-content: center;
+}
+
+.heic-pdf-hero__art img {
+  width: min(345px, 100%);
+  height: auto;
+  display: block;
 }
 
 .heic-pdf-art-card {
@@ -2429,6 +2433,14 @@ body.recipe-heic-pixel-native .heic-native-tool .tool-shell {
   font-weight: 950;
 }
 
+.heic-pdf-step img {
+  width: 145px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 0 18px;
+}
+
 .heic-pdf-steps h3 {
   margin: 22px 0 10px;
   color: #050505;
@@ -2455,6 +2467,14 @@ body.recipe-heic-pixel-native .heic-native-tool .tool-shell {
   font-size: 23px;
 }
 
+.heic-pdf-card img {
+  width: 180px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 0 20px;
+}
+
 .heic-pdf-card p {
   margin-top: 16px;
 }
@@ -2465,13 +2485,21 @@ body.recipe-heic-pixel-native .heic-native-tool .tool-shell {
 
 .heic-pdf-privacy__panel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 42px;
+  grid-template-columns: 168px minmax(0, 1fr) 360px;
+  gap: 30px;
   align-items: center;
   padding: 36px 38px;
   border-radius: 8px;
   background: #050505;
   color: #fff;
+}
+
+.heic-pdf-privacy img {
+  width: 168px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
 }
 
 .heic-pdf-privacy h2,

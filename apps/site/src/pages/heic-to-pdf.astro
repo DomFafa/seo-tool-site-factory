@@ -7,6 +7,7 @@ import { heicToPdfFaqs } from '../features/open-heic-file/heicFaqData';
 
 const ctx = await loadSelectedSite();
 const locale = ctx.siteConfig.defaultLocale;
+const assetBase = '/open-heic-file';
 
 const page: ContentDocument = {
   filePath: 'apps/site/src/pages/heic-to-pdf.astro',
@@ -28,37 +29,51 @@ const steps = [
   {
     number: '1',
     title: 'Choose HEIC or HEIF photos',
-    body: 'Select one or more iPhone photos from your device.'
+    body: 'Select one or more iPhone photos from your device.',
+    image: 'heic-pdf-step-1.png',
+    alt: 'Illustration of selecting HEIC and HEIF photo files'
   },
   {
     number: '2',
     title: 'Preview before converting',
-    body: 'Check the decoded images in your browser before creating the PDF.'
+    body: 'Check the decoded images in your browser before creating the PDF.',
+    image: 'heic-pdf-step-2.png',
+    alt: 'Illustration of previewing HEIC photos before PDF conversion'
   },
   {
     number: '3',
     title: 'Pick simple PDF settings',
-    body: 'Choose page size, orientation, and margin options for the document.'
+    body: 'Choose page size, orientation, and margin options for the document.',
+    image: null,
+    alt: null
   },
   {
     number: '4',
     title: 'Download your PDF',
-    body: 'Generate a PDF locally and save it to your device.'
+    body: 'Generate a PDF locally and save it to your device.',
+    image: 'heic-pdf-step-3.png',
+    alt: 'Illustration of downloading a generated PDF document'
   }
 ] as const;
 
 const featureCards = [
   {
     title: 'Combine photos into one PDF',
-    body: 'Turn multiple HEIC or HEIF photos into a single document, with one image per page.'
+    body: 'Turn multiple HEIC or HEIF photos into a single document, with one image per page.',
+    image: 'heic-pdf-card-combine.png',
+    alt: 'Illustration of multiple HEIC photos combined into one PDF'
   },
   {
     title: 'Choose practical page settings',
-    body: 'Prepare common PDF layouts such as Auto, A4, or Letter with simple margin options.'
+    body: 'Prepare common PDF layouts such as Auto, A4, or Letter with simple margin options.',
+    image: 'heic-pdf-card-page-size.png',
+    alt: 'Illustration of PDF page size and margin settings'
   },
   {
     title: 'No upload conversion',
-    body: 'The page is designed for browser-based processing, so your selected photos stay in your session.'
+    body: 'The page is designed for browser-based processing, so your selected photos stay in your session.',
+    image: 'heic-pdf-card-private.png',
+    alt: 'Illustration of private browser-based HEIC to PDF conversion'
   }
 ] as const;
 
@@ -87,14 +102,15 @@ const privacyBullets = [
             <a class="heic-native-button" href="#how-it-works">How it works</a>
           </div>
         </div>
-        <div class="heic-pdf-hero__art" aria-hidden="true">
-          <div class="heic-pdf-art-card heic-pdf-art-card--image">
-            <span>HEIC</span>
-          </div>
-          <div class="heic-pdf-art-arrow">to</div>
-          <div class="heic-pdf-art-card heic-pdf-art-card--document">
-            <span>PDF</span>
-          </div>
+        <div class="heic-pdf-hero__art">
+          <img
+            src={`${assetBase}/heic-pdf-hero-art.png`}
+            alt="Illustration of HEIC and HEIF files converting into a PDF in a private browser tool"
+            width="345"
+            height="315"
+            loading="eager"
+            decoding="async"
+          />
         </div>
       </div>
     </section>
@@ -122,7 +138,17 @@ const privacyBullets = [
         </div>
         <div class="heic-pdf-steps">
           {steps.map((step) => (
-            <article>
+            <article class="heic-pdf-step">
+              {step.image && (
+                <img
+                  src={`${assetBase}/${step.image}`}
+                  alt={step.alt}
+                  width="145"
+                  height="105"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
               <span>{step.number}</span>
               <h3>{step.title}</h3>
               <p>{step.body}</p>
@@ -136,6 +162,14 @@ const privacyBullets = [
       <div class="container heic-pdf-card-grid">
         {featureCards.map((card) => (
           <article class="heic-pdf-card">
+            <img
+              src={`${assetBase}/${card.image}`}
+              alt={card.alt}
+              width="180"
+              height="130"
+              loading="lazy"
+              decoding="async"
+            />
             <h2>{card.title}</h2>
             <p>{card.body}</p>
           </article>
@@ -146,6 +180,14 @@ const privacyBullets = [
     <section class="heic-native-section heic-pdf-privacy">
       <div class="container">
         <div class="heic-pdf-privacy__panel">
+          <img
+            src={`${assetBase}/heic-pdf-privacy-art.png`}
+            alt="Illustration of a protected local PDF conversion workflow"
+            width="168"
+            height="122"
+            loading="lazy"
+            decoding="async"
+          />
           <div>
             <h2>Built for private document conversion</h2>
             <p>HEIC photos often come from iPhones and personal albums. This tool is designed to preview and prepare PDF documents locally in the browser instead of uploading files to a remote server.</p>
