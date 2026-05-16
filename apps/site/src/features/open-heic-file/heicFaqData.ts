@@ -16,20 +16,8 @@ export const heicViewerFaqs: HeicFaqItem[] = [
     answer: 'HEIC is an image format commonly used by Apple devices for photos. It can keep good image quality with smaller file sizes, but some apps still do not support it.'
   },
   {
-    question: 'Can I use this as a HEIC viewer online?',
-    answer: 'Yes. You can open and preview HEIC or HEIF photos directly in your browser without installing software.'
-  },
-  {
-    question: 'Is this online HEIC viewer private?',
-    answer: 'Yes. Your image is decoded locally in your browser session and is not uploaded to a server.'
-  },
-  {
-    question: 'Can I view HEIC files on Windows with this tool?',
-    answer: 'Yes. This browser-based HEIC viewer can help you preview HEIC files even when your default photo app cannot open them. Browser compatibility may still vary by HEIC variant.'
-  },
-  {
-    question: 'Do I need to convert HEIC to JPG first?',
-    answer: 'No. You can preview the HEIC file first, then optionally download a JPG or PNG copy if you need a more compatible format.'
+    question: 'Does this upload my image?',
+    answer: 'No. The selected HEIC or HEIF file is decoded in your browser session. The tool does not need a server upload to preview or export the file.'
   },
   {
     question: 'Can I save the image as JPG or PNG?',
@@ -38,6 +26,10 @@ export const heicViewerFaqs: HeicFaqItem[] = [
   {
     question: 'Should I choose JPG or PNG?',
     answer: 'Choose JPG for broad compatibility. Choose PNG when you want a lossless copy for documentation, screenshots, or design workflows.'
+  },
+  {
+    question: 'Does this work without the Windows HEVC extension?',
+    answer: 'The browser-side decoder is separate from Windows Photos or the Microsoft HEVC extension. Final compatibility still depends on the browser and HEIC variant.'
   },
   {
     question: 'Can this repair a corrupted HEIC file?',
